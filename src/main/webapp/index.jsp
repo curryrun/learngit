@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <script src="vue.js"></script>
 <script  src="jquery.min.js"></script>
-<script  src="index.js"></script>
+<script  src="test.js"></script>
 <html>
   <head>
     <title>各种传参方式</title>
@@ -53,14 +53,14 @@
       <button id = "postParam" onclick="postParam()">post方式，url带参数</button>
     </div>
 
-    <%--<div id="app">--%>
-      <%--{{ message }}--%>
-    <%--</div>--%>
+    <div id="app">
+      {{ message }}
+    </div>
 
-    <%--<div id="app-5">--%>
-      <%--<p>{{ message }}</p>--%>
-      <%--<button v-on:click="reverseMessage">逆转消息</button>--%>
-    <%--</div>--%>
+    <div id="app-5">
+      <p>{{ message }}</p>
+      <button v-on:click="reverseMessage">逆转消息</button>
+    </div>
 
 
   </body>
