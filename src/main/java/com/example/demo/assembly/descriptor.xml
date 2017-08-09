@@ -14,20 +14,20 @@
             <directory>${project.basedir}/src/main/resources</directory>
             <outputDirectory>/conf</outputDirectory>
 			<excludes>
-                <exclude>META-INF/**</exclude>
+                <exclude>view/**</exclude>
             </excludes>
             <fileMode>0644</fileMode>
             <filtered>true</filtered>
         </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/src/main/assembly</directory>
-            <outputDirectory>/bin</outputDirectory>
-            <filtered>true</filtered>
-            <fileMode>0755</fileMode>
-            <includes>
-                <include>*.sh</include>
-            </includes>
-            <lineEnding>unix</lineEnding>
-        </fileSet>
+        <!--<fileSet>-->
+            <!--<directory>${project.basedir}/src/main/assembly</directory>-->
+            <!--<outputDirectory>/bin</outputDirectory>-->
+            <!--<filtered>true</filtered>-->
+            <!--<fileMode>0755</fileMode>-->
+            <!--<includes>-->
+                <!--<include>*.sh</include>-->
+            <!--</includes>-->
+            <!--<lineEnding>unix</lineEnding>-->
+        <!--</fileSet>-->
     </fileSets>
 </assembly>
