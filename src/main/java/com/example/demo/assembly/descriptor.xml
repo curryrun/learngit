@@ -11,10 +11,10 @@
     </dependencySets>
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}/src/main/resources</directory>
+            <directory>${project.basedir}/src/main/webapp</directory>
             <outputDirectory>/conf</outputDirectory>
 			<excludes>
-                <exclude>view/**</exclude>
+                <exclude>picture/**</exclude>
             </excludes>
             <fileMode>0644</fileMode>
             <filtered>true</filtered>

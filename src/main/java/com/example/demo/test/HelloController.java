@@ -30,6 +30,7 @@ public class HelloController {
 	@ResponseBody
 	public JSONObject Hello2(String code, String name){
 		JSONObject res = new JSONObject();
+		System.out.println("+++++++++++++name:"+name);
 		res.put("code", code);
 		res.put("name", name);
 		return res;

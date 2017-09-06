@@ -72,7 +72,7 @@ public class TimeController {
     public void init() throws SchedulerException {
         System.out.println("logalert_init start");
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-        addQuartzJob(testId, "localSystemName", "env", "0/5 * * * * ?");
+//        addQuartzJob(testId, "localSystemName", "env", "0/5 * * * * ?");
         scheduler.start();
         System.out.println("logalert_init end");
     }
@@ -100,15 +100,15 @@ public class TimeController {
         }
     }
 
-    @Scheduled(fixedRate = 5000)
-    public void flush() throws SchedulerException {
-        System.out.println("flush start");
-        if(testId < 5){
-            testId++;
-            addQuartzJob(testId, "localSystemName", "env", "0/5 * * * * ?");
-        }
-        System.out.println("flush end:"+testId);
-    }
+//    @Scheduled(fixedRate = 5000)
+//    public void flush() throws SchedulerException {
+//        System.out.println("flush start");
+//        if(testId < 5){
+//            testId++;
+////            addQuartzJob(testId, "localSystemName", "env", "0/5 * * * * ?");
+//        }
+//        System.out.println("flush end:"+testId);
+//    }
 
     private static void addQuartzJob(Long id, String localSystemName, String env, String corntabEx) {
         try {
