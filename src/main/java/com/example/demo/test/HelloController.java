@@ -3,6 +3,8 @@ package com.example.demo.test;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.util.FileUtil;
 import com.example.demo.domain.User;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +14,20 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
+@RefreshScope
 @Controller
 @RequestMapping("/demo")
 public class HelloController {
-
+	
+	@Value("${spring.datasource.url}")
+	private String url;
+	
+	@RequestMapping("/url")
+	@ResponseBody
+	public String from() {
+		return this.url;
+	}
+	
 	@RequestMapping(value = "/get1", method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
