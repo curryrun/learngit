@@ -19,14 +19,14 @@ import java.util.Map;
 @RequestMapping("/demo")
 public class HelloController {
 	
-	@Value("${spring.datasource.url}")
-	private String url;
-	
-	@RequestMapping("/url")
-	@ResponseBody
-	public String from() {
-		return this.url;
-	}
+//	@Value("${spring.datasource.url}")
+//	private String url;
+//
+//	@RequestMapping("/url")
+//	@ResponseBody
+//	public String from() {
+//		return this.url;
+//	}
 	
 	@RequestMapping(value = "/get1", method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
