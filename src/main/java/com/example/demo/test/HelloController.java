@@ -3,6 +3,8 @@ package com.example.demo.test;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.util.FileUtil;
 import com.example.demo.domain.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
@@ -19,6 +21,9 @@ import java.util.Map;
 @RequestMapping("/demo")
 public class HelloController {
 	
+	
+	private final static Logger logger = LoggerFactory.getLogger(HelloController.class);
+	
 	@Value("${spring.datasource.url}")
 	private String url;
 
@@ -26,6 +31,13 @@ public class HelloController {
 	@ResponseBody
 	public String from() {
 		return this.url;
+	}
+	
+	@RequestMapping("/logTest")
+	@ResponseBody
+	public String logTest() {
+		logger.info("i am log");
+		return "hello";
 	}
 	
 	@RequestMapping(value = "/get1", method = RequestMethod.GET,
