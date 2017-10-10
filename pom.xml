@@ -173,6 +173,11 @@
             <version>${logback.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -206,11 +211,7 @@
             <id>local</id>
 
             <properties>
-                <!--<config.url>http://t.config.pub.puhuifinance.com:8888/puhui-holmes-admin/config/dev/</config.url>-->
-                <!--<cas.service.url>http://10.10.227.155:8092/puhui-cas</cas.service.url>-->
-                <!--<casServerTomcat.url>http://10.10.227.155:8092/puhui-cas</casServerTomcat.url>-->
                 <local.login.url>http://127.0.0.1:8080/puhui-holmes-admin</local.login.url>
-                <!--<zuul.Url>http://d1.zuul.pub.puhuifinance.com:8765</zuul.Url>-->
             </properties>
 
             <build>
@@ -237,11 +238,7 @@
             <id>test</id>
 
             <properties>
-                <!--<config.url>http://t.config.pub.puhuifinance.com:8888/puhui-holmes-admin/config/dev/</config.url>-->
-                <!--<cas.service.url>http://10.10.227.155:8092/puhui-cas</cas.service.url>-->
-                <!--<casServerTomcat.url>http://10.10.227.155:8092/puhui-cas</casServerTomcat.url>-->
                 <local.login.url>http://127.0.0.1:8080/puhui-holmes-admin</local.login.url>
-                <!--<zuul.Url>http://d1.zuul.pub.puhuifinance.com:8765</zuul.Url>-->
             </properties>
         </profile>
 

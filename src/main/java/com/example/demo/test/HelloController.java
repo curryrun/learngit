@@ -24,19 +24,22 @@ public class HelloController {
 	
 	private final static Logger logger = LoggerFactory.getLogger(HelloController.class);
 	
-	@Value("${spring.datasource.url}")
-	private String url;
-
-	@RequestMapping("/url")
-	@ResponseBody
-	public String from() {
-		return this.url;
-	}
+//	@Value("${spring.datasource.url}")
+//	private String url;
+//
+//	@RequestMapping("/url")
+//	@ResponseBody
+//	public String from() {
+//		return this.url;
+//	}
 	
 	@RequestMapping("/logTest")
 	@ResponseBody
 	public String logTest() {
-		logger.info("i am log");
+		logger.debug("i am debug log");
+		logger.info("i am info log");
+		logger.warn("i am warn log");
+		logger.error("i am error log");
 		return "hello";
 	}
 	
