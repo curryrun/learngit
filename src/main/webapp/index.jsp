@@ -63,5 +63,9 @@
     </div>
 
 
+    <div>
+      <button id = "bibao" onclick="bibao()">闭包测试</button>
+    </div>
+
   </body>
 </html>

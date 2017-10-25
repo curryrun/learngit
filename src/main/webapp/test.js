@@ -268,3 +268,22 @@ function postParam() {
         }
     });
 }
+
+function outerFun() {
+    var a=0;
+    function innerFun() {
+        a++;
+        alert(a);
+    }
+    return innerFun;  //注意这里
+}
+
+// var n = 999;
+function bibao() {
+    var obj=outerFun();
+    obj();  //结果为1
+    obj();  //结果为2
+    var obj2=outerFun();
+    obj2();  //结果为1
+    obj2();  //结果为2
+}
