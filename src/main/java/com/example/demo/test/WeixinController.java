@@ -31,7 +31,7 @@ public class WeixinController {
     @ResponseBody
     public String changeMenu() {
 
-        String url = weixinUrl + "cgi-bin/menu/create?access_token=" + "uHbW5N5GIgU9BkSQeBawkuCpCjTSu2IaZIGGmIohg6VuN7FfNKSHzcHIXfqk-g4Hg6ii90199n4qLevK1IlRwPhA1unx4kEvI_Q1WQy_ADoXmnRqhJ6hMsCTm81vWkwLMIHcACATPO";
+        String url = weixinUrl + "cgi-bin/menu/create?access_token=" + "t6_pLN5UqBeKqQDtIc5GEfcrcGRyxLp30GxA7qAtDQIFkiZ4T_vxi2v1Q7EZ62m2xW-SwtixPTwV7Yq9ZoWTB4ZkWxLlPRa72fD7qY4udhRVWi2vLDaGxe9zwHyuaftOSQTiAAAZXA";
         String req = "{\"button\":[{\"type\":\"click\",\"name\":\"今日歌曲\",\"key\":\"V1001_TODAY_MUSIC\"},{\"name\":\"菜单\",\"sub_button\":[{\"type\":\"view\",\"name\":\"搜索\",\"url\":\"http://www.soso.com/\"},{\"type\":\"miniprogram\",\"name\":\"wxa\",\"url\":\"http://mp.weixin.qq.com\",\"appid\":\"wx286b93c14bbf93aa\",\"pagepath\":\"pages/lunar/index\"},{\"type\":\"click\",\"name\":\"赞一下我们\",\"key\":\"V1001_GOOD\"}]}]}";
 //        String res = HttpUtils.sendPost(url, req);
         String res = restTemplate.postForObject(url, req, String.class);
