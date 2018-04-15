@@ -269,6 +269,30 @@ function postParam() {
     });
 }
 
+function addCookie() {
+    $.ajax({
+        type: "get",
+        url: "/demo/addCookie",
+        data : {
+            normalParam : 123
+        },
+        // contentType: "application/json; charset=UTF-8",
+        // contentType: "application/x-www-form-urlencoded",
+        success: function(data){
+            console.log("addCookie success");
+            // var data = data.HelloWorld;
+            // alert("urlParam:"+data.urlParam+"====normalParam:" + data.normalParam);
+        },
+        error :function(jqXHR){
+            /*弹出jqXHR对象的信息*/
+            alert(jqXHR.responseText);
+            alert(jqXHR.status);
+            alert(jqXHR.readyState);
+            alert(jqXHR.statusText);
+        }
+    });
+}
+
 function outerFun() {
     var a=0;
     function innerFun() {

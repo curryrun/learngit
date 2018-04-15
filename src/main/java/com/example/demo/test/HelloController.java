@@ -1,10 +1,12 @@
 package com.example.demo.test;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.demo.service.MyService;
 import com.example.demo.util.FileUtil;
 import com.example.demo.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +23,9 @@ import java.util.Map;
 @Controller
 @RequestMapping("/demo")
 public class HelloController {
-	
+
+	@Autowired
+	private MyService myService;
 	
 	private final static Logger logger = LoggerFactory.getLogger(HelloController.class);
 	
@@ -148,6 +153,12 @@ public class HelloController {
 		res.put("normalParam", normalParam);
 //		res.put("name", params.get("name"));
 		return res;
+	}
+
+	@RequestMapping(value = "/addCookie", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public JSONObject addCookie(HttpServletRequest request, HttpServletResponse response){
+		return myService.addCookie(request, response, "cookie2");
 	}
 
 }

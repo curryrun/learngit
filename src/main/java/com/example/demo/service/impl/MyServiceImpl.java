@@ -1,8 +1,14 @@
 package com.example.demo.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.demo.service.MyService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by finup on 2017/8/7.
@@ -10,8 +16,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class MyServiceImpl implements MyService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyServiceImpl.class);
+
     @Override
     public String getFromService(Long id){
         return "hello:"+id;
+    }
+
+    @Override
+    public JSONObject addCookie(HttpServletRequest request, HttpServletResponse response, String cookieName){
+        LOGGER.info("cookieName:{}", cookieName);
+        JSONObject res = new JSONObject();
+        res.put("code", 0);
+        Cookie cookie = new Cookie(cookieName,"2333");
+        response.addCookie(cookie);
+        return res;
     }
 }

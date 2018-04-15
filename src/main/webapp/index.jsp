@@ -50,7 +50,11 @@
     <%--</form>--%>
 
     <div>
-      <button id = "postParam" onclick="postParam()">post方式，url带参数</button>
+      <button id = "postParam" onclick="postParam()">post方式2333，url带参数</button>
+    </div>
+
+    <div>
+      <button id = "addCookie" onclick="addCookie()">添加cookie</button>
     </div>
 
     <div id="app">
