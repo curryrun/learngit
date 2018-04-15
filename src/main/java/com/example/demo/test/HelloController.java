@@ -161,4 +161,10 @@ public class HelloController {
 		return myService.addCookie(request, response, "cookie2");
 	}
 
+	@RequestMapping(value = "/getCookie", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public JSONObject getCookie(HttpServletRequest request, HttpServletResponse response){
+		return myService.getCookie(request, response, "cookie1");
+	}
+
 }

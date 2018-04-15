@@ -14,4 +14,6 @@ public interface MyService {
     public String getFromService(Long id);
 
     public JSONObject addCookie(HttpServletRequest request, HttpServletResponse response, String cookieName);
+
+    public JSONObject getCookie(HttpServletRequest request, HttpServletResponse response, String cookieName);
 }

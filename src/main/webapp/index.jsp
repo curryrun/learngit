@@ -57,6 +57,10 @@
       <button id = "addCookie" onclick="addCookie()">添加cookie</button>
     </div>
 
+    <div>
+      <button id = "getCookie" onclick="getCookie()">添加cookie</button>
+    </div>
+
     <div id="app">
       {{ message }}
     </div>

@@ -29,7 +29,22 @@ public class MyServiceImpl implements MyService {
         JSONObject res = new JSONObject();
         res.put("code", 0);
         Cookie cookie = new Cookie(cookieName,"2333");
+        // cooKie 一定要设置path 如果controller没用@ResponeseBody 则会默认path 为:/
+        cookie.setPath("/");
         response.addCookie(cookie);
+        return res;
+    }
+
+    @Override
+    public JSONObject getCookie(HttpServletRequest request, HttpServletResponse response, String cookieName){
+        LOGGER.info("cookieName:{}", cookieName);
+        JSONObject res = new JSONObject();
+        res.put("code", 0);
+        Cookie[] cookies = request.getCookies(); //获取cookie数组
+        for (Cookie item:cookies) {
+            LOGGER.info(item.getName());
+            LOGGER.info(item.getValue());
+        }
         return res;
     }
 }
