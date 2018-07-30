@@ -47,4 +47,23 @@ public class MyServiceImpl implements MyService {
         }
         return res;
     }
+
+    public static void main(String[] args) {
+        System.out.println(90*1 + 80*2 + 90*3 + 130*4 + 60*5+ 100*10); // 720
+        //  221
+        System.out.println(8*1 + 8*2 + 8*3 + 3*4 + 6*5 + 1*10); //
+        // 008008008003006001769  100
+
+        int count = 0;
+//        String a = "072052082047054002769";
+        String a = "103055082044052003936";
+        for(int i = 0; i< 6; ++i){
+            String tt = a.substring(3 * i, 3 * (i + 1));
+            count = Integer.valueOf(tt) * (i +1)+ count;
+        }
+        System.out.println(count);
+
+        System.out.println("a".length()> 300? a.substring(300): a);
+
+    }
 }
