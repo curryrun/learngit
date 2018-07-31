@@ -3,6 +3,8 @@ package com.example.demo.leetcode;
 import com.alibaba.fastjson.JSON;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author zhangdongrun
@@ -52,17 +54,87 @@ public class TwoSum {
 
         long sum = l1Val + l2Val;
         long test = sum % 10;
-        ListNode start = new ListNode((int)test);
+        ListNode start = new ListNode((int) test);
         ListNode temp = start;
         sum = sum / 10;
         while (sum > 0) {
             long test2 = sum % 10;
-            ListNode node = new ListNode((int)test2);
+            ListNode node = new ListNode((int) test2);
             sum = sum / 10;
             temp.next = node;
             temp = node;
         }
         return start;
+    }
+
+    public static int lengthOfLongestSubstring(String s) {
+        int length = s.length();
+        int i = 0, j = 0, res = 0;
+        HashSet<Character> hashSet = new HashSet<>();
+        while (i < length && j < length) {
+            if (!hashSet.contains(s.charAt(j))) {
+                hashSet.add(s.charAt(j));
+                res = Math.max(res, j - i + 1);
+                j++;
+            } else {
+                hashSet.remove(s.charAt(i));
+                i++;
+            }
+        }
+        return res;
+    }
+
+    public static double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int m = nums1.length, n = nums2.length;
+        int count = 1;
+        int i = 0, j = 0;
+        int left = 0, right = 0;
+        if (m != 0 && n != 0) {
+            left = nums1[0] > nums2[0] ? nums2[0] : nums1[0];
+            right = nums1[0] < nums2[0] ? nums2[0] : nums1[0];
+            if (nums1[m - 1] < nums2[0]) {
+                left = nums1[m - 1];
+                right = nums2[0];
+            } else if (nums2[n - 1] < nums1[0]) {
+                left = nums2[n - 1];
+                right = nums1[0];
+            }
+        } else if (m == 0 && n > 1) {
+            left = nums2[0];
+            right = nums2[1];
+            j = 1;
+        } else if (n == 0 && m > 1) {
+            left = nums1[0];
+            right = nums1[1];
+            i = 1;
+        } else if (n == 0 && m == 1) {
+            return nums1[0];
+        } else {
+            return nums2[0];
+        }
+
+        while (count < (m + n + 1) / 2) {
+            left = right;
+            count++;
+            if (i + 1 >= m) {
+                j++;
+                right = nums2[j];
+            } else if (j + 1 >= n) {
+                i++;
+                right = nums1[i];
+            } else if (nums1[i] < nums2[j]) {
+                i++;
+                right = nums1[i];
+            } else {
+                j++;
+                right = nums2[j];
+            }
+        }
+        if ((m + n) % 2 == 0) {
+            return (left + right) / 2.0;
+        } else {
+            return (double) left;
+        }
     }
 
     public static void main(String[] args) {
@@ -79,15 +151,18 @@ public class TwoSum {
         ListNode l10 = new ListNode(9);
         ListNode l11 = new ListNode(9);
         ListNode l5 = new ListNode(1);
-        l5.next=l2;
-        l2.next=l3;
-        l3.next=l4;
-        l4.next=l6;
-        l6.next=l7;
-        l7.next=l8;
-        l8.next=l9;
-        l9.next=l10;
-        l10.next=l11;
+        l5.next = l2;
+        l2.next = l3;
+        l3.next = l4;
+        l4.next = l6;
+        l6.next = l7;
+        l7.next = l8;
+        l8.next = l9;
+        l9.next = l10;
+        l10.next = l11;
         addTwoNumbers(l1, l5);
+
+        lengthOfLongestSubstring("pwwkew");
+        System.out.println(findMedianSortedArrays(new int[]{}, new int[]{-3,-2,-1,1,5}));
     }
 }
