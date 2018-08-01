@@ -204,16 +204,13 @@ public class TwoSum {
                         temp[count] = num2[j];
                         j++;
                     }
-                }
-                else if(i < m && j == n){
+                } else if (i < m && j == n) {
                     temp[count] = num1[i];
                     i++;
-                }
-                else if(j < n && i == m){
+                } else if (j < n && i == m) {
                     temp[count] = num2[j];
                     j++;
-                }
-                else {
+                } else {
                     break;
                 }
                 count++;
