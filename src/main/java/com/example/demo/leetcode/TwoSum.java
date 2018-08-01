@@ -84,7 +84,7 @@ public class TwoSum {
         return res;
     }
 
-    public static double findMedianSortedArrays(int[] nums1, int[] nums2) {
+    public static double findMedianSortedArrays1(int[] nums1, int[] nums2) {
         int m = nums1.length, n = nums2.length;
         int count = 1;
         int i = 0, j = 0;
@@ -137,6 +137,95 @@ public class TwoSum {
         }
     }
 
+    public static double findMedianSortedArrays(int[] A, int[] B) {
+        int m = A.length;
+        int n = B.length;
+        if (m > n) { // to ensure m<=n
+            int[] temp = A;
+            A = B;
+            B = temp;
+            int tmp = m;
+            m = n;
+            n = tmp;
+        }
+        int iMin = 0, iMax = m, halfLen = (m + n + 1) / 2;
+        while (iMin <= iMax) {
+            int i = (iMin + iMax) / 2;
+            int j = halfLen - i;
+            if (i < iMax && B[j - 1] > A[i]) {
+                iMin = iMin + 1; // i is too small
+            } else if (i > iMin && A[i - 1] > B[j]) {
+                iMax = iMax - 1; // i is too big
+            } else { // i is perfect
+                int maxLeft = 0;
+                if (i == 0) {
+                    maxLeft = B[j - 1];
+                } else if (j == 0) {
+                    maxLeft = A[i - 1];
+                } else {
+                    maxLeft = Math.max(A[i - 1], B[j - 1]);
+                }
+                if ((m + n) % 2 == 1) {
+                    return maxLeft;
+                }
+
+                int minRight = 0;
+                if (i == m) {
+                    minRight = B[j];
+                } else if (j == n) {
+                    minRight = A[i];
+                } else {
+                    minRight = Math.min(B[j], A[i]);
+                }
+
+                return (maxLeft + minRight) / 2.0;
+            }
+        }
+        return 0.0;
+    }
+
+    public static double findMedianSortedArrays2(int[] num1, int[] num2) {
+        int m = num1.length;
+        int n = num2.length;
+        int halfLength = (m + n) / 2;
+        int i = 0, j = 0, count = 0;
+        int[] temp = new int[halfLength + 1];
+        if (m == 0) {
+            temp = num2;
+        } else if (n == 0) {
+            temp = num1;
+        } else {
+            while (count <= halfLength) {
+                if (i < m && j < n) {
+                    if (num1[i] < num2[j]) {
+                        temp[count] = num1[i];
+                        i++;
+                    } else {
+                        temp[count] = num2[j];
+                        j++;
+                    }
+                }
+                else if(i < m && j == n){
+                    temp[count] = num1[i];
+                    i++;
+                }
+                else if(j < n && i == m){
+                    temp[count] = num2[j];
+                    j++;
+                }
+                else {
+                    break;
+                }
+                count++;
+            }
+        }
+        if ((m + n) % 2 == 0) {
+            return (temp[halfLength] + temp[halfLength - 1]) / 2.0;
+        } else {
+            return temp[halfLength];
+        }
+    }
+
     public static void main(String[] args) {
         int nums[] = new int[]{2, 7, 11, 15};
         System.out.println(JSON.toJSONString(twoSum(nums, 9)));
@@ -163,6 +252,6 @@ public class TwoSum {
         addTwoNumbers(l1, l5);
 
         lengthOfLongestSubstring("pwwkew");
-        System.out.println(findMedianSortedArrays(new int[]{}, new int[]{-3,-2,-1,1,5}));
+        System.out.println(findMedianSortedArrays2(new int[]{1}, new int[]{1}));
     }
 }
