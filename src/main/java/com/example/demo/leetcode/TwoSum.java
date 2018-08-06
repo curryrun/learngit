@@ -223,6 +223,22 @@ public class TwoSum {
         }
     }
 
+    public static String longestPalindrome(String s) {
+        int i = 0, j = s.length() - 1;
+        int halfLength = (s.length() + 1) / 2;
+        while (i != j) {
+            String left = s.substring(i, halfLength - 1);
+            String right = s.substring(halfLength, j);
+            String reverse = new StringBuilder(right).reverse().toString();
+            if(left.equals(reverse)){
+                return s;
+            }else {
+
+            }
+        }
+        return String.valueOf(s.charAt(i));
+    }
+
     public static void main(String[] args) {
         int nums[] = new int[]{2, 7, 11, 15};
         System.out.println(JSON.toJSONString(twoSum(nums, 9)));

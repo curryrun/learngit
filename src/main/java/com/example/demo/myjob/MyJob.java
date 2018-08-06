@@ -1,11 +1,10 @@
-package com.example.demo.MyJob;
+package com.example.demo.myjob;
 
 import com.example.demo.service.MyService;
 import com.example.demo.util.SpringBeanFactory;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by finup on 2017/8/7.

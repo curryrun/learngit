@@ -1,4 +1,4 @@
-package com.example.demo.test;
+package com.example.demo.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.service.MyService;
@@ -7,8 +7,8 @@ import com.example.demo.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +26,9 @@ public class HelloController {
 
 	@Autowired
 	private MyService myService;
+
+	@Autowired
+	private RedisTemplate<String, String> redisTemplate;
 	
 	private final static Logger logger = LoggerFactory.getLogger(HelloController.class);
 	
@@ -45,6 +48,7 @@ public class HelloController {
 		logger.info("i am info log");
 		logger.warn("i am warn log");
 		logger.error("i am error log");
+		redisTemplate.opsForValue().set("spring-test", "run");
 		return "hello";
 	}
 	

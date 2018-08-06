@@ -1,20 +1,16 @@
-package com.example.demo.test;
+package com.example.demo.controller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.example.demo.MyJob.MyJob;
+import com.example.demo.myjob.MyJob;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.PostConstruct;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by zdr on 2017/8/7.
