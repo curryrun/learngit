@@ -48,7 +48,7 @@ public class MyServiceImpl implements MyService {
         return res;
     }
 
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
         System.out.println(90*1 + 80*2 + 90*3 + 130*4 + 60*5+ 100*10); // 720
         //  221
         System.out.println(8*1 + 8*2 + 8*3 + 3*4 + 6*5 + 1*10); //
@@ -65,5 +65,50 @@ public class MyServiceImpl implements MyService {
 
         System.out.println("a".length()> 300? a.substring(300): a);
 
+    }
+
+    public static void main2(String[] args) {
+        String str = new String("123");
+        str.intern();
+        String str2 = new String("123");
+        String str3 = "123";
+        System.out.println(str == str2);
+        System.out.println(str == str3);
+        System.out.println(str.intern() == str3);
+        System.out.println(str == str3);
+    }
+
+    public static void main3(String[] args) {
+        String s = new String("1");
+        s.intern();
+        String s2 = "1";
+        System.out.println(s == s2);
+
+        String s3 = new String("1") + new String("1");
+        String s4 = "11";
+        s3 = s3.intern();
+        System.out.println(s3 == s4);
+    }
+
+    public static void main(String[] args) {
+        StringBuilder sb = new StringBuilder();
+        sb.toString();
+
+        String s = new String("1");
+        s.intern();
+        String s2 = "1";
+        System.out.println(s == s2);
+
+        String s3 = new String("1") + new String("1");
+        String s4 = "11";
+        s3.intern();
+        System.out.println(s3 == s4);
+        System.out.println(s3.intern() == s4);
+
+//        String ss1 = new StringBuilder().append("ja").append("va").toString();
+//        System.out.println(ss1.intern() == ss1);
+//
+//        String ss2 = new StringBuilder().append("计算机").append("va").toString();
+//        System.out.println(ss2.intern() == ss2);
     }
 }

@@ -267,5 +267,6 @@ public class HttpUtils {
         parameters.put("name", "sarin");
         String result =sendGet("http://www.baidu.com", parameters);
         System.out.println(result);
+        StrictMath.pow(2,4);
     }
 }
