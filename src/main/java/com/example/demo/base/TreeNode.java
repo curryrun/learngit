@@ -3,12 +3,15 @@ package com.example.demo.base;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author zhangdongrun
  * @date 2018/12/12 下午5:03
  */
 public class TreeNode {
+
+    private ConcurrentHashMap map;
 
     private TreeNode left;
 
@@ -46,6 +49,7 @@ public class TreeNode {
         this.value = value;
     }
 
+    // 树的结构 https://blog.csdn.net/My_Jobs/article/details/43451187
     public static void main(String[] args) {
         TreeNode root = new TreeNode(1);
         TreeNode r1 = new TreeNode(2);
@@ -68,6 +72,7 @@ public class TreeNode {
 //        zhongxu(root);
 //        houxu(root);
         level(root);
+        findRoot(root, 10);
 
     }
 
@@ -141,19 +146,65 @@ public class TreeNode {
     // 层次遍历 poll offer 当队列为空时候，使用add方法会报错，而offer方法会返回false
     // add当属于List
     // offer当属于queue
-    public static void level(TreeNode root){
+    public static void level(TreeNode root) {
         LinkedList<TreeNode> queue = new LinkedList<>();
         queue.push(root);
-        while(!queue.isEmpty()){
+        while (!queue.isEmpty()) {
             TreeNode top = queue.poll();
             System.out.println(top.getValue());
-            if(null != top.getLeft()){
+            if (null != top.getLeft()) {
                 queue.add(top.getLeft());
             }
-            if(null != top.getRight()){
+            if (null != top.getRight()) {
                 queue.add(top.getRight());
             }
         }
+    }
+
+    public static LinkedList<TreeNode> findRoot(TreeNode root, int target) {
+        LinkedList<TreeNode> stack = new LinkedList<>();
+        int sum = root.getValue();
+        TreeNode prePop = null;
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode temp = stack.peek();
+            // 出栈时机
+            // 1、如果上一个被pop的是当前栈顶节点的左孩子，并且右孩子为null
+            // 2、如果上一个被pop的是当前栈顶节点的右孩子
+            // 3、如果已经到了叶子节点加和还不满足条件的时候
+            if (prePop != null && ((prePop == temp.getLeft() && temp.getRight() == null) || prePop == temp.getRight())) {
+                prePop = stack.pop();
+                sum = sum - prePop.getValue();
+            } else if (null != temp.getLeft() && prePop != temp.getLeft()) {
+                sum += temp.getLeft().getValue();
+                // 判断加和，模拟出栈操作
+                if (sum > target) {
+                    prePop = temp.getLeft();
+                    sum -= temp.getLeft().getValue();
+                } else {
+                    stack.push(temp.getLeft());
+                }
+            } else if (null != temp.getRight() && prePop != temp.getRight()) {
+                sum += temp.getRight().getValue();
+                if (sum > target) {
+                    prePop = temp.getRight();
+                    sum -= temp.getRight().getValue();
+                } else {
+                    stack.push(temp.getRight());
+                }
+            }
+
+            // 叶子节点
+            else {
+                if (sum == target) {
+                    break;
+                } else {
+                    prePop = stack.pop();
+                    sum = sum - prePop.getValue();
+                }
+            }
+        }
+        return stack;
     }
 
 }
