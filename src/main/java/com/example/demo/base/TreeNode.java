@@ -13,11 +13,11 @@ public class TreeNode {
 
     private ConcurrentHashMap map;
 
-    private TreeNode left;
+    public TreeNode left;
 
-    private TreeNode right;
+    public TreeNode right;
 
-    private Integer value;
+    public Integer val;
 
     public TreeNode getLeft() {
         return left;
@@ -36,17 +36,17 @@ public class TreeNode {
     }
 
     public Integer getValue() {
-        return value;
+        return val;
     }
 
     public void setValue(Integer value) {
-        this.value = value;
+        this.val = value;
     }
 
     public TreeNode(Integer value) {
         this.left = null;
         this.right = null;
-        this.value = value;
+        this.val = value;
     }
 
     // 树的结构 https://blog.csdn.net/My_Jobs/article/details/43451187
