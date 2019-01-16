@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class Sort {
     public static void main(String[] args) {
-        int[] arr1 = new int[]{5, 6, 1, 4, 3, 7, 88, 99, 22, 2};
+        int[] arr1 = new int[]{5, 6, 1, 4, 3, 7, 9, 8, 2};
 
         // 位运算
         int[] arr = new int[]{5, 5, 6, 7, 6, 7, 1, 2, 12, 2, 1};
@@ -19,7 +19,11 @@ public class Sort {
         }
         System.out.println(res);
 
-        quickS(arr1, 0, arr1.length - 1);
+//        quickS(arr1, 0, arr1.length - 1);
+
+        int[] temp = new int[arr1.length];
+        guibingS(arr1, 0, arr1.length - 1, temp);
+
         for (int i = 0; i < arr1.length; ++i) {
             System.out.println(arr1[i]);
         }
@@ -56,7 +60,7 @@ public class Sort {
     public List<Integer> pancakeSort(int[] A) {
         List<Integer> res = new ArrayList<>();
         int end = A.length;
-        while (end != 0){
+        while (end != 0) {
             int large = findLarge(A, end);
             flip(A, large);
             flip(A, end - 1);
@@ -67,7 +71,7 @@ public class Sort {
         return res;
     }
 
-    public static int findLarge(int[] A, int target){
+    public static int findLarge(int[] A, int target) {
         for (int i = 0; i < A.length; ++i) {
             if (A[i] == target) {
                 return i;
@@ -76,14 +80,49 @@ public class Sort {
         return -1;
     }
 
-    public static void flip(int[] A, int end){
+    public static void flip(int[] A, int end) {
         int start = 0;
-        while (start < end){
+        while (start < end) {
             int temp = A[start];
             A[start] = A[end];
             A[end] = temp;
             ++start;
             --end;
+        }
+    }
+
+    // 归并排序
+    private static void guibingS(int[] arr, int left, int right, int[] temp) {
+        if(left >= right){
+            return;
+        }
+        int mid = (left + right) / 2;
+        guibingS(arr, left, mid, temp);//左边归并排序，使得左子序列有序
+        guibingS(arr, mid + 1, right, temp);//右边归并排序，使得右子序列有序
+        merge(arr, left, mid, right, temp);//将两个有序子数组合并操作
+    }
+
+    private static void merge(int[] arr, int left, int mid, int right, int[] temp) {
+        int i = left;//左序列指针
+        int j = mid + 1;//右序列指针
+        int t = 0;//临时数组指针
+        while (i <= mid && j <= right) {
+            if (arr[i] <= arr[j]) {
+                temp[t++] = arr[i++];
+            } else {
+                temp[t++] = arr[j++];
+            }
+        }
+        while (i <= mid) {//将左边剩余元素填充进temp中
+            temp[t++] = arr[i++];
+        }
+        while (j <= right) {//将右序列剩余元素填充进temp中
+            temp[t++] = arr[j++];
+        }
+        t = 0;
+        //将temp中的元素全部拷贝到原数组中
+        while (left <= right) {
+            arr[left++] = temp[t++];
         }
     }
 

@@ -1,8 +1,11 @@
 package com.example.demo.base;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -12,6 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TreeNode {
 
     private ConcurrentHashMap map;
+
+    private HashMap hashMap;
 
     public TreeNode left;
 
@@ -206,5 +211,4 @@ public class TreeNode {
         }
         return stack;
     }
-
 }

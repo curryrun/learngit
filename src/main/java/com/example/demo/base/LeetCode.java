@@ -1,8 +1,13 @@
 package com.example.demo.base;
 
+import java.lang.reflect.Array;
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * @author zhangdongrun
@@ -12,7 +17,19 @@ public class LeetCode {
 
     public static void main(String[] args) {
 //        System.out.println(lengthOfLongestSubstring("au"));
-        System.out.println(bigSum("56789", "567"));
+//        System.out.println(bigSum("56789", "567"));
+        int[] arr1 = new int[]{1, 8, 6, 2, 5, 4, 8, 3, 7};
+//        System.out.println(maxAreaOn(arr1));
+
+        int points[][] = new int[][]{{1, 3}, {-2, 2}};
+//        kClosest(points, 1);
+        int[] arr2 = new int[]{2, 1, 2};
+//        System.out.println(largestPerimeter(arr2));
+        int[] arr3 = new int[]{4, 5, 0, -2, -3, 1};
+//        subarraysDivByK(arr3, 5);
+//        subarraysDivByKMy(arr3, 5);
+        int[] arr4 = new int[]{10,13,12,14,15};
+        oddEvenJumps(arr4);
     }
 
     // 寻找最长没有重复字符串的子串长度
@@ -96,6 +113,172 @@ public class LeetCode {
             --count;
         }
         return bigArr;
+    }
+
+    public static int maxArea(int[] height) {
+        int maxArea = 0;
+        for (int i = 0; i < height.length; ++i) {
+            for (int j = i + 1; j < height.length; ++j) {
+                int minHeight = Math.min(height[i], height[j]);
+                int area = minHeight * (j - i);
+                maxArea = Math.max(area, maxArea);
+            }
+        }
+        return maxArea;
+    }
+
+    // 优化之后的方法
+    public static int maxAreaOn(int[] height) {
+        int left = 0;
+        int right = height.length - 1;
+        int max = 0;
+        while (left < right) {
+            int temp = Math.min(height[left], height[right]) * (right - left);
+            max = Math.max(temp, max);
+            if (height[left] < height[right]) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+        return max;
+    }
+
+    public static int[][] kClosest(int[][] points, int K) {
+        Map<Integer, int[][]> treeMap = new TreeMap<>();
+        for (int i = 0; i < points.length; ++i) {
+            int temp = sqrt(points[i][0], points[i][1]);
+            int[][] tempArr = new int[][]{points[i]};
+            treeMap.put(temp, tempArr);
+        }
+        int[][] res = new int[K][2];
+        int i = 0;
+        for (Map.Entry<Integer, int[][]> entry : treeMap.entrySet()) {
+            if (i >= K) {
+                break;
+            }
+            res[i][0] = entry.getValue()[0][0];
+            res[i][1] = entry.getValue()[0][1];
+            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+            i++;
+        }
+        return res;
+    }
+
+    public static int sqrt(int x, int y) {
+        return x * x + y * y;
+    }
+
+    public static int largestPerimeter(int[] A) {
+        Arrays.sort(A);
+        int max = 0;
+        for (int x = A.length - 1; x >= 0; --x) {
+            for (int y = x - 1; y >= 0; --y) {
+                for (int z = y - 1; z >= 0; --z) {
+                    int temp = A[x] + A[y] + A[z];
+                    if (hasArea(A[x], A[y], A[z])) {
+                        max = Math.max(max, temp);
+                        return max;
+                    }
+                }
+            }
+        }
+        return max;
+    }
+
+    public static boolean hasArea(int x, int y, int z) {
+        if (x + y <= z || x + z <= y || y + z <= x) {
+            return false;
+        }
+        return true;
+    }
+
+    public static int subarraysDivByK(int[] A, int K) {
+        Map<Integer, Integer> count = new HashMap<>();
+        count.put(0, 1);
+        int prefix = 0, res = 0;
+        for (int a : A) {
+            prefix = (prefix + a % K + K) % K;
+            int temp = count.getOrDefault(prefix, 0);
+            res = res + temp;
+            count.put(prefix, temp + 1);
+        }
+        return res;
+    }
+
+    // 超时了```
+    public static int subarraysDivByKMy(int[] A, int K) {
+        int count = 0;
+        for (int i = 0; i < A.length; ++i) {
+            int sum = A[i];
+            if (sum % K == 0) {
+                count++;
+            }
+            for (int j = i + 1; j < A.length; ++j) {
+                sum = sum + A[j];
+                if (sum % K == 0) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public static int oddEvenJumps(int[] A) {
+        int count = 0;
+        // i是起始位
+        for(int i = 0; i< A.length; ++i){
+            int jumpCount = 1;
+            int now = i;
+            while (now < A.length){
+                if(now == A.length - 1){
+                    count++;
+                    break;
+                }
+                // 奇数跳
+                if(jumpCount % 2 != 0){
+                    int temp = findJiPositionJump(A, now);
+                    if(temp < 0){
+                        break;
+                    }
+                    now = temp;
+                }
+                // 偶数跳
+                else {
+                    int temp = findOuPositionJump(A, now);
+                    if(temp < 0){
+                        break;
+                    }
+                    now = temp;
+                }
+                jumpCount++;
+            }
+        }
+        return count;
+    }
+
+    public static int findJiPositionJump(int[] arr, int now){
+        int pre = 900000;
+        int pos = -1;
+        for(int i = now + 1; i< arr.length; ++i){
+            if(arr[now] <= arr[i] && arr[i] < pre){
+                pos = i;
+                pre = arr[i];
+            }
+        }
+        return pos;
+    }
+
+    public static int findOuPositionJump(int[] arr, int now){
+        int pre = -1;
+        int pos = -1;
+        for(int i = now + 1; i< arr.length; ++i){
+            if(arr[now] >= arr[i] && arr[i] > pre){
+                pos = i;
+                pre = arr[i];
+            }
+        }
+        return pos;
     }
 
 }
