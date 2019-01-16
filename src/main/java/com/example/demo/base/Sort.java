@@ -21,11 +21,60 @@ public class Sort {
 
 //        quickS(arr1, 0, arr1.length - 1);
 
-        int[] temp = new int[arr1.length];
-        guibingS(arr1, 0, arr1.length - 1, temp);
+//        int[] temp = new int[arr1.length];
+//        guibingS(arr1, 0, arr1.length - 1, temp);
+
+        sortG(arr1);
 
         for (int i = 0; i < arr1.length; ++i) {
             System.out.println(arr1[i]);
+        }
+    }
+
+    public static void sortG(int arr[]) {
+        int temp[] = new int[arr.length];
+        sortGuibing(arr, 0, arr.length - 1, temp);
+    }
+
+    public static void sortGuibing(int[] arr, int left, int right, int[] temp) {
+        if (left >= right) {
+            return;
+        }
+        int mid = (left + right) / 2;
+        sortGuibing(arr, left, mid, temp);
+        sortGuibing(arr, mid + 1, right, temp);
+        mergeArr(arr, left, mid, right, temp);
+    }
+
+    public static void mergeArr(int[] arr, int left, int mid, int right, int[] temp) {
+        int arr1Left = left;
+        int arr2Left = mid + 1;
+        int count = 0;
+        while (arr1Left <= mid && arr2Left <= right) {
+            if (arr[arr1Left] < arr[arr2Left]) {
+                temp[count] = arr[arr1Left];
+                ++arr1Left;
+            } else {
+                temp[count] = arr[arr2Left];
+                ++arr2Left;
+            }
+            ++count;
+        }
+        while (arr1Left <= mid) {
+            temp[count] = arr[arr1Left];
+            ++arr1Left;
+            ++count;
+        }
+        while (arr2Left <= right) {
+            temp[count] = arr[arr2Left];
+            ++arr2Left;
+            ++count;
+        }
+        int i = 0;
+        while (left <= right){
+            arr[left] = temp[i];
+            ++left;
+            ++i;
         }
     }
 
@@ -93,7 +142,7 @@ public class Sort {
 
     // 归并排序
     private static void guibingS(int[] arr, int left, int right, int[] temp) {
-        if(left >= right){
+        if (left >= right) {
             return;
         }
         int mid = (left + right) / 2;
