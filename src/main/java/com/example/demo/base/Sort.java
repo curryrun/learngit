@@ -24,13 +24,36 @@ public class Sort {
 //        int[] temp = new int[arr1.length];
 //        guibingS(arr1, 0, arr1.length - 1, temp);
 
-        sortG(arr1);
+//        sortG(arr1);
+
+//        insertSort(arr1);
+
+        insertSortMy(arr1);
 
         for (int i = 0; i < arr1.length; ++i) {
             System.out.println(arr1[i]);
         }
     }
 
+    // 插入排序 是通过构建有序序列，对于未排序数据，在已排序序列中从后向前扫描，找到相应位置并插入
+    public static void insertSortMy(int[] arr) {
+        for (int i = 1; i < arr.length; ++i) {
+            // 有序队列的末尾
+            int preIndex = i - 1;
+            // 先把当前位置的值记录一下
+            int now = arr[i];
+            // 如果当前值小于有序队列末尾值，则有序队列整个向后移动
+            while (preIndex >= 0 && now < arr[preIndex]) {
+                arr[preIndex + 1] = arr[preIndex];
+                --preIndex;
+            }
+            // 把临时存储的当前位置的值放在被移动出来的位置上
+            arr[preIndex + 1] = now;
+        }
+    }
+
+
+    // 归并排序思想 拆分数组成小块 然后将两个数组进行合并
     public static void sortG(int arr[]) {
         int temp[] = new int[arr.length];
         sortGuibing(arr, 0, arr.length - 1, temp);
@@ -71,7 +94,7 @@ public class Sort {
             ++count;
         }
         int i = 0;
-        while (left <= right){
+        while (left <= right) {
             arr[left] = temp[i];
             ++left;
             ++i;
