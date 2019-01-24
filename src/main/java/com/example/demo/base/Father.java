@@ -12,6 +12,10 @@ public class Father {
         System.out.println("i am static father");
     }
 
+//    public Father(int age) {
+//        this.age = age;
+//    }
+
     public void func(){
         System.out.println("i am father");
     }

@@ -76,8 +76,11 @@ public class TreeNode {
 //        cengciComm(root);
 //        zhongxu(root);
 //        houxu(root);
-        level(root);
-        findRoot(root, 10);
+//        level(root);
+//        findRoot(root, 10);
+
+//        System.out.println(numTrees(3));
+        generateTrees(3);
 
     }
 
@@ -210,5 +213,56 @@ public class TreeNode {
             }
         }
         return stack;
+    }
+
+    // 给定一个整数 n，求以 1 ... n 为节点组成的二叉搜索树有多少种？
+    public static int numTrees(int n) {
+        if (n == 1 || n == 0) {
+            return 1;
+        }
+        int count = 0;
+        // 选出根节点
+        for (int node = 1; node <= n; ++node) {
+            // 左子树节点个数 为根的值 - 1
+            for (int left = node - 1; left < node; ++left) {
+                // 右子树节点个数 节点总个数 - 左子树个数 - 1(根节点)
+                int right = n - left - 1;
+                count = count + numTrees(left) * numTrees(right);
+            }
+        }
+        return count;
+    }
+
+    // 给定一个整数 n，输出以 1 ... n 为节点组成的二叉搜索树有
+    public static List<TreeNode> generateTrees(int n) {
+        if (n <= 0) {
+            return null;
+        }
+        return treeNodes(1, n);
+    }
+
+    public static List<TreeNode> treeNodes(int start, int end) {
+        List<TreeNode> res = new LinkedList<>();
+        // start == end 也不要set null
+        if (start > end) {
+            res.add(null);
+            return res;
+        }
+        // 选出根节点
+        for (int i = start; i <= end; ++i) {
+            List<TreeNode> leftSub = treeNodes(start, i - 1);
+            List<TreeNode> rightSub = treeNodes(i + 1, end);
+
+            for (TreeNode l : leftSub) {
+                for (TreeNode r : rightSub) {
+                    TreeNode t = new TreeNode(i);
+                    t.left = l;
+                    t.right = r;
+                    res.add(t);
+                }
+            }
+
+        }
+        return res;
     }
 }

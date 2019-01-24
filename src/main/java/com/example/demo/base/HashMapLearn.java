@@ -1,5 +1,7 @@
 package com.example.demo.base;
 
+import com.alibaba.fastjson.JSON;
+
 import java.util.HashMap;
 
 /**
@@ -7,6 +9,8 @@ import java.util.HashMap;
  * @date 2019/1/11 下午2:32
  */
 public class HashMapLearn {
+
+    public final int[] arrTest = new int[]{1, 2, 3};
 
     public static class Person{
         private String name;
@@ -44,6 +48,19 @@ public class HashMapLearn {
         Person p1 = new Person("xpp");
         change(p1);
         System.out.println(p1.getName());
+
+        HashMapLearn learn = new HashMapLearn();
+        learn.arrTest[1] = 99;
+        for(int i = 0; i< learn.arrTest.length; ++i){
+            System.out.println(learn.arrTest[i]);
+        }
+
+        int[] arr2 = new int[]{5, 5, 4};
+        ThreadLocal<String> threadLocal = new ThreadLocal<>();
+        threadLocal.get();
+//        threadLocal.set();
+        JSON.toJSONString(p1);
+        System.out.println(testInt());
     }
 
     public static void change(String ss){
@@ -55,6 +72,18 @@ public class HashMapLearn {
         System.out.println(p2.getName());
         p2 = new Person("zzz");
         System.out.println(p2.getName());
+    }
+
+    public static int testInt(){
+        int i = 1;
+        try {
+            i = 2;
+            return i;
+        }catch (Throwable th){
+            return i;
+        }finally {
+            i = 3;
+        }
     }
 
 }

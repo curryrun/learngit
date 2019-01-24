@@ -23,6 +23,7 @@ public class Son extends Father {
 
         String s = null;
         String s1 = "";
+        s1.hashCode();
         System.out.println(s == s1);
         System.out.println(s instanceof String);
 
