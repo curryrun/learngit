@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -33,6 +34,7 @@ public class LeetCode {
         int[] arr4 = new int[]{10,13,12,14,15};
 //        oddEvenJumps(arr4);
         generateTrees(3);
+//        System.out.println(quickFindKthLargest(new int[]{3,2,3,1,2,4,5,5,6}, 4));
     }
 
     // 寻找最长没有重复字符串的子串长度

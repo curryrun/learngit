@@ -2,6 +2,7 @@ package com.example.demo.base;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 /**
  * @author zhangdongrun
@@ -196,6 +197,54 @@ public class Sort {
         while (left <= right) {
             arr[left++] = temp[t++];
         }
+    }
+
+    public static int findKthLargest(int[] nums, int k) {
+        PriorityQueue<Integer> queue = new PriorityQueue<>(k + 1);
+        int i = 0;
+        for(; i< k; ++i){
+            queue.add(nums[i]);
+        }
+        for(; i< nums.length; ++i){
+//            if(!queue.contains(nums[i])){
+            queue.add(nums[i]);
+//            }
+            if(queue.size() > k || nums[i] > queue.peek()){
+                queue.poll();
+            }
+        }
+        return queue.peek();
+    }
+
+    public static int quickFindKthLargest(int[] nums, int k) {
+        int left = 0, right = nums.length - 1;
+        while (true){
+            int mid = sorts(nums, left, right);
+            if(mid == nums.length - k){
+                return nums[mid];
+            }else if(mid < nums.length - k){
+                left = mid + 1;
+            }else {
+                right = mid - 1;
+            }
+        }
+    }
+
+    // 核心思想在于交换 把小的换到左边 大的换到右边
+    public static int sorts(int arr[], int left, int right) {
+        int temp = arr[left];
+        while (left < right) {
+            while (left < right && arr[right] >= temp) {
+                --right;
+            }
+            arr[left] = arr[right];
+            while (left < right && arr[left] <= temp) {
+                ++left;
+            }
+            arr[right] = arr[left];
+        }
+        arr[left] = temp;
+        return left;
     }
 
 

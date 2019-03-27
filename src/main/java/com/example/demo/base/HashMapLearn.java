@@ -3,6 +3,7 @@ package com.example.demo.base;
 import com.alibaba.fastjson.JSON;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author zhangdongrun
@@ -30,6 +31,7 @@ public class HashMapLearn {
 
     public static void main(String[] args) {
         HashMap<String, Integer> map = new HashMap<String, Integer>();
+        ConcurrentHashMap c = new ConcurrentHashMap();
         map.put("语文", 1);
         map.put("数学", 2);
         map.put("英语", 3);
