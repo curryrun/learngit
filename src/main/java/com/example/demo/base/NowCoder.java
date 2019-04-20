@@ -96,10 +96,9 @@ public class NowCoder {
         while (null != node || !linkedList.isEmpty()) {
             if (null != node) {
                 // 叶子节点什么都不做
-                if(node.left == null && node.right == null){
+                if (node.left == null && node.right == null) {
 
-                }
-                else if (node.left != null && node.right == null) {
+                } else if (node.left != null && node.right == null) {
                     if (node.val != voyage[count] && node.left.val != voyage[count + 1]) {
                         res.clear();
                         res.add(-1);
@@ -112,7 +111,7 @@ public class NowCoder {
                         return res;
                     }
                 } else if (node.right != null && node.left != null) {
-                    if(node.left.val == voyage[count + 2] && node.right.val == voyage[count + 1]){
+                    if (node.left.val == voyage[count + 2] && node.right.val == voyage[count + 1]) {
                         res.add(node.val);
                     }
                 }
@@ -192,11 +191,11 @@ public class NowCoder {
         quickS(arr, mid + 1, right);
     }
 
-    public static int ccc= 0;
+    public static int ccc = 0;
 
     public static List<Integer> flipMatchVoyageMy(TreeNode root, int[] voyage) {
         List<Integer> res = new ArrayList<>();
-        if(!digui(res, root, voyage)){
+        if (!digui(res, root, voyage)) {
             res.clear();
             res.add(-1);
             return res;
@@ -204,19 +203,85 @@ public class NowCoder {
         return res;
     }
 
-    public static boolean digui(List<Integer> list, TreeNode root, int[] arr){
-        if(null == root){
+    public static boolean digui(List<Integer> list, TreeNode root, int[] arr) {
+        if (null == root) {
             return true;
         }
-        if(root.val!=arr[ccc++]){
+        if (root.val != arr[ccc++]) {
             return false;
         }
         // 做交换 只关注当前节点和当前节点的左孩子
-        if(null != root.left && root.left.val != arr[ccc]){
+        if (null != root.left && root.left.val != arr[ccc]) {
             list.add(root.val);
             return digui(list, root.right, arr) && digui(list, root.left, arr);
         }
         return digui(list, root.left, arr) && digui(list, root.right, arr);
+    }
+
+    public static ArrayList<Integer> FindNumbersWithSum(int[] array, int sum) {
+        if (array.length < 2) {
+            return new ArrayList<>();
+        }
+        ArrayList<Integer> res = new ArrayList<>();
+        int left = 0, right = array.length - 1;
+        while (left < right) {
+            if (array[left] + array[right] == sum) {
+                res.add(array[left]);
+                res.add(array[right]);
+                return res;
+            } else if (array[left] + array[right] > sum) {
+                right--;
+            } else {
+                left++;
+            }
+        }
+        return res;
+    }
+
+    public static ArrayList<ArrayList<Integer>> FindContinuousSequence(int sum) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        int left =1, right = 2;
+        while (right > left){
+            int cur = (right + left) * (right - left + 1) / 2;
+            if(sum == cur){
+                ArrayList<Integer> temp = new ArrayList<>();
+                for (int i = left; i<= right ; ++i){
+                    temp.add(i);
+                }
+                res.add(temp);
+                left++;
+            }else if(cur < sum){
+                right++;
+            }else {
+                left++;
+            }
+        }
+        return res;
+    }
+
+    public static String ReverseSentence(String str) {
+        if(null == str || str.length() < 1){
+            return str;
+        }
+        String[] arr = str.split(" ");
+        if(0 == arr.length){
+            return str;
+        }
+        StringBuilder sb = new StringBuilder(arr.length - 1);
+        for(int i = arr.length - 2; i >= 0; --i){
+            sb.append(" ").append(arr[i]);
+        }
+        return sb.toString();
+    }
+
+    public static String LeftRotateString(String str,int n) {
+        if(null == str || str.length() == 0){
+            return str;
+        }
+        int time = n % str.length();
+        StringBuilder sb = new StringBuilder(str.substring(time));
+        sb.append(str.substring(0, time));
+        return sb.toString();
     }
 
 }

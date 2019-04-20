@@ -88,4 +88,35 @@ public class HashMapLearn {
         }
     }
 
+    private void test(){
+        try {
+            for (;;) {
+                if (retries++ == RETRIES_BEFORE_LOCK) {
+                    for (int j = 0; j < segments.length; ++j)
+                        ensureSegment(j).lock(); // force creation
+                }
+                sum = 0L;
+                size = 0;
+                overflow = false;
+                for (int j = 0; j < segments.length; ++j) {
+                    Segment<K,V> seg = segmentAt(segments, j);
+                    if (seg != null) {
+                        sum += seg.modCount;
+                        int c = seg.count;
+                        if (c < 0 || (size += c) < 0)
+                            overflow = true;
+                    }
+                }
+                if (sum == last)
+                    break;
+                last = sum;
+            }
+        } finally {
+            if (retries > RETRIES_BEFORE_LOCK) {
+                for (int j = 0; j < segments.length; ++j)
+                    segmentAt(segments, j).unlock();
+            }
+        }
+    }
+
 }
