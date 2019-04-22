@@ -3,7 +3,9 @@ package com.example.demo.base;
 import com.alibaba.fastjson.JSON;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author zhangdongrun
@@ -31,7 +33,15 @@ public class HashMapLearn {
 
     public static void main(String[] args) {
         HashMap<String, Integer> map = new HashMap<String, Integer>();
+        Hashtable<String ,Integer> hashtable = new Hashtable<>();
+//        hashtable.get();
+//        hashtable.put();
         ConcurrentHashMap c = new ConcurrentHashMap();
+//        c.get();
+//        c.put();
+//        c.size();
+//        c.mappingCount()
+//        AtomicInteger
         map.put("语文", 1);
         map.put("数学", 2);
         map.put("英语", 3);
@@ -88,35 +98,35 @@ public class HashMapLearn {
         }
     }
 
-    private void test(){
-        try {
-            for (;;) {
-                if (retries++ == RETRIES_BEFORE_LOCK) {
-                    for (int j = 0; j < segments.length; ++j)
-                        ensureSegment(j).lock(); // force creation
-                }
-                sum = 0L;
-                size = 0;
-                overflow = false;
-                for (int j = 0; j < segments.length; ++j) {
-                    Segment<K,V> seg = segmentAt(segments, j);
-                    if (seg != null) {
-                        sum += seg.modCount;
-                        int c = seg.count;
-                        if (c < 0 || (size += c) < 0)
-                            overflow = true;
-                    }
-                }
-                if (sum == last)
-                    break;
-                last = sum;
-            }
-        } finally {
-            if (retries > RETRIES_BEFORE_LOCK) {
-                for (int j = 0; j < segments.length; ++j)
-                    segmentAt(segments, j).unlock();
-            }
-        }
-    }
+//    private void test(){
+//        try {
+//            for (;;) {
+//                if (retries++ == RETRIES_BEFORE_LOCK) {
+//                    for (int j = 0; j < segments.length; ++j)
+//                        ensureSegment(j).lock(); // force creation
+//                }
+//                sum = 0L;
+//                size = 0;
+//                overflow = false;
+//                for (int j = 0; j < segments.length; ++j) {
+//                    Segment<K,V> seg = segmentAt(segments, j);
+//                    if (seg != null) {
+//                        sum += seg.modCount;
+//                        int c = seg.count;
+//                        if (c < 0 || (size += c) < 0)
+//                            overflow = true;
+//                    }
+//                }
+//                if (sum == last)
+//                    break;
+//                last = sum;
+//            }
+//        } finally {
+//            if (retries > RETRIES_BEFORE_LOCK) {
+//                for (int j = 0; j < segments.length; ++j)
+//                    segmentAt(segments, j).unlock();
+//            }
+//        }
+//    }
 
 }

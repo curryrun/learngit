@@ -47,10 +47,13 @@ public class NowCoder {
         root2.setLeft(root3);
         root2.setRight(root4);
 
-        flipMatchVoyageMy(root2, new int[]{1, 3, 2});
+//        flipMatchVoyageMy(root2, new int[]{1, 3, 2});
 
-        powerfulIntegers(2, 3, 10);
+//        powerfulIntegers(2, 3, 10);
 
+//        LastRemaining_Solution(4, 2);
+        NumberOf1(-7);
+        System.out.println(Integer.toBinaryString(-7));
     }
 
 //    public static List<Integer> powerfulIntegers(int x, int y, int bound) {
@@ -240,19 +243,19 @@ public class NowCoder {
 
     public static ArrayList<ArrayList<Integer>> FindContinuousSequence(int sum) {
         ArrayList<ArrayList<Integer>> res = new ArrayList<>();
-        int left =1, right = 2;
-        while (right > left){
+        int left = 1, right = 2;
+        while (right > left) {
             int cur = (right + left) * (right - left + 1) / 2;
-            if(sum == cur){
+            if (sum == cur) {
                 ArrayList<Integer> temp = new ArrayList<>();
-                for (int i = left; i<= right ; ++i){
+                for (int i = left; i <= right; ++i) {
                     temp.add(i);
                 }
                 res.add(temp);
                 left++;
-            }else if(cur < sum){
+            } else if (cur < sum) {
                 right++;
-            }else {
+            } else {
                 left++;
             }
         }
@@ -260,22 +263,22 @@ public class NowCoder {
     }
 
     public static String ReverseSentence(String str) {
-        if(null == str || str.length() < 1){
+        if (null == str || str.length() < 1) {
             return str;
         }
         String[] arr = str.split(" ");
-        if(0 == arr.length){
+        if (0 == arr.length) {
             return str;
         }
         StringBuilder sb = new StringBuilder(arr.length - 1);
-        for(int i = arr.length - 2; i >= 0; --i){
+        for (int i = arr.length - 2; i >= 0; --i) {
             sb.append(" ").append(arr[i]);
         }
         return sb.toString();
     }
 
-    public static String LeftRotateString(String str,int n) {
-        if(null == str || str.length() == 0){
+    public static String LeftRotateString(String str, int n) {
+        if (null == str || str.length() == 0) {
             return str;
         }
         int time = n % str.length();
@@ -283,5 +286,136 @@ public class NowCoder {
         sb.append(str.substring(0, time));
         return sb.toString();
     }
+
+    // 瓜子三面题 约瑟夫环问题
+    public static int LastRemaining_Solution(int n, int m) {
+        if (n <= 0 || m <= 0) {
+            return -1;
+        }
+        LinkedList<Integer> list = new LinkedList<>();
+        for (int i = 0; i < n; ++i) {
+            list.add(i);
+        }
+        // 下一个删除的点 = 上一个删除的点加上 m-1
+        // 有可能超出总长度 所以取余
+        int pre = 0;
+        while (list.size() > 1) {
+            int cur = (pre + m - 1) % list.size();
+            list.remove(cur);
+            pre = cur;
+        }
+        return list.pop();
+    }
+
+    // 扑克牌顺子
+    public boolean isContinuous2(int[] numbers) {
+        if (numbers.length == 0) {
+            return false;
+        }
+        Arrays.sort(numbers);
+        int i = 0, count = 0;
+        for (; i < numbers.length; ++i) {
+            if (numbers[i] == 0) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        int count2 = 0, pre = numbers[i];
+        for (int j = i + 1; j < numbers.length; ++j) {
+            // 下一个正好比上一个大1
+            if (numbers[j] == pre + 1) {
+                pre = numbers[j];
+            }
+            // 数组中有重复数字 一定不是顺子
+            else if (numbers[j] == pre) {
+                return false;
+            } else {
+                // 计算如果需要癞子的情况
+                count2 = count2 + numbers[j] - pre - 1;
+                pre = numbers[j];
+            }
+        }
+        if (count2 > count)
+            return false;
+        else
+            return true;
+    }
+
+    // 斐波那契
+    public int Fibonacci(int n) {
+        int f1 = 1, f2 = 1;
+        if (n == 0) {
+            return 0;
+        }
+        if (n <= 2) {
+            return 1;
+        }
+        int f = 0;
+        for (int i = 2; i < n; ++i) {
+            f = f1 + f2;
+            f1 = f2;
+            f2 = f;
+        }
+        return f;
+    }
+
+    // 跳台阶
+    // 对于本题,前提只有 一次 1阶或者2阶的跳法。
+    // a.如果两种跳法，1阶或者2阶，那么假定第一次跳的是一阶，那么剩下的是n-1个台阶，跳法是f(n-1);
+    // b.假定第一次跳的是2阶，那么剩下的是n-2个台阶，跳法是f(n-2)
+    // 所以说还是斐波那契数列
+    public static int JumpFloor(int target) {
+        int count = 0, sum = 0;
+        return count;
+    }
+
+    // 变态跳台阶
+    // f(n) = f(n-1)+f(n-2)+...+f(n-(n-1)) + f(n-n) => f(0) + f(1) + f(2) + f(3) + ... + f(n-1)
+
+    // f(n-1) = f(0) + f(1)+f(2)+f(3) + ... + f((n-1)-1) = f(0) + f(1) + f(2) + f(3) + ... + f(n-2)
+
+    // f(n) = f(0) + f(1) + f(2) + f(3) + ... + f(n-2) + f(n-1) = f(n-1) + f(n-1)
+
+    // 可以得出 f(n) = 2*f(n-1)
+    public int JumpFloorII(int target) {
+        if (target < 0) {
+            return -1;
+        }
+        if (target == 1) {
+            return 1;
+        } else if (target == 2) {
+            return 2;
+        } else {
+            return 2 * JumpFloorII(target - 1);
+        }
+    }
+
+    // 矩形覆盖
+    public int RectCover(int target) {
+        if (target < 1) {
+            return 0;
+        }
+        if (target == 1) {
+            return 1;
+        } else if (target == 2) {
+            return 2;
+        } else {
+            return RectCover(target - 1) + RectCover(target - 2);
+        }
+    }
+
+    // 输出一个整数的二进制 1的个数 负数使用补码 补码 = 反码 + 1
+    public static int NumberOf1(int n) {
+        int count = 0;
+        while (n != 0){
+            if((n & 1) == 1){
+                count++;
+            }
+            n = n>>>1;
+        }
+        return count;
+    }
+
 
 }

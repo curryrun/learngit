@@ -29,11 +29,13 @@ public class Sort {
 
 //        insertSort(arr1);
 
-        insertSortMy(arr1);
+//        insertSortMy(arr1);
 
         for (int i = 0; i < arr1.length; ++i) {
             System.out.println(arr1[i]);
         }
+
+        findKthLargest(arr1, 3);
     }
 
     // 插入排序 是通过构建有序序列，对于未排序数据，在已排序序列中从后向前扫描，找到相应位置并插入
