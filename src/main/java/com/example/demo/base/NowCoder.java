@@ -54,6 +54,8 @@ public class NowCoder {
 //        LastRemaining_Solution(4, 2);
         NumberOf1(-7);
         System.out.println(Integer.toBinaryString(-7));
+
+        reOrderArray(new int[]{1, 2, 3, 4, 5, 6, 7});
     }
 
 //    public static List<Integer> powerfulIntegers(int x, int y, int bound) {
@@ -417,5 +419,103 @@ public class NowCoder {
         return count;
     }
 
+    // 数组里 奇数在前，偶数在后
+    public static void reOrderArray(int [] array) {
+        int preOu = 0;
+        for(int i = 0; i< array.length; ++i){
+            if (array[i] % 2 == 0){
+                preOu = i;
+                break;
+            }
+        }
+        int now = preOu + 1;
+        while (now < array.length){
+            if(array[now] % 2 == 1){
+                move(preOu, now, array);
+                preOu++;
+            }
+            now++;
+        }
+    }
+
+    // 从后往前移动
+    private static void move(int left, int right, int[] arr){
+        int temp = arr[right];
+        while (right >= left){
+            arr[right] = arr[right - 1];
+            right--;
+        }
+        arr[left] = temp;
+        return;
+    }
+
+    // 链表中倒数第K个 思路 让一个指针先走K步， 然后另一个指针从头走，两个指针一起走
+    public static ListNode FindKthToTail(ListNode head,int k) {
+        ListNode node = head;
+        for(int i = 0; i< k; ++i){
+            if(null == node){
+                return null;
+            }
+            node = node.next;
+        }
+        while (node != null){
+            head = head.next;
+            node = node.next;
+        }
+        return head;
+    }
+
+    // 反转链表
+    public ListNode ReverseList(ListNode head) {
+        if(null == head || null == head.next){
+            return head;
+        }
+        ListNode pre = null, next = null;
+        while (head != null){
+            next = head.next;
+            head.next = pre;
+            pre = head;
+            head = next;
+        }
+        return pre;
+    }
+
+    // 判断r2是不是r1的子结构树
+    public boolean HasSubtree(TreeNode root1,TreeNode root2) {
+        if(null == root1 || null == root2){
+            return false;
+        }
+        boolean res = false;
+        if(root1.val == root2.val){
+            res = isContain(root1, root2);
+        }
+        if(!res) {
+            res= HasSubtree(root1.left, root2);
+        }
+        if(!res){
+            res= HasSubtree(root1.right, root2);
+        }
+        return res;
+    }
+
+    // 我日 有可能是子树在 父亲树的中间位置是相同的
+    public boolean isContain(TreeNode root1,TreeNode root2){
+        // 这个地方是关键 因为有可能子树已经到底了，但是父亲树还是没有到底
+        if(null == root2){
+            return true;
+        }
+        // 如果父亲已经到底，但是子树没到底
+        if(root1 == null && root2 != null) {
+            return false;
+        }
+        // 如果父亲没到底，但是子树到底了
+        if(root1 != null && root2 == null){
+            return false;
+        }
+        if(root1.val != root2.val){
+            return false;
+        }
+        return isContain(root1.left, root2.left) && isContain(root1.right, root2.right);
+    }
 
 }
