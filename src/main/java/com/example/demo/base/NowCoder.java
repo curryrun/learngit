@@ -518,6 +518,7 @@ public class NowCoder {
         return isContain(root1.left, root2.left) && isContain(root1.right, root2.right);
     }
 
+    // 镜像二叉树
     public void Mirror(TreeNode root) {
         if (root == null) {
             return;
