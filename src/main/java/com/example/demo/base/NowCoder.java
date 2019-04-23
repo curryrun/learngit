@@ -56,6 +56,9 @@ public class NowCoder {
         System.out.println(Integer.toBinaryString(-7));
 
         reOrderArray(new int[]{1, 2, 3, 4, 5, 6, 7});
+
+        int[][] arrEr = new int[][]{{1, 2, 3, 4}, {5, 6, 7, 8}};
+        printMatrix(new int [][] {{1}, {2}, {3}, {4}, {5}});
     }
 
 //    public static List<Integer> powerfulIntegers(int x, int y, int bound) {
@@ -539,6 +542,40 @@ public class NowCoder {
                 stack.push(now.right);
             }
         }
+    }
+
+    static int count = 0;
+
+    // 顺时针打印二维数组
+    public static ArrayList<Integer> printMatrix(int[][] matrix) {
+        ArrayList<Integer> res = new ArrayList<>();
+        int size = matrix.length * matrix[0].length;
+        myPrint(matrix, 0, 0, matrix.length - 1, matrix[0].length - 1, res, size);
+        return res;
+    }
+
+    // 每次都要判断是否已经遍历所有元素！
+    private static void myPrint(int[][] arr, int startHang, int startLie, int hangRight, int lieRight, ArrayList<Integer> res, int size) {
+        if (count >= size) {
+            return;
+        }
+        for (int i = startLie; i <= lieRight && count < size; ++i) {
+            res.add(arr[startHang][i]);
+            count++;
+        }
+        for (int i = startHang + 1; i <= hangRight && count < size; ++i) {
+            res.add(arr[i][lieRight]);
+            count++;
+        }
+        for (int i = lieRight - 1; i >= startLie && count < size; --i) {
+            res.add(arr[hangRight][i]);
+            count++;
+        }
+        for (int i = hangRight - 1; i > startHang && count < size; --i) {
+            res.add(arr[i][startLie]);
+            count++;
+        }
+        myPrint(arr, startHang + 1, startLie + 1, hangRight - 1, lieRight - 1, res, size);
     }
 
 }

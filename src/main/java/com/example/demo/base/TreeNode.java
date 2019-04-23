@@ -80,7 +80,9 @@ public class TreeNode {
 //        findRoot(root, 10);
 
 //        System.out.println(numTrees(3));
-        generateTrees(3);
+//        generateTrees(3);
+        qianxu(root);
+        qianxu2(root);
 
     }
 
@@ -105,6 +107,21 @@ public class TreeNode {
             } else {
                 TreeNode treeNode = linkedList.pop();
                 node = treeNode.getRight();
+            }
+        }
+    }
+
+    public static void qianxu2(TreeNode root) {
+        LinkedList<TreeNode> linkedList = new LinkedList<>();
+        linkedList.push(root);
+        while (!linkedList.isEmpty()) {
+            TreeNode node = linkedList.pop();
+            System.out.println(node.val);
+            if(null != node.right){
+                linkedList.push(node.right);
+            }
+            if(null != node.left){
+                linkedList.push(node.left);
             }
         }
     }
