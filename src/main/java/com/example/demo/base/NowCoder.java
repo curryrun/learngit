@@ -31,34 +31,63 @@ public class NowCoder {
 //            System.out.println(arr1[i]);
 //        }
 
-        TreeNode root = new TreeNode(2);
-        TreeNode t1 = new TreeNode(1);
-        TreeNode t2 = new TreeNode(4);
-        TreeNode t3 = new TreeNode(5);
-        TreeNode t5 = new TreeNode(3);
-        root.setLeft(t1);
-        root.setRight(t2);
-        t1.setLeft(t3);
-        t2.setLeft(t5);
-
-        TreeNode root2 = new TreeNode(1);
-        TreeNode root3 = new TreeNode(2);
-        TreeNode root4 = new TreeNode(3);
-        root2.setLeft(root3);
-        root2.setRight(root4);
+//        TreeNode root = new TreeNode(2);
+//        TreeNode t1 = new TreeNode(1);
+//        TreeNode t2 = new TreeNode(4);
+//        TreeNode t3 = new TreeNode(5);
+//        TreeNode t5 = new TreeNode(3);
+//        root.setLeft(t1);
+//        root.setRight(t2);
+//        t1.setLeft(t3);
+//        t2.setLeft(t5);
+//
+//        TreeNode root2 = new TreeNode(1);
+//        TreeNode root3 = new TreeNode(2);
+//        TreeNode root4 = new TreeNode(3);
+//        root2.setLeft(root3);
+//        root2.setRight(root4);
 
 //        flipMatchVoyageMy(root2, new int[]{1, 3, 2});
 
 //        powerfulIntegers(2, 3, 10);
 
 //        LastRemaining_Solution(4, 2);
-        NumberOf1(-7);
-        System.out.println(Integer.toBinaryString(-7));
+//        NumberOf1(-7);
+//        System.out.println(Integer.toBinaryString(-7));
 
-        reOrderArray(new int[]{1, 2, 3, 4, 5, 6, 7});
+//        reOrderArray(new int[]{1, 2, 3, 4, 5, 6, 7});
 
-        int[][] arrEr = new int[][]{{1, 2, 3, 4}, {5, 6, 7, 8}};
-        printMatrix(new int [][] {{1}, {2}, {3}, {4}, {5}});
+//        int[][] arrEr = new int[][]{{1, 2, 3, 4}, {5, 6, 7, 8}};
+//        printMatrix(new int[][]{{1}, {2}, {3}, {4}, {5}});
+//        IsPopOrder(new int[]{1, 2, 3, 4, 5}, new int[]{4, 3, 5, 1, 2});
+
+        // 树的结构 https://blog.csdn.net/My_Jobs/article/details/43451187
+        TreeNode root = new TreeNode(1);
+        TreeNode r1 = new TreeNode(2);
+        TreeNode r2 = new TreeNode(3);
+        TreeNode r3 = new TreeNode(4);
+        TreeNode r4 = new TreeNode(5);
+        TreeNode r5 = new TreeNode(6);
+        TreeNode r6 = new TreeNode(7);
+        TreeNode r7 = new TreeNode(8);
+        root.setLeft(r1);
+        root.setRight(r2);
+        r2.setRight(r5);
+        r1.setLeft(r3);
+        r1.setRight(r4);
+        r4.setLeft(r6);
+        r4.setRight(r7);
+
+        TreeNode root1 = new TreeNode(10);
+        TreeNode rr1 = new TreeNode(5);
+        TreeNode rr2 = new TreeNode(4);
+        TreeNode rr3 = new TreeNode(7);
+        TreeNode rr4 = new TreeNode(12);
+        root1.setLeft(rr1);
+        root1.setRight(rr4);
+        rr1.setLeft(rr2);
+        rr1.setRight(rr3);
+        FindPath(root1, 22);
     }
 
 //    public static List<Integer> powerfulIntegers(int x, int y, int bound) {
@@ -576,6 +605,175 @@ public class NowCoder {
             count++;
         }
         myPrint(arr, startHang + 1, startLie + 1, hangRight - 1, lieRight - 1, res, size);
+    }
+
+    // 判断出栈顺序
+    // 第一层循环先入栈 第二层循环 判断栈顶元素是否等于当前pop的元素 如果相等则进入循环 相当于循环出栈
+    public static boolean IsPopOrder(int[] pushA, int[] popA) {
+        LinkedList<Integer> stack = new LinkedList<>();
+        if (popA.length == 0 || pushA.length == 0) {
+            return false;
+        }
+        for (int i = 0, j = 0; i < pushA.length; ++i) {
+            // 先入栈
+            stack.push(pushA[i]);
+            // 如果栈顶 == pop第一位 则进行出栈 循环进行
+            while (j < popA.length && stack.peek() == popA[j]) {
+                stack.pop();
+                j++;
+            }
+        }
+        // 如果已经全部入栈了，但是出栈没有出完
+        return stack.isEmpty();
+    }
+
+    // 二叉树层次遍历
+    public ArrayList<Integer> PrintFromTopToBottom(TreeNode root) {
+        ArrayList<Integer> res = new ArrayList<>();
+        if (null == root) {
+            return res;
+        }
+        LinkedList<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            TreeNode top = queue.poll();
+            res.add(top.val);
+            if (null != top.left) {
+                queue.add(top.left);
+            }
+            if (null != top.right) {
+                queue.add(top.right);
+            }
+        }
+        return res;
+    }
+
+    // 二叉搜索树的后序遍历序列
+    // 后序遍历特点 可以通过最后一个节点（即根节点）,把整个数组拆分成两部分, 一部分比根大，另外一部分比根小
+    // 也就是说一半是左子树，一半是右子树 ，子树也满足这个条件，就可以做递归判断
+    public boolean VerifySquenceOfBST(int[] sequence) {
+        if (sequence.length == 0) {
+            return false;
+        }
+        return isRight(0, sequence.length - 1, sequence);
+    }
+
+    public boolean isRight(int left, int right, int[] arr) {
+        if (left >= right) {
+            return true;
+        }
+        int i = left;
+        while (i < right) {
+            if (arr[i] > arr[right]) {
+                break;
+            }
+            ++i;
+        }
+        int pos = i;
+        while (i < right) {
+            if (arr[i] < arr[right]) {
+                return false;
+            }
+            ++i;
+        }
+        return isRight(left, pos - 1, arr) && isRight(pos + 1, right, arr);
+    }
+
+    //输入一颗二叉树的跟节点和一个整数，打印出二叉树中结点值的和为输入整数的所有路径。路径定义为从树的根结点开始往下一直到叶结点所经过的结点形成一条路径。(注意: 在返回值的list中，数组长度大的数组靠前)
+    // 我服了，自定义栈太难写了 试试递归8```
+    public ArrayList<ArrayList<Integer>> FindPath1(TreeNode root, int target) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        if (null == root) {
+            return res;
+        }
+        LinkedList<TreeNode> stack = new LinkedList<>();
+        // 初始化信息
+        stack.add(root);
+        int count = root.val;
+        ArrayList<Integer> itemList = new ArrayList<>();
+        itemList.add(root.val);
+        // 上一个被出栈的节点
+        TreeNode pre = null;
+        while (!stack.isEmpty()) {
+            TreeNode temp = stack.peek();
+            if (target == count) {
+                res.add(new ArrayList<>(itemList));
+                pre = stack.pop();
+                itemList.remove(itemList.size() - 1);
+                count = count - pre.val;
+                if (null != temp.right) {
+                    stack.push(temp.right);
+                    count = count + temp.right.val;
+                    itemList.add(temp.right.val);
+                }
+                if (null != temp.left) {
+                    stack.push(temp.left);
+                    count = count + temp.left.val;
+                    itemList.add(temp.left.val);
+                }
+            } else if (target > count || ((temp.right == null && pre == temp.left) || (temp.right == pre) || (temp.left == null && temp.right == null))) {
+                pre = stack.pop();
+                itemList.remove(itemList.size() - 1);
+                count = count - pre.val;
+            } else {
+                if (null != temp.right) {
+                    stack.push(temp.right);
+                    count = count + temp.right.val;
+                    itemList.add(temp.right.val);
+                }
+                if (null != temp.left) {
+                    stack.push(temp.left);
+                    count = count + temp.left.val;
+                    itemList.add(temp.left.val);
+                }
+            }
+        }
+        ArrayList<ArrayList<Integer>> res2 = new ArrayList<>();
+        for (int i = res.size() - 1; i >= 0; --i) {
+            res2.add(res.get(i));
+        }
+        return res2;
+    }
+
+    //输入一颗二叉树的跟节点和一个整数，打印出二叉树中结点值的和为输入整数的所有路径。路径定义为从树的根结点开始往下一直到叶结点所经过的结点形成一条路径。(注意: 在返回值的list中，数组长度大的数组靠前)
+    public static ArrayList<ArrayList<Integer>> FindPath(TreeNode root, int target) {
+        find(root, target);
+        return treeRes;
+    }
+
+    static ArrayList<ArrayList<Integer>> treeRes = new ArrayList<>();
+    static ArrayList<Integer> itemList = new ArrayList<>();
+    static int treeCount = 0;
+
+    // 思路是每次递归的时候，节点都加到List里
+    // 如果值相等就添加到结果里
+    // 如果值小于target就继续递归
+    // 在函数最后的时候出list 也就是每次递归返回的时候都做出list操作
+    public static void find(TreeNode root, int target) {
+        if (null == root) {
+            return;
+        }
+        // 先把当前节点加到List里
+        int temp = root.val + treeCount;
+        treeCount = temp;
+        itemList.add(root.val);
+
+        // 如果是满足条件
+        if (temp == target && root.left == null && root.right == null) {
+            treeRes.add(new ArrayList<>(itemList));
+        }
+        // 如果当前值较小则继续递归
+        else if (temp < target) {
+            find(root.left, target);
+            find(root.right, target);
+        }
+        // 如果当前值较大 则不处理，等到末尾出List
+        else {
+
+        }
+        // 退出的时候从list移除
+        treeCount = treeCount - itemList.get(itemList.size() - 1);
+        itemList.remove(itemList.size() - 1);
     }
 
 }
