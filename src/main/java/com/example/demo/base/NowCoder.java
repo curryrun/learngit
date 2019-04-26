@@ -2,10 +2,13 @@ package com.example.demo.base;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.Stack;
 
 /**
  * @author zhangdongrun
@@ -87,7 +90,11 @@ public class NowCoder {
         root1.setRight(rr4);
         rr1.setLeft(rr2);
         rr1.setRight(rr3);
-        FindPath(root1, 22);
+//        FindPath(root1, 22);
+//        MoreThanHalfNum_Solution2(new int[]{1, 2, 3, 2, 2, 2, 5, 4, 2});
+//        GetLeastNumbers_Solution2(new int[]{4, 5, 1, 6, 2, 7, 3, 8}, 8);
+//        FindGreatestSumOfSubArray(new int[]{1, -2, 3, 10, -4, 7, 2, -5});
+        NumberOf1Between1AndN_Solution(55);
     }
 
 //    public static List<Integer> powerfulIntegers(int x, int y, int bound) {
@@ -255,6 +262,7 @@ public class NowCoder {
         return digui(list, root.left, arr) && digui(list, root.right, arr);
     }
 
+    // 和为S的两个数
     public static ArrayList<Integer> FindNumbersWithSum(int[] array, int sum) {
         if (array.length < 2) {
             return new ArrayList<>();
@@ -774,6 +782,299 @@ public class NowCoder {
         // 退出的时候从list移除
         treeCount = treeCount - itemList.get(itemList.size() - 1);
         itemList.remove(itemList.size() - 1);
+    }
+
+    // 二叉搜索树转换为 双向链表
+    // 本质上利用了中序遍历
+    // 思路 先循环访问到最左边的节点，这个节点就是双向链表的起始节点，同时把这些节点都入栈 第一次访问到最左节点就记下来，同时初始化pre
+    // 然后就是 让pre的right指向根，根的左孩子指向pre，然后把当前节点变成pre，整个节点再向右子树遍历
+    public TreeNode Convert1(TreeNode root) {
+        LinkedList<TreeNode> stack = new LinkedList<>();
+        // 只是个初始化，以后会被覆盖
+        TreeNode pre = root, res = root;
+        boolean isFirst = true;
+        while (root != null || !stack.isEmpty()) {
+            while (root != null) {
+                stack.push(root);
+                root = root.left;
+            }
+            // 第一次来的时候temp就是最左节点 要保存下来这个节点当做链表的头，同时也记录下一次遍历时，上次遍历的节点
+            TreeNode temp = stack.pop();
+            if (isFirst) {
+                pre = temp;
+                res = temp;
+                isFirst = false;
+            }
+            //
+            else {
+                pre.right = temp;
+                temp.left = pre;
+                pre = temp;
+            }
+            root = temp.right;
+        }
+        return res;
+    }
+
+    // 复杂链表复制
+    // 链表里有个随机指向的指针
+    // 思路是 现在原链表的每个节点后面都复制一个新节点
+    // 再遍历一遍复制原节点的随机指针
+    // 最后遍历 把新老节点拆开，拆成两个链表
+    public RandomListNode Clone(RandomListNode pHead) {
+        if (null == pHead) {
+            return null;
+        }
+        RandomListNode node = pHead;
+        // 第一次遍历把链表扩大为两倍，在每个旧节点后面插入一个新节点
+        while (node != null) {
+            RandomListNode newNode = new RandomListNode(node.label);
+            newNode.next = node.next;
+            node.next = newNode;
+            node = newNode.next;
+        }
+        node = pHead;
+        while (node != null) {
+            node.next.random = node.random == null ? null : node.random.next;
+            node = node.next.next;
+        }
+        RandomListNode cur = pHead;
+        RandomListNode pCloneHead = cur.next;
+        while (null != cur) {
+            RandomListNode clone = cur.next;
+            cur.next = clone.next;
+            clone.next = clone.next == null ? null : clone.next.next;
+            cur = cur.next;
+        }
+        return pCloneHead;
+    }
+
+    // 输入一个字符串,按字典序打印出该字符串中字符的所有排列。例如输入字符串abc,则打印出由字符a,b,c所能排列出来的所有字符串abc,acb,bac,bca,cab和cba
+    // todo 这个不对 等大佬讲讲
+    public ArrayList<String> Permutation(String str) {
+        ArrayList<String> res = new ArrayList<>();
+        if (null == str || "".equals(str)) {
+            return res;
+        }
+        StringBuilder sb = new StringBuilder();
+        subSet(str, sb, res, 0);
+        return res;
+    }
+
+    public void subSet(String str, StringBuilder sb, ArrayList<String> list, int start) {
+        if (sb.toString().length() == str.length()) {
+            list.add(sb.toString());
+        }
+        for (int i = start; i < str.length(); ++i) {
+            sb.append(str.charAt(i));
+            subSet(str, sb, list, i + 1);
+            sb = sb.deleteCharAt(sb.length() - 1);
+        }
+    }
+
+    // 数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字
+    // 方法一 使用额外空间做判断
+    public int MoreThanHalfNum_Solution(int[] array) {
+        if (array.length == 1) {
+            return array[0];
+        }
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < array.length; ++i) {
+            if (map.containsKey(array[i])) {
+                int temp = map.get(array[i]) + 1;
+                if (temp > array.length / 2) {
+                    return array[i];
+                }
+                map.put(array[i], temp);
+            } else {
+                map.put(array[i], 1);
+            }
+        }
+        return 0;
+    }
+
+    // 方法二 不使用额外空间做判断
+    // 对数组同时去掉两个不同的数字，到最后剩下的一个数就是该数字。如果剩下两个，那么这两个也是一样的，就是结果），
+    // 在其基础上把最后剩下的一个数字或者两个回到原来数组中，将数组遍历一遍统计一下数字出现次数进行最终判断。
+    // 我日，如果要申请N的空间为啥不用 hashMap
+    public static int MoreThanHalfNum_Solution2(int[] array) {
+        if (array.length == 1) {
+            return array[0];
+        }
+        int pre = array[0], right = array.length - 1, prePos = 0, i = prePos + 1;
+        while (i <= right) {
+//            i = prePos + 1;
+            if (pre != array[i]) {
+                int temp = array[right];
+                array[right] = pre;
+                pre = temp;
+                array[prePos] = temp;
+
+                int temp2 = array[right - 1];
+                array[right - 1] = array[i];
+                array[i] = temp2;
+                right = right - 2;
+                i = prePos + 1;
+            } else {
+                ++i;
+            }
+            if (right < 4) {
+
+            }
+        }
+        int res = array[right - 1], count = 0;
+        for (int j = 0; j < array.length; ++i) {
+            if (res == array[j]) {
+                count++;
+                if (count > array.length / 2) {
+                    return res;
+                }
+            }
+        }
+        return 0;
+    }
+
+    // 输入n个整数，找出其中最小的K个数。例如输入4,5,1,6,2,7,3,8这8个数字，则最小的4个数字是1,2,3,4
+    // 我日 写反了 写成最大的前K个数了
+    public ArrayList<Integer> GetLeastNumbers_Solution(int[] input, int k) {
+        PriorityQueue<Integer> queue = new PriorityQueue<>(k + 1);
+        for (int i = 0; i < k; ++i) {
+            queue.add(input[i]);
+        }
+        for (int i = k; i < input.length; ++i) {
+            int now = input[i];
+            if (now > queue.peek()) {
+                queue.add(now);
+                queue.poll();
+            } else {
+                continue;
+            }
+        }
+        ArrayList<Integer> res = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            res.add(queue.poll());
+        }
+        return res;
+    }
+
+    // 最小的前K个数
+    public static ArrayList<Integer> GetLeastNumbers_Solution1(int[] input, int k) {
+        if (k > input.length) {
+            return new ArrayList<>();
+        }
+        PriorityQueue<Integer> queue = new PriorityQueue<>();
+        ArrayList<Integer> res = new ArrayList<>();
+        for (int i = 0; i < input.length; ++i) {
+            if (queue.size() < input.length - k) {
+                queue.add(input[i]);
+            } else {
+                int temp = input[i];
+                queue.add(temp);
+                res.add(queue.poll());
+            }
+        }
+        return res;
+    }
+
+    // 最小的前K个数 使用快排思想
+    public static ArrayList<Integer> GetLeastNumbers_Solution2(int[] input, int k) {
+        if (k > input.length) {
+            return new ArrayList<>();
+        }
+        ArrayList<Integer> res = new ArrayList<>();
+        int left = 0, right = input.length - 1;
+        while (left < right) {
+            int mid = quickSS(input, left, right);
+            if (mid == k) {
+                break;
+            } else if (mid > k) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
+        for (int i = 0; i < k; ++i) {
+            res.add(input[i]);
+        }
+        return res;
+    }
+
+    public static int quickSS(int[] input, int left, int right) {
+        int temp = input[left];
+        while (left < right) {
+            while (input[right] >= temp && left < right) {
+                right--;
+            }
+            input[left] = input[right];
+            while (input[left] <= temp && left < right) {
+                left++;
+            }
+            input[right] = input[left];
+        }
+        input[left] = temp;
+        return left;
+    }
+
+    /*链接：https://www.nowcoder.com/questionTerminal/459bd355da1549fa8a49e350bf3df484
+
+使用动态规划
+F（i）：以array[i]为末尾元素的子数组的和的最大值，子数组的元素的相对位置不变
+F（i）=max（F（i-1）+array[i] ， array[i]）
+res：所有子数组的和的最大值
+res=max（res，F（i））
+
+如数组[6, -3, -2, 7, -15, 1, 2, 2]
+初始状态：
+    F（0）=6
+    res=6
+i=1：
+    F（1）=max（F（0）-3，-3）=max（6-3，-3）=3
+    res=max（F（1），res）=max（3，6）=6
+i=2：
+    F（2）=max（F（1）-2，-2）=max（3-2，-2）=1
+    res=max（F（2），res）=max（1，6）=6
+i=3：
+    F（3）=max（F（2）+7，7）=max（1+7，7）=8
+    res=max（F（2），res）=max（8，6）=8
+i=4：
+    F（4）=max（F（3）-15，-15）=max（8-15，-15）=-7
+    res=max（F（4），res）=max（-7，8）=8
+以此类推
+最终res的值为8 */
+
+    // 数组内 最大连续子序列之和
+    // 动态规划
+    public static int FindGreatestSumOfSubArray(int[] array) {
+        if (null == array || 0 == array.length) {
+            return 0;
+        }
+        int res = array[0];
+        int nowSum = array[0];
+        for (int i = 1; i < array.length; ++i) {
+            // 为什么不和原来的自己比较，为了有机会抛弃掉之前的结果 可以选择一个新的起点
+            // 有可能当前这个数很大，比前面加和的最大值还大，这个时候就以这个数作为新的起点
+            nowSum = Math.max(nowSum + array[i], array[i]);
+            res = Math.max(res, nowSum);
+        }
+        return res;
+    }
+
+    // 从1 到 n 中1出现的次数
+    public static int NumberOf1Between1AndN_Solution(int n) {
+        int count = 0, res = 0;
+        while (n > 0) {
+            int temp = n % 10;
+            int now = 0;
+            if (temp < 1) {
+                now = 0;
+            } else {
+                now = 1;
+            }
+            res = now + now * count * 10 + res;
+            count++;
+            n = n / 10;
+        }
+        return res;
     }
 
 }

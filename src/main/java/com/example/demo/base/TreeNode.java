@@ -81,8 +81,9 @@ public class TreeNode {
 
 //        System.out.println(numTrees(3));
 //        generateTrees(3);
-        qianxu(root);
-        qianxu2(root);
+        zhongxu(root);
+        System.out.println();
+        zhongxu2(root);
 
     }
 
@@ -117,10 +118,10 @@ public class TreeNode {
         while (!linkedList.isEmpty()) {
             TreeNode node = linkedList.pop();
             System.out.println(node.val);
-            if(null != node.right){
+            if (null != node.right) {
                 linkedList.push(node.right);
             }
-            if(null != node.left){
+            if (null != node.left) {
                 linkedList.push(node.left);
             }
         }
@@ -138,6 +139,20 @@ public class TreeNode {
                 System.out.println(treeNode.getValue());
                 node = treeNode.getRight();
             }
+        }
+    }
+
+    public static void zhongxu2(TreeNode root) {
+        LinkedList<TreeNode> linkedList = new LinkedList<>();
+        TreeNode node = root;
+        while (null != node || !linkedList.isEmpty()) {
+            while (null != node) {
+                linkedList.push(node);
+                node = node.getLeft();
+            }
+            TreeNode treeNode = linkedList.pop();
+            System.out.println(treeNode.getValue());
+            node = treeNode.getRight();
         }
     }
 
