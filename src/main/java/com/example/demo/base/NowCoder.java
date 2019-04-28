@@ -2,10 +2,14 @@ package com.example.demo.base;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.Stack;
@@ -94,7 +98,8 @@ public class NowCoder {
 //        MoreThanHalfNum_Solution2(new int[]{1, 2, 3, 2, 2, 2, 5, 4, 2});
 //        GetLeastNumbers_Solution2(new int[]{4, 5, 1, 6, 2, 7, 3, 8}, 8);
 //        FindGreatestSumOfSubArray(new int[]{1, -2, 3, 10, -4, 7, 2, -5});
-        NumberOf1Between1AndN_Solution(55);
+//        NumberOf1Between1AndN_Solution(55);
+//        GetUglyNumber_Solution(7);
     }
 
 //    public static List<Integer> powerfulIntegers(int x, int y, int bound) {
@@ -1075,6 +1080,220 @@ i=4：
             n = n / 10;
         }
         return res;
+    }
+
+    // 输入一个正整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个。例如输入数组{3，32，321}，则打印出这三个数字能排成的最小数字为321323。
+    public String PrintMinNumber(int[] numbers) {
+        String[] stringArr = new String[numbers.length];
+        for (int i = 0; i < stringArr.length; ++i) {
+            stringArr[i] = String.valueOf(numbers[i]);
+        }
+        Arrays.sort(stringArr, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                String s1 = o1 + o2;
+                String s2 = o2 + o1;
+                return s1.compareTo(s2);
+            }
+        });
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < stringArr.length; ++i) {
+            sb.append(stringArr[i]);
+        }
+        return sb.toString();
+    }
+
+    // 把只包含质因子2、3和5的数称作丑数（Ugly Number）。例如6、8都是丑数，但14不是，因为它包含质因子7。 习惯上我们把1当做是第一个丑数。求按从小到大的顺序的第N个丑数。
+    public int GetUglyNumber_Solution(int index) {
+        return 0;
+    }
+
+    // 完全看不懂啊
+    static final int d[] = {2, 3, 5};
+
+    public static int GetUglyNumber_Solution_1(int index) {
+        if (index == 0) return 0;
+        int a[] = new int[index];
+        a[0] = 1;
+        int p[] = new int[]{0, 0, 0};
+        int num[] = new int[]{2, 3, 5};
+        int cur = 1;
+
+        while (cur < index) {
+            int m = finMin(num[0], num[1], num[2]);
+            if (a[cur - 1] < num[m])
+                a[cur++] = num[m];
+            p[m] += 1;
+            num[m] = a[p[m]] * d[m];
+        }
+        return a[index - 1];
+    }
+
+    private static int finMin(int num2, int num3, int num5) {
+        int min = Math.min(num2, Math.min(num3, num5));
+        return min == num2 ? 0 : min == num3 ? 1 : 2;
+    }
+
+    public int FirstNotRepeatingChar(String str) {
+        LinkedHashMap<Character, Integer> map = new LinkedHashMap<>();
+        for (int i = 0; i < str.length(); ++i) {
+            Character temp = str.charAt(i);
+            if (!map.containsKey(temp)) {
+                map.put(temp, 1);
+            } else {
+                int tempInt = map.get(temp);
+                map.put(temp, ++tempInt);
+            }
+        }
+        Iterator<Map.Entry<Character, Integer>> iterator = map.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Character, Integer> entry = iterator.next();
+            if (entry.getValue() == 1) {
+                System.out.println(entry.getKey());
+            }
+        }
+
+        for (int i = 0; i < str.length(); ++i) {
+            char c = str.charAt(i);
+            if (map.get(c) == 1) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    // 在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。输入一个数组,求出这个数组中的逆序对的总数P。
+    // 如果数组内后面的一个数比前面的一个数大，就是一个逆序对，求这个的总数
+    // mid - i + 1
+    // 归并的思想来做
+    public int InversePairs(int[] array) {
+        int[] temp = new int[array.length];
+        guibingS(array, 0, array.length - 1, temp);
+        return guibingCount;
+    }
+
+    int guibingCount = 0;
+
+    public void guibingS(int[] array, int left, int right, int[] temp) {
+        // 这个判断千万别忘了写
+        if (left >= right) {
+            return;
+        }
+        int mid = (left + right) / 2;
+        guibingS(array, left, mid, temp);
+        guibingS(array, mid + 1, right, temp);
+        merge(array, left, mid, right, temp);
+    }
+
+    public void merge(int[] array, int left, int mid, int right, int[] temp) {
+        int i = left, j = mid + 1, k = 0;
+        while (i <= mid && j <= right) {
+            if (array[i] <= array[j]) {
+                temp[k] = array[i];
+                ++i;
+                ++k;
+            } else {
+                temp[k] = array[j];
+                ++j;
+                ++k;
+                // 这个是精髓所在 核心代码
+                // 如果右边的这个数小，那么右边的这个数肯定比左数组后面的数小，个数就是mid- i,在加上当前这个数本身 就是 mid- i + 1
+                guibingCount = (guibingCount + mid - i + 1) % 1000000007;
+            }
+        }
+        while (i <= mid) {
+            temp[k] = array[i];
+            ++k;
+            ++i;
+        }
+        while (j <= right) {
+            temp[k] = array[j];
+            ++k;
+            ++j;
+        }
+        int m = 0;
+        while (left <= right) {
+            array[left] = temp[m];
+            ++m;
+            ++left;
+        }
+    }
+
+    // 统计一个数字在排序数组中出现的次数
+    // 二分
+    public int GetNumberOfK(int[] array, int k) {
+        int pos = find(array, k, 0, array.length - 1);
+        if (-1 == pos) {
+            return 0;
+        }
+        int count = 0, i = pos;
+        while (i >= 0) {
+            if (array[i] != k) {
+                break;
+            } else {
+                count++;
+            }
+            --i;
+        }
+        i = pos + 1;
+        while (i < array.length) {
+            if (array[i] != k) {
+                break;
+            } else {
+                count++;
+            }
+            ++i;
+        }
+        return count;
+    }
+
+    public int find(int[] array, int k, int left, int right) {
+        while (left <= right) {
+            int mid = (left + right) >> 1;
+            if (array[mid] == k) {
+                return mid;
+            } else if (k > array[mid]) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return -1;
+    }
+
+    // 获取二叉树的深度
+    // 层次遍历
+    // 从第一层开始记录这一层的元素数量
+    public int TreeDepth(TreeNode root) {
+        if (null == root) {
+            return 0;
+        }
+        LinkedList<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        int deep = 0;
+        // 记录当前这一层访问了多少个节点
+        int count = 0;
+        // 当前这层一共有多少个节点 初始的时候肯定是只有一个节点 就是根节点
+        int nowLimit = 1;
+        while (!queue.isEmpty()) {
+            TreeNode temp = queue.poll();
+            count++;
+            if (null != temp.left) {
+                queue.add(temp.left);
+            }
+            if (null != temp.right) {
+                queue.add(temp.right);
+            }
+            // 如果这层已经遍历结束了
+            if (count == nowLimit) {
+                deep++;
+                // 下一层的元素个数 = 当前队列内的元素个数
+                nowLimit = queue.size();
+                // 当前层数遍历元素数量清零
+                count = 0;
+            }
+        }
+        return deep;
     }
 
 }
