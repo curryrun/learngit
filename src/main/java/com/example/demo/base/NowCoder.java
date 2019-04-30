@@ -100,6 +100,8 @@ public class NowCoder {
 //        FindGreatestSumOfSubArray(new int[]{1, -2, 3, 10, -4, 7, 2, -5});
 //        NumberOf1Between1AndN_Solution(55);
 //        GetUglyNumber_Solution(7);
+//        System.out.println(find1From3(new int[]{1, 1, 1, 2, 2, 2, 3, 3, 3, 4}));
+        System.out.println(match("".toCharArray(), new char[]{'.', '*'}));
     }
 
 //    public static List<Integer> powerfulIntegers(int x, int y, int bound) {
@@ -288,6 +290,7 @@ public class NowCoder {
         return res;
     }
 
+    // 和为S的连续正数序列
     public static ArrayList<ArrayList<Integer>> FindContinuousSequence(int sum) {
         ArrayList<ArrayList<Integer>> res = new ArrayList<>();
         int left = 1, right = 2;
@@ -309,6 +312,8 @@ public class NowCoder {
         return res;
     }
 
+    // “student. a am I”。后来才意识到，这家伙原来把句子单词的顺序翻转了，正确的句子应该是“I am a student.”
+    // 字符串里的单词反转
     public static String ReverseSentence(String str) {
         if (null == str || str.length() < 1) {
             return str;
@@ -324,6 +329,7 @@ public class NowCoder {
         return sb.toString();
     }
 
+    // 循环左移字符串
     public static String LeftRotateString(String str, int n) {
         if (null == str || str.length() == 0) {
             return str;
@@ -1295,5 +1301,231 @@ i=4：
         }
         return deep;
     }
+
+    // 输入一棵二叉树，判断该二叉树是否是平衡二叉树
+    // 最直接的做法，遍历每个结点，借助一个获取树深度的递归函数，根据该结点的左右子树高度差判断是否平衡，然后递归地对左右子树进行判断。
+    // 在判断上层结点的时候，会多次重复遍历下层结点，增加了不必要的开销。
+    // todo 还有个更优化的写法
+    public boolean IsBalanced_Solution(TreeNode root) {
+        if (null == root) {
+            return true;
+        }
+        int maxLeft = getDeep(root.left);
+        int maxRight = getDeep(root.right);
+        if (Math.abs(maxLeft - maxRight) > 1) {
+            return false;
+        }
+        return IsBalanced_Solution(root.left) && IsBalanced_Solution(root.right);
+    }
+
+    public int getDeep(TreeNode root) {
+        if (null == root) {
+            return 0;
+        }
+        return 1 + Math.max(getDeep(root.left), getDeep(root.right));
+    }
+
+    // 一个整型数组里除了两个数字之外，其他的数字都出现了两次。请写程序找出这两个只出现一次的数字。
+    // 实在是太秀了
+    // 对整个数组内的元素之间做一次异或，最后得到的数肯定就是两个只出现一次的数字的异或结果
+    // 然后找这个数字中找到第一个为1的位,这两个数肯定在这个位上，一个是0，一个是1
+    // 那么就可以把数组按照这个位划分为两个数组
+    // 这两个数组内分别循环异或，就找到了这两个数字
+    public void FindNumsAppearOnce(int[] array, int num1[], int num2[]) {
+        if (null == array || 0 == array.length) {
+            return;
+        }
+        // 循环异或整个数组
+        // temp就是两个不同数字的异或结果
+        int temp = 0;
+        for (int i = 0; i < array.length; ++i) {
+            temp = temp ^ array[i];
+        }
+        // 找到异或结果的从右往左数，的第一个为1的位数
+        int count = 0;
+        while (temp != 0) {
+            if (1 == (temp & 1)) {
+                break;
+            }
+            temp = temp >>> 1;
+            count++;
+        }
+        int n1 = 0, n2 = 0;
+        for (int i = 0; i < array.length; ++i) {
+            // 拆分成两个数组
+            if (posIsOne(array[i], count)) {
+                n1 = n1 ^ array[i];
+            } else {
+                n2 = n2 ^ array[i];
+            }
+        }
+        num1[0] = n1;
+        num2[0] = n2;
+    }
+
+    // 对普通元素无符号右移和temp定位的位置一样的，找到这位是0还是1
+    public boolean posIsOne(int num, int pos) {
+        int temp = num >>> pos;
+        int t = temp & 1;
+        if (1 == t) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // 一个整型数组里除了1个数字之外，其他的数字都出现了3次。请写程序找出这个只出现一次的数字。
+    // 可以延伸出现n次的数组里找只出现一次的
+    // 申请了32位数组,然后把原数组中的每一个数字,展开成二进制,哪一位为1,那么bits[]那一位就+1. 最终,判断bit中每一位是否是3的倍数(或者是0),如果是,那么我们要找的数字在这一位肯定为0,反之为1
+    public static int find1From3(int[] arr) {
+        int[] bits = new int[32];
+        // 把原数组中的每一个数字,展开成二进制,哪一位为1,那么bits[]那一位就+1
+        for (int i = 0; i < arr.length; ++i) {
+            int temp = arr[i];
+            for (int j = 0; j < 32; ++j) {
+                // 获取第几位是1
+                int t = (temp >>> j) & 1;
+                if (1 == t) {
+                    ++bits[j];
+                }
+            }
+        }
+
+        int res = 0;
+        for (int i = 0; i < bits.length; ++i) {
+            if (bits[i] % 3 != 0) {
+                res = res | (1 << i);
+            }
+        }
+        return res;
+    }
+
+    // 不用四则运算 算加法
+    // 肯定是位运算了
+    // a^b 结果就是不考虑进位的结果
+    // todo 进位结果
+    // 进位的结果 = (a & b) << 1
+    public int Add(int num1, int num2) {
+        while (0 != num2) {
+            // 不考虑进位的情况
+            int nojinwei = num1 ^ num2;
+            // 计算进位情况
+            num2 = (num1 & num2) << 1;
+            // 给num1 赋值进位结果，等待下次循环再加一下
+            num1 = nojinwei;
+        }
+        return num1;
+    }
+
+    // String->int
+    // todo 判断Int是否溢出
+    public int StrToInt(String str) {
+        if (null == str || 0 == str.length()) {
+            return 0;
+        }
+        char[] arr = str.trim().toCharArray();
+        boolean isZhengshu = true;
+        int start = 0;
+        if (arr[0] == '+') {
+            start = 1;
+        }
+        if (arr[0] == '-') {
+            start = 1;
+            isZhengshu = false;
+        }
+        int res = 0;
+        for (int i = start; i < arr.length; ++i) {
+            char c = arr[i];
+            if (c < '0' || c > '9') {
+                return 0;
+            }
+            int temp = c - '0';
+            res = res * 10 + temp;
+        }
+        if (!isZhengshu) {
+            res = -res;
+        }
+        return res;
+    }
+
+    // 找出数组中任意一个重复的数字
+    public boolean duplicate(int numbers[], int length, int[] duplication) {
+        if (0 == length) {
+            duplication[0] = -1;
+            return false;
+        }
+        int[] arr = new int[length];
+        for (int i = 0; i < numbers.length; ++i) {
+            arr[numbers[i]]++;
+        }
+        for (int i = 0; i < arr.length; ++i) {
+            if (arr[i] > 1) {
+                duplication[0] = numbers[i];
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // 给定一个数组A[0,1,...,n-1],请构建一个数组B[0,1,...,n-1],其中B中的元素B[i]=A[0]*A[1]*...*A[i-1]*A[i+1]*...*A[n-1]。不能使用除法。
+    // 就是除去自己 B[i] = A元素全乘在一起 但是排除A[i]
+    // b0 = 1 a1 a2 ... an
+    // b1 = a0 1 a2 ... an
+    // ...
+    // bn = a0 a1 a2 ... an-1 1
+    // 按照1划分为上半部分和下半部分 b[i] 分成两段来算
+    // 先算下半部分
+    public int[] multiply(int[] A) {
+        int[] res = new int[A.length];
+        // 上半部分
+        res[0] = 1;
+        for (int i = 1; i < res.length; ++i) {
+            res[i] = res[i - 1] * A[i - 1];
+        }
+        // 下半部分
+        int temp = 1;
+        for (int i = res.length - 2; i >= 0; --i) {
+            temp = temp * A[i + 1];
+            res[i] = res[i] * temp;
+        }
+        return res;
+    }
+
+    // 实现一个函数用来匹配包括'.'和'*'的正则表达式
+    // 模式中的字符'.'表示任意一个字符，而'*'表示它前面的字符可以出现任意次（包含0次）
+    public static boolean match(char[] str, char[] pattern) {
+        int i = 0, j = 0;
+        while (i < pattern.length && j < str.length) {
+            if (i + 1 >= pattern.length) {
+                break;
+            }
+            if ('*' == pattern[i + 1]) {
+                if (pattern[i] == str[j]) {
+                    while (pattern[i] == str[j] && i < pattern.length && j < str.length) {
+                        j++;
+                    }
+                    i = i + 2;
+                } else {
+                    i = i + 2;
+                }
+            }
+            if ('.' == pattern[i]) {
+                i++;
+                j++;
+                continue;
+            }
+            if (pattern[i] != str[j]) {
+                return false;
+            }
+            i++;
+            j++;
+
+        }
+        if (i != pattern.length || j != str.length) {
+            return false;
+        }
+        return true;
+    }
+
 
 }
