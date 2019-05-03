@@ -867,19 +867,30 @@ public class NowCoder {
         if (null == str || "".equals(str)) {
             return res;
         }
-        StringBuilder sb = new StringBuilder();
-        subSet(str, sb, res, 0);
+        char[] nums = str.toCharArray();
+        boolean[] usedArr = new boolean[nums.length];
+        subSet(nums, new StringBuilder(), res, usedArr);
         return res;
     }
 
-    public void subSet(String str, StringBuilder sb, ArrayList<String> list, int start) {
-        if (sb.toString().length() == str.length()) {
-            list.add(sb.toString());
+    public void subSet(char[] nums, StringBuilder sb, ArrayList<String> list, boolean[] usedArr) {
+        if (sb.toString().length() == nums.length) {
+            list.add(new String(sb.toString()));
         }
-        for (int i = start; i < str.length(); ++i) {
-            sb.append(str.charAt(i));
-            subSet(str, sb, list, i + 1);
-            sb = sb.deleteCharAt(sb.length() - 1);
+        for (int i = 0; i < nums.length; ++i) {
+            // 去除非同层的重复，也就是同一次内自己不能使用两次
+            if (usedArr[i]) {
+                continue;
+            }
+            // 同层的判断 如果前一个为false(这就意味着之前那个相同的元素已经被考虑过了)并且和当前相等 则跳过
+            if (i - 1 >= 0 && !usedArr[i - 1] && nums[i - 1] == nums[i]) {
+                continue;
+            }
+            sb.append(nums[i]);
+            usedArr[i] = true;
+            subSet(nums, sb, list, usedArr);
+            sb.deleteCharAt(sb.length() - 1);
+            usedArr[i] = false;
         }
     }
 
