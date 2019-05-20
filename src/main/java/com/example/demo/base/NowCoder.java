@@ -2,6 +2,7 @@ package com.example.demo.base;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -101,7 +102,11 @@ public class NowCoder {
 //        NumberOf1Between1AndN_Solution(55);
 //        GetUglyNumber_Solution(7);
 //        System.out.println(find1From3(new int[]{1, 1, 1, 2, 2, 2, 3, 3, 3, 4}));
-        System.out.println(match("".toCharArray(), new char[]{'.', '*'}));
+//        System.out.println(match("".toCharArray(), new char[]{'.', '*'}));
+//        Deserialize("1,2,4,#,#,5,7,#,#,8,#,#,3,#,6,#,#");
+//        System.out.println(longestStr("[[(())]][[()))))"));
+//        maxInWindows(new int[]{2, 3, 4, 2, 6, 2, 5, 1}, 3);
+        hasPath("ABCESFCSADEE".toCharArray(), 3, 4, "ABCCED".toCharArray());
     }
 
 //    public static List<Integer> powerfulIntegers(int x, int y, int bound) {
@@ -360,6 +365,40 @@ public class NowCoder {
         return list.pop();
     }
 
+    // 猿辅导 三面题
+    // 求一堆括号里 最长合法的串
+    public static String longestStr(String str) {
+        String res = "";
+        int max = 0;
+        LinkedList<Character> stack1 = new LinkedList<>();
+        LinkedList<Integer> stack2 = new LinkedList<>();
+        stack1.push(str.charAt(0));
+        stack2.push(0);
+        for (int i = 1; i < str.length(); ++i) {
+            Character top = stack1.peek();
+            Character now = str.charAt(i);
+            if (!stack1.isEmpty() && '[' == top && ']' == now) {
+                stack1.pop();
+                int pre = stack2.pop();
+                if (i - pre + 1 > max) {
+                    max = i - pre + 1;
+                    res = str.substring(pre, i + 1);
+                }
+            } else if (!stack1.isEmpty() && '(' == top && ')' == now) {
+                stack1.pop();
+                int pre = stack2.pop();
+                if (i - pre + 1 > max) {
+                    max = i - pre + 1;
+                    res = str.substring(pre, i + 1);
+                }
+            } else {
+                stack1.push(now);
+                stack2.push(i);
+            }
+        }
+        return res;
+    }
+
     // 扑克牌顺子
     public boolean isContinuous2(int[] numbers) {
         if (numbers.length == 0) {
@@ -578,6 +617,7 @@ public class NowCoder {
         stack.push(root);
         while (!stack.isEmpty()) {
             TreeNode now = stack.pop();
+            // 左右孩子不同时为空
             if (!(null == now.left && null == now.right)) {
                 TreeNode temp = now.left;
                 now.left = now.right;
@@ -1122,7 +1162,30 @@ i=4：
 
     // 把只包含质因子2、3和5的数称作丑数（Ugly Number）。例如6、8都是丑数，但14不是，因为它包含质因子7。 习惯上我们把1当做是第一个丑数。求按从小到大的顺序的第N个丑数。
     public int GetUglyNumber_Solution(int index) {
-        return 0;
+        if (0 == index) {
+            return 0;
+        }
+        int[] arr = new int[index];
+        arr[0] = 1;
+        int pos2 = 0, pos3 = 0, pos5 = 0, count = 1;
+        while (count < index) {
+            int temp2 = 2 * arr[pos2];
+            int temp3 = 3 * arr[pos3];
+            int temp5 = 5 * arr[pos5];
+            int next = Math.min(Math.min(temp2, temp3), temp5);
+            arr[count] = next;
+            count++;
+            if (temp2 == next) {
+                pos2++;
+            }
+            if (temp3 == next) {
+                pos3++;
+            }
+            if (temp5 == next) {
+                pos5++;
+            }
+        }
+        return arr[index - 1];
     }
 
     // 完全看不懂啊
@@ -1504,9 +1567,10 @@ i=4：
 
     // 实现一个函数用来匹配包括'.'和'*'的正则表达式
     // 模式中的字符'.'表示任意一个字符，而'*'表示它前面的字符可以出现任意次（包含0次）
+    // 还是不对
     public static boolean match(char[] str, char[] pattern) {
         int i = 0, j = 0;
-        while (i < pattern.length && j < str.length) {
+        while (i < pattern.length) {
             if (i + 1 >= pattern.length) {
                 break;
             }
@@ -1538,5 +1602,453 @@ i=4：
         return true;
     }
 
+    // 给一个链表，若其中包含环，请找出该链表的环的入口结点，否则，输出null
+    public ListNode EntryNodeOfLoop(ListNode pHead) {
+        ListNode quick = pHead, slow = pHead;
+        while (null != quick && null != slow) {
+            slow = slow.next;
+            quick = quick.next == null ? null : quick.next.next;
+            if (null == slow || null == quick) {
+                return null;
+            }
+            if (slow == quick) {
+                quick = pHead;
+                while (quick != slow) {
+                    quick = quick.next;
+                    slow = slow.next;
+                }
+                return quick;
+            }
+        }
+        return null;
+    }
+
+    // 在一个排序的链表中，存在重复的结点，请删除该链表中重复的结点，重复的结点不保留，返回链表头指针。 例如，链表1->2->3->3->4->4->5 处理后为 1->2->5
+    public ListNode deleteDuplication(ListNode pHead) {
+        if (null == pHead) {
+            return pHead;
+        }
+        ListNode tempHead = new ListNode(-1);
+        tempHead.next = pHead;
+        ListNode pre = tempHead;
+        while (pHead != null) {
+            ListNode next = pHead.next;
+            if (null == next) {
+                break;
+            }
+            if (pHead.val == next.val) {
+                // 一直往后找 找到下一个不一样的 也就是next
+                while (null != pHead && next != null && pHead.val == next.val) {
+                    pHead = pHead.next;
+                    next = next.next;
+                }
+                pre.next = next;
+                pHead = next;
+            } else {
+                pre = pHead;
+                pHead = pHead.next;
+            }
+        }
+        return tempHead.next;
+    }
+
+    // 给定一个二叉树和其中的一个结点，请找出中序遍历顺序的下一个结点并且返回。注意，树中的结点不仅包含左右子结点，同时包含指向父结点的指针（next指针）
+
+    public TreeLinkNode GetNext(TreeLinkNode pNode) {
+        if (null == pNode) {
+            return pNode;
+        }
+        // 如果节点右孩子存在，则找右孩子的最左节点
+        if (null != pNode.right) {
+            TreeLinkNode temp = pNode.right;
+            while (temp != null) {
+                if (temp.left == null) {
+                    return temp;
+                }
+                temp = temp.left;
+            }
+        }
+        // 当节点不是根节点 一直找到和pNode是左孩子的父亲节点
+        while (null != pNode.next) {
+            TreeLinkNode temp = pNode.next;
+            if (temp.left == pNode) {
+                return temp;
+            }
+            pNode = pNode.next;
+        }
+        return null;
+    }
+
+    // 请实现一个函数，用来判断一颗二叉树是不是对称的。注意，如果一个二叉树同此二叉树的镜像是同样的，定义其为对称的。
+    public boolean isSymmetrical(TreeNode pRoot) {
+        if (null == pRoot) {
+            return true;
+        }
+        return help(pRoot.left, pRoot.right);
+    }
+
+    public boolean help(TreeNode left, TreeNode right) {
+        if (null == left && null == right) {
+            return true;
+        }
+        if ((null == left && null != right) || (null != left && null == right)) {
+            return false;
+        }
+        if (left.val != right.val) {
+            return false;
+        }
+        // 镜像是最左==最右 所以应该是left.left == right.right
+        // 中间的等于中间的 left.right == right.left
+        return help(left.left, right.right) && help(left.right, right.left);
+    }
+
+    // 层次遍历 如果要按顺序 就是用堆， 如果要之字形输出 就用两个栈
+    // 按照之字形打印二叉树，即第一行按照从左到右的顺序打印，第二层按照从右至左的顺序打印，第三行按照从左到右的顺序打印，其他行以此类推。
+    public ArrayList<ArrayList<Integer>> Print(TreeNode pRoot) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        ArrayList<Integer> tempList = new ArrayList<>();
+        if (null == pRoot) {
+            return res;
+        }
+        LinkedList<TreeNode> queue = new LinkedList<>();
+        queue.add(pRoot);
+        int cengLimit = 1, nowCount = 0;
+        boolean isZheng = false;
+        while (!queue.isEmpty()) {
+            TreeNode temp = queue.poll();
+            tempList.add(temp.val);
+            nowCount++;
+            if (null != temp.left) {
+                queue.add(temp.left);
+            }
+            if (null != temp.right) {
+                queue.add(temp.right);
+            }
+            if (nowCount == cengLimit) {
+                cengLimit = queue.size();
+                nowCount = 0;
+                // 正序
+                if (isZheng) {
+                    res.add(new ArrayList<>(tempList));
+                }
+                // 倒序反转list
+                else {
+                    ArrayList<Integer> a = new ArrayList<>(tempList);
+                    Collections.reverse(a);
+                    res.add(a);
+                }
+                tempList.clear();
+                isZheng = !isZheng;
+            }
+        }
+        return res;
+    }
+
+    // 按照之字形打印二叉树，即第一行按照从左到右的顺序打印，第二层按照从右至左的顺序打印，第三行按照从左到右的顺序打印，其他行以此类推。
+    // 通过两个栈做
+    public ArrayList<ArrayList<Integer>> PrintV2(TreeNode pRoot) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        ArrayList<Integer> tempList = new ArrayList<>();
+        if (null == pRoot) {
+            return res;
+        }
+        // 奇数层
+        LinkedList<TreeNode> stack1 = new LinkedList<>();
+        // 偶数层
+        LinkedList<TreeNode> stack2 = new LinkedList<>();
+        stack1.add(pRoot);
+        boolean isJi = true;
+        while (!stack1.isEmpty() || !stack2.isEmpty()) {
+            if (isJi) {
+                while (!stack1.isEmpty()) {
+                    TreeNode temp = stack1.pop();
+                    tempList.add(temp.val);
+                    if (null != temp.left) {
+                        stack2.push(temp.left);
+                    }
+                    if (null != temp.right) {
+                        stack2.push(temp.right);
+                    }
+                }
+                res.add(new ArrayList<>(tempList));
+                tempList.clear();
+            } else {
+                while (!stack2.isEmpty()) {
+                    TreeNode temp = stack2.pop();
+                    tempList.add(temp.val);
+                    if (null != temp.right) {
+                        stack1.push(temp.right);
+                    }
+                    if (null != temp.left) {
+                        stack1.push(temp.left);
+                    }
+                }
+                res.add(new ArrayList<>(tempList));
+                tempList.clear();
+            }
+            isJi = !isJi;
+        }
+        return res;
+    }
+
+    // 对于序列化：使用前序遍历，递归的将二叉树的值转化为字符，并且在每次二叉树的结点不为空时，在转化val所得的字符之后添加一个' ， '作为分割。对于空节点则以 '#' 代替。
+    public String Serialize(TreeNode root) {
+        StringBuilder sb = new StringBuilder();
+        if (null == root) {
+            return "";
+        }
+        LinkedList<TreeNode> stack = new LinkedList<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode temp = stack.pop();
+            if (null == temp) {
+                sb.append("#,");
+                continue;
+            }
+            sb.append(temp.val).append(",");
+            if (null == temp.left && null == temp.right) {
+                sb.append("#,#,");
+                continue;
+            }
+            stack.push(temp.right);
+            stack.push(temp.left);
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
+    }
+
+
+    //对于反序列化：按照前序顺序，递归的使用字符串中的字符创建一个二叉树
+
+    public static int index = 0;
+
+    public static TreeNode Deserialize(String str) {
+        if (null == str || 0 == str.length()) {
+            return null;
+        }
+        String[] arr = str.split(",");
+        TreeNode root = null;
+        if (!"#".equalsIgnoreCase(arr[index])) {
+            root = new TreeNode(Integer.valueOf(arr[index]));
+            ++index;
+            root.left = Deserialize(str);
+            ++index;
+            root.right = Deserialize(str);
+        }
+        return root;
+    }
+
+    public TreeNode KthNode(TreeNode pRoot, int k) {
+        if (null == pRoot) {
+            return null;
+        }
+        int count = 0;
+        TreeNode res = null;
+        LinkedList<TreeNode> linkedList = new LinkedList<>();
+        TreeNode node = pRoot;
+        while (null != node || !linkedList.isEmpty()) {
+            while (null != node) {
+                linkedList.push(node);
+                node = node.left;
+            }
+            TreeNode treeNode = linkedList.pop();
+            count++;
+            if (count == k) {
+                res = treeNode;
+                break;
+            }
+            node = treeNode.right;
+        }
+        return res;
+    }
+
+
+    public PriorityQueue<Integer> small = null;
+    public PriorityQueue<Integer> big = null;
+
+    // 如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。
+    // 读取数据流
+    public void Insert(Integer num) {
+        if (null == small && null == big) {
+            init();
+        }
+        if (!small.isEmpty() && num > small.peek()) {
+            small.add(num);
+        } else if (!big.isEmpty() && num < big.peek()) {
+            big.add(num);
+        } else {
+            big.add(num);
+        }
+        int smallSize = small.size(), bigSize = big.size();
+        if (bigSize - smallSize > 0) {
+            small.add(big.poll());
+        } else if (smallSize - bigSize > 0) {
+            big.add(small.poll());
+        }
+    }
+
+    // 获取当前读取数据的中位数
+    public Double GetMedian() {
+        if (null == small && null == big) {
+            init();
+        }
+        int size = small.size() + big.size();
+        if (size % 2 == 1) {
+            if (small.size() > big.size()) {
+                return Double.valueOf(small.peek());
+            } else {
+                return Double.valueOf(big.peek());
+            }
+        } else {
+            return (small.peek() + big.peek()) / 2.0;
+        }
+    }
+
+    public void init() {
+        small = new PriorityQueue<>();
+        big = new PriorityQueue<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o2 - o1;
+            }
+        });
+    }
+
+    // 给定一个数组和滑动窗口的大小，找出所有滑动窗口里数值的最大值
+    public static ArrayList<Integer> maxInWindows(int[] num, int size) {
+        ArrayList<Integer> res = new ArrayList<>();
+        if (size == 0) {
+            return res;
+        }
+        int max = 0, maxPos = -1;
+        for (int i = 0; i < num.length - size + 1; ++i) {
+            if (i > maxPos) {
+                max = Integer.MIN_VALUE;
+                for (int j = i; j < i + size; ++j) {
+                    if (num[j] >= max) {
+                        max = num[j];
+                        maxPos = j;
+                    }
+                }
+            } else {
+                if (num[i + size - 1] >= max) {
+                    max = num[i + size - 1];
+                    maxPos = i;
+                }
+            }
+            res.add(max);
+        }
+        return res;
+    }
+
+    // 用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。路径可以从矩阵中的任意一个格子开始，
+    // 每一步可以在矩阵中向左，向右，向上，向下移动一个格子。如果一条路径经过了矩阵中的某一个格子，则之后不能再次进入这个格子。
+    // 例如 a b c e s f c s a d e e 这样的3 X 4 矩阵中包含一条字符串"bcced"的路径，
+    // 但是矩阵中不包含"abcb"路径，因为字符串的第一个字符b占据了矩阵中的第一行第二个格子之后，路径不能再次进入该格子。
+    public static boolean has = false;
+
+    public static boolean hasPath(char[] matrix, int rows, int cols, char[] str) {
+        char[][] arr = new char[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; ++j) {
+                // 好蠢啊```这里是乘 列！！！！
+                arr[i][j] = matrix[i * cols + j];
+            }
+        }
+        for (int i = 0; i < arr.length; ++i) {
+            for (int j = 0; j < arr[0].length; ++j) {
+                if (str[0] == arr[i][j]) {
+                    boolean[][] used = new boolean[rows][cols];
+                    used[i][j] = true;
+                    helpHasPath(arr, str, used, 1, i, j);
+                    if (has) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return has;
+    }
+
+    public static void helpHasPath(char[][] arr, char[] str, boolean[][] used, int index, int i, int j) {
+        if (index == str.length) {
+            has = true;
+            return;
+        }
+        if (has) return;
+        if (!has && i - 1 >= 0 && !used[i - 1][j] && arr[i - 1][j] == str[index]) {
+            used[i - 1][j] = true;
+            // 要用index + 1 不能用++index 因为下面的方法还要用这个index
+            helpHasPath(arr, str, used, index + 1, i - 1, j);
+            used[i - 1][j] = false;
+        }
+        if (!has && i + 1 < arr.length && !used[i + 1][j] && arr[i + 1][j] == str[index]) {
+            used[i + 1][j] = true;
+            helpHasPath(arr, str, used, index + 1, i + 1, j);
+            used[i + 1][j] = false;
+        }
+        if (!has && j - 1 >= 0 && !used[i][j - 1] && arr[i][j - 1] == str[index]) {
+            used[i][j - 1] = true;
+            helpHasPath(arr, str, used, index + 1, i, j - 1);
+            used[i][j - 1] = false;
+        }
+        if (!has && j + 1 < arr[0].length && !used[i][j + 1] && arr[i][j + 1] == str[index]) {
+            used[i][j + 1] = true;
+            helpHasPath(arr, str, used, index + 1, i, j + 1);
+            used[i][j + 1] = false;
+        }
+    }
+
+    public int sum = 1;
+
+    public int movingCount(int threshold, int rows, int cols) {
+        if(threshold < 0){
+            return 0;
+        }
+        boolean[][] used = new boolean[rows][cols];
+        used[0][0] = true;
+        helpMovingCount(used, 0, 0, rows, cols, threshold);
+        return sum;
+    }
+
+    public void helpMovingCount(boolean[][] used, int i, int j, int rows, int cols, int threshold) {
+        if (i - 1 >= 0 && !used[i - 1][j]) {
+            if (getSum(i - 1) + getSum(j) <= threshold) {
+                used[i -1][j] = true;
+                sum++;
+                helpMovingCount(used, i -1, j, rows, cols, threshold);
+            }
+        }
+        if (i + 1 < rows && !used[i + 1][j]) {
+            if (getSum(i + 1) + getSum(j) <= threshold) {
+                used[i+ 1][j] = true;
+                sum++;
+                helpMovingCount(used, i +1, j, rows, cols, threshold);
+            }
+        }
+        if (j - 1 >= 0 && !used[i][j - 1]) {
+            if (getSum(i ) + getSum(j - 1) <= threshold) {
+                used[i][j - 1] = true;
+                sum++;
+                helpMovingCount(used, i, j - 1, rows, cols, threshold);
+            }
+        }
+        if (j + 1 < cols && !used[i][j + 1]) {
+            if (getSum(i) + getSum(j + 1) <= threshold) {
+                used[i][j + 1] = true;
+                sum++;
+                helpMovingCount(used, i, j + 1, rows, cols, threshold);
+            }
+        }
+    }
+
+    public int getSum(int i) {
+        int sum = 0;
+        while (i != 0) {
+            sum = sum + i % 10;
+            i = i / 10;
+        }
+        return sum;
+    }
 
 }

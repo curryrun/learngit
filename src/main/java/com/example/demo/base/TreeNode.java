@@ -81,9 +81,11 @@ public class TreeNode {
 
 //        System.out.println(numTrees(3));
 //        generateTrees(3);
-        zhongxu(root);
+//        zhongxu(root);
         System.out.println();
-        zhongxu2(root);
+//        zhongxu2(root);
+//        System.out.println(getMax(root));
+        System.out.println(SerializeDigui(root));
 
     }
 
@@ -297,4 +299,116 @@ public class TreeNode {
         }
         return res;
     }
+
+    // 求树的最大宽度
+    public static int getMax(TreeNode root) {
+        if (null == root) {
+            return 0;
+        }
+        int max = 0, nowCount = 0, limit = 1;
+        LinkedList<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            TreeNode temp = queue.poll();
+            if (null != temp.left) {
+                queue.add(temp.left);
+            }
+            if (null != temp.right) {
+                queue.add(temp.right);
+            }
+            nowCount++;
+            if (limit == nowCount) {
+                max = Math.max(max, nowCount);
+                nowCount = 0;
+                limit = queue.size();
+            }
+        }
+        return max;
+    }
+
+    // leetcode 79 给定一个二维网格和一个单词，找出该单词是否存在于网格中。
+    // 单词必须按照字母顺序，通过相邻的单元格内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。同一个单元格内的字母不允许被重复使用。
+
+    public boolean isFind = false;
+
+    public boolean exist(char[][] board, String word) {
+        if (null == word || 0 == word.length() || null == board || board.length == 0 || board[0].length == 0) {
+            return false;
+        }
+        for (int i = 0; i < board.length; ++i) {
+            for (int j = 0; j < board[0].length; ++j) {
+                boolean[][] isUsed = new boolean[board.length][board[0].length];
+                if (board[i][j] == word.charAt(0)) {
+                    isUsed[i][j] = true;
+                    dfs(i, j, 1, word, board, isUsed);
+                    isUsed[i][j] = false;
+                }
+            }
+        }
+        return isFind;
+    }
+
+    public void dfs(int i, int j, int index, String word, char[][] board, boolean[][] isUsed) {
+        if (index == word.length()) {
+            isFind = true;
+            return;
+        }
+        if (i - 1 >= 0 && !isFind && board[i - 1][j] == word.charAt(index) && !isUsed[i - 1][j]) {
+            isUsed[i - 1][j] = true;
+            dfs(i - 1, j, index + 1, word, board, isUsed);
+            isUsed[i - 1][j] = false;
+        }
+        if (i + 1 < board.length && !isFind && board[i + 1][j] == word.charAt(index) && !isUsed[i + 1][j]) {
+            isUsed[i + 1][j] = true;
+            dfs(i + 1, j, index + 1, word, board, isUsed);
+            isUsed[i + 1][j] = false;
+        }
+        if (j - 1 >= 0 && !isFind && board[i][j - 1] == word.charAt(index) && !isUsed[i][j - 1]) {
+            isUsed[i][j - 1] = true;
+            dfs(i, j - 1, index + 1, word, board, isUsed);
+            isUsed[i][j - 1] = false;
+        }
+        if (j + 1 < board[0].length && board[i][j + 1] == word.charAt(index) && !isUsed[i][j + 1]) {
+            isUsed[i][j + 1] = true;
+            dfs(i, j + 1, index + 1, word, board, isUsed);
+            isUsed[i][j + 1] = false;
+        }
+    }
+
+    public static String Serialize(TreeNode root) {
+        if(null == root){
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        LinkedList<TreeNode> stack = new LinkedList<>();
+        stack.push(root);
+        while (!stack.isEmpty()){
+            TreeNode temp = stack.pop();
+            if(null == temp){
+                sb.append("#,");
+                continue;
+            }
+            sb.append(temp.val).append(",");
+            if(null == temp.left && null == temp.right){
+                continue;
+            }
+            stack.push(temp.right);
+            stack.push(temp.left);
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
+    }
+
+    public static String SerializeDigui(TreeNode root) {
+        StringBuilder sb = new StringBuilder();
+        if(null == root){
+            sb.append("#,");
+            return sb.toString();
+        }
+        sb.append(root.val).append(",");
+        sb.append(SerializeDigui(root.left));
+        sb.append(SerializeDigui(root.right));
+        return sb.toString();
+    }
+
 }

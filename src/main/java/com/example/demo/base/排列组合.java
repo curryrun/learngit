@@ -2,6 +2,7 @@ package com.example.demo.base;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -71,7 +72,7 @@ public class 排列组合 {
             return;
         }
         for (int i = 0; i < nums.length; ++i) {
-            if(useArr[i] == true || ( i - 1 >= 0 && nums[i- 1] == nums[i] && useArr[i - 1] == false)){
+            if (useArr[i] == true || (i - 1 >= 0 && nums[i - 1] == nums[i] && useArr[i - 1] == false)) {
                 continue;
             }
             tempList.add(nums[i]);
@@ -80,6 +81,90 @@ public class 排列组合 {
             tempList.remove(tempList.size() - 1);
             useArr[i] = false;
         }
+    }
+
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        List<Integer> tempList = new ArrayList<>();
+        boolean[] usedArr = new boolean[candidates.length];
+        helpCombinationSum(candidates, target, res, tempList, 0);
+        return res;
+    }
+
+    public void helpCombinationSum(int[] candidates, int remain, List<List<Integer>> res, List<Integer> tempList, int start) {
+        if (remain < 0) {
+            return;
+        }
+        if (remain == 0) {
+            res.add(new ArrayList<>(tempList));
+            return;
+        }
+        for (int i = start; i < candidates.length; ++i) {
+            tempList.add(candidates[i]);
+            helpCombinationSum(candidates, remain - candidates[i], res, tempList, i);
+            tempList.remove(tempList.size() - 1);
+        }
+    }
+
+    // 和上一题类似 但是有重复
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        List<Integer> tempList = new ArrayList<>();
+        Arrays.sort(candidates);
+        boolean[] usedArr = new boolean[candidates.length];
+        helpCombinationSum2(candidates, target, res, tempList, 0, usedArr);
+        return res;
+    }
+
+    public void helpCombinationSum2(int[] candidates, int remain, List<List<Integer>> res, List<Integer> tempList, int start, boolean[] usedArr) {
+        if (remain < 0) {
+            return;
+        }
+        if (remain == 0) {
+            res.add(new ArrayList<>(tempList));
+            return;
+        }
+        for (int i = start; i < candidates.length; ++i) {
+            if (i >= 1 && usedArr[i - 1] == false && candidates[i - 1] == candidates[i]) {
+                continue;
+            }
+            tempList.add(candidates[i]);
+            usedArr[i] = true;
+            helpCombinationSum2(candidates, remain - candidates[i], res, tempList, i + 1, usedArr);
+            usedArr[i] = false;
+            tempList.remove(tempList.size() - 1);
+        }
+    }
+
+    // 回文串
+    public List<List<String>> partition(String s) {
+        List<List<String>> res =new ArrayList<>();
+        List<String> tempList = new ArrayList<>();
+        helpPartition(res, tempList, s, 0);
+        return res;
+    }
+
+    public void helpPartition(List<List<String>> res, List<String> tempList, String s, int start){
+        if(start == s.length()){
+            res.add(new ArrayList<>(tempList));
+        }else {
+            for(int i = start; i< s.length(); ++i){
+                if(isHui(start, i, s)){
+                    tempList.add(s.substring(start, i + 1));
+                    helpPartition(res, tempList, s, i + 1);
+                    tempList.remove(tempList.size() - 1);
+                }
+            }
+        }
+    }
+
+    public boolean isHui(int left, int right, String s){
+        while (left< right){
+            if(s.charAt(left++) != s.charAt(right--)){
+                return false;
+            }
+        }
+        return true;
     }
 
 }
