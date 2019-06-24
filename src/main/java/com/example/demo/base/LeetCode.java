@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -31,7 +32,7 @@ public class LeetCode {
         int[] arr3 = new int[]{4, 5, 0, -2, -3, 1};
 //        subarraysDivByK(arr3, 5);
 //        subarraysDivByKMy(arr3, 5);
-        int[] arr4 = new int[]{10,13,12,14,15};
+        int[] arr4 = new int[]{10, 13, 12, 14, 15};
 //        oddEvenJumps(arr4);
         generateTrees(3);
 //        System.out.println(quickFindKthLargest(new int[]{3,2,3,1,2,4,5,5,6}, 4));
@@ -232,18 +233,18 @@ public class LeetCode {
     public static int oddEvenJumps(int[] A) {
         int count = 0;
         // i是起始位
-        for(int i = 0; i< A.length; ++i){
+        for (int i = 0; i < A.length; ++i) {
             int jumpCount = 1;
             int now = i;
-            while (now < A.length){
-                if(now == A.length - 1){
+            while (now < A.length) {
+                if (now == A.length - 1) {
                     count++;
                     break;
                 }
                 // 奇数跳
-                if(jumpCount % 2 != 0){
+                if (jumpCount % 2 != 0) {
                     int temp = findJiPositionJump(A, now);
-                    if(temp < 0){
+                    if (temp < 0) {
                         break;
                     }
                     now = temp;
@@ -251,7 +252,7 @@ public class LeetCode {
                 // 偶数跳
                 else {
                     int temp = findOuPositionJump(A, now);
-                    if(temp < 0){
+                    if (temp < 0) {
                         break;
                     }
                     now = temp;
@@ -262,11 +263,11 @@ public class LeetCode {
         return count;
     }
 
-    public static int findJiPositionJump(int[] arr, int now){
+    public static int findJiPositionJump(int[] arr, int now) {
         int pre = 900000;
         int pos = -1;
-        for(int i = now + 1; i< arr.length; ++i){
-            if(arr[now] <= arr[i] && arr[i] < pre){
+        for (int i = now + 1; i < arr.length; ++i) {
+            if (arr[now] <= arr[i] && arr[i] < pre) {
                 pos = i;
                 pre = arr[i];
             }
@@ -274,11 +275,11 @@ public class LeetCode {
         return pos;
     }
 
-    public static int findOuPositionJump(int[] arr, int now){
+    public static int findOuPositionJump(int[] arr, int now) {
         int pre = -1;
         int pos = -1;
-        for(int i = now + 1; i< arr.length; ++i){
-            if(arr[now] >= arr[i] && arr[i] > pre){
+        for (int i = now + 1; i < arr.length; ++i) {
+            if (arr[now] >= arr[i] && arr[i] > pre) {
                 pos = i;
                 pre = arr[i];
             }
@@ -323,5 +324,104 @@ public class LeetCode {
         return res;
     }
 
+    public static void main1(String[] args) {
+        Scanner cin = new Scanner(System.in);
+        int n = cin.nextInt();
+        int[] aiList = new int[n];
+        for (int i = 0; i < n; i++) {
+            aiList[i] = cin.nextInt();
+        }
+        int prof = 0;//利润
+        int count = 0;//交易的次数
+        int minPrice = 0;//
+        for (int i = 0; i < n; i++) {
+            // 找到第一个买入的低价
+            while (i < n - 1 && aiList[i + 1] <= aiList[i])
+                i += 1;
+            minPrice = aiList[i];
+
+            //从最低价的后一个元素起，开始寻找第一个卖出的高价
+            i += 1;
+            while (i < n - 1 && aiList[i + 1] >= aiList[i])
+                i += 1;
+            /*
+             * 情况1：但最低价为最后一个元素n-1，if语句不执行
+			 * 情况2：当最低价为倒数第二个的元素时,那么最高价必定为最后一个.
+			 * */
+            if (i < n) {
+                // 找到的高价与找到的低价做差即可
+                prof += aiList[i] - minPrice;
+                // 交易的次数为偶数，买和卖，土豪不会将神秘石留在手上的
+                count += 2;
+            }
+        }
+        System.out.println(prof + " " + count);
+        cin.close();
+    }
+
+    // Best Time to Buy and Sell Stock
+    // 给定一个价格序列prices，其中prices[i]代表第i天商品的价格，商家需要在某一天买入，然后在之后的某一天出售，计算可以获得的最大利润
+    public int maxProfit(int[] prices) {
+        if (0 == prices.length) {
+            return 0;
+        }
+        int min = prices[0];
+        int maxPrice = 0;
+        for (int i = 1; i < prices.length; ++i) {
+            maxPrice = Math.max(maxPrice, prices[i] - min);
+            min = Math.min(min, prices[i]);
+        }
+        return maxPrice;
+    }
+
+    // 这回变成可以买卖多次 计算可以获得的最大利润
+    public int maxProfitV2(int[] prices) {
+        if (0 == prices.length) {
+            return 0;
+        }
+        int maxPrice = 0;
+        for (int i = 1; i < prices.length; ++i) {
+            // 计算每次的前后差值 如果大于0 则累加
+            maxPrice = maxPrice + Math.max(prices[i] - prices[i - 1], 0);
+        }
+        return maxPrice;
+    }
+
+    // dp[i][j] = Math.max (dp[i][j - 1], dp[i-1][m] + (price[j] - price[m]) ） 其中 m = 0 , 1, 2, ``` ,j -1
+    // 前一天已经做了i次交易， 前一次交易的最大值 + （今天股票价格 - m天买入的价格）
+    // 这回变成最多可以完成K次交易 计算可以获得的最大利润
+    public int maxProfitV3(int[] prices, int k) {
+        if (null == prices || 0 == prices.length) {
+            return 0;
+        }
+        if (k > prices.length / 2) return maxProfitV2(prices);
+        int[][] dp = new int[k + 1][prices.length];
+        for (int i = 1; i < k + 1; ++i) {
+            for (int j = 1; j < prices.length; ++j) {
+                int tempMax = 0;
+                for (int m = 0; m < j; ++m) {
+                    tempMax = Math.max(tempMax, dp[i - 1][m] + prices[j] - prices[m]);
+                }
+                dp[i][j] = Math.max(dp[i][j - 1], tempMax);
+            }
+        }
+        return dp[k][prices.length - 1];
+    }
+
+    // 优化
+    public int maxProfitV3_youhua(int[] prices, int k) {
+        if (null == prices || 0 == prices.length) {
+            return 0;
+        }
+        int[][] dp = new int[k + 1][prices.length];
+        for (int i = 1; i < k + 1; ++i) {
+            int max = dp[i][0] - prices[i];
+            for (int j = 1; j < prices.length; ++j) {
+                dp[i][j] = Math.max(dp[i][j - 1], max + prices[j]);
+                max = Math.max(dp[i][j] - prices[j], max);
+            }
+        }
+        return dp[k][prices.length - 1];
+    }
 
 }

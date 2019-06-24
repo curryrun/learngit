@@ -26,10 +26,10 @@ public class MyQueue {
             return;
         }
         put++;
-        arr[put] = a;
         if (put == arr.length) {
             put = 0;
         }
+        arr[put] = a;
     }
 
     // 出队
@@ -54,7 +54,7 @@ public class MyQueue {
             myQueue.add(i);
         }
         for(int j = 0; j < 5; ++j){
-            myQueue.poll();
+            System.out.println(myQueue.poll());
         }
     }
 }

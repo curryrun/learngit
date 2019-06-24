@@ -59,7 +59,7 @@ public class NowCoder {
 
 //        powerfulIntegers(2, 3, 10);
 
-//        LastRemaining_Solution(4, 2);
+        LastRemaining_Solution(4, 2);
 //        NumberOf1(-7);
 //        System.out.println(Integer.toBinaryString(-7));
 
@@ -107,6 +107,7 @@ public class NowCoder {
 //        System.out.println(longestStr("[[(())]][[()))))"));
 //        maxInWindows(new int[]{2, 3, 4, 2, 6, 2, 5, 1}, 3);
         hasPath("ABCESFCSADEE".toCharArray(), 3, 4, "ABCCED".toCharArray());
+//        System.out.println(ReverseSentence("I am a student."));
     }
 
 //    public static List<Integer> powerfulIntegers(int x, int y, int bound) {
@@ -328,9 +329,10 @@ public class NowCoder {
             return str;
         }
         StringBuilder sb = new StringBuilder(arr.length - 1);
-        for (int i = arr.length - 2; i >= 0; --i) {
+        for (int i = arr.length - 1; i >= 0; --i) {
             sb.append(" ").append(arr[i]);
         }
+        sb.deleteCharAt(0);
         return sb.toString();
     }
 
