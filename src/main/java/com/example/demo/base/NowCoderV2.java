@@ -434,12 +434,266 @@ public class NowCoderV2 {
         return myFirst.next;
     }
 
-    // JZ19 正则表达式匹配
-    public boolean match (String str, String pattern) {
+    // TODO JZ19 正则表达式匹配
+    public boolean match(String str, String pattern) {
         // write code here
+        int n = str.length();
+        int m = pattern.length();
+        boolean[][] f = new boolean[n + 1][m + 1];
+
+        for (int i = 0; i <= n; i++) {
+            for (int j = 0; j <= m; j++) {
+                // 空正
+                if (j == 0) {
+                    if (i == 0) {
+                        f[i][j] = true;
+                    }
+                }
+                // 非空正则
+                else {
+                    // 分为两种情况 * 和 非*
+                    if (pattern.charAt(j - 1) != '*') {
+                        if (i > 0 && (str.charAt(i - 1) == pattern.charAt(j - 1) || pattern.charAt(j - 1) == '.')) {
+                            f[i][j] = f[i - 1][j - 1];
+                        }
+                    } else {
+                        //碰到 * 了，分为看和不看两种情况
+                        //不看
+                        if (j >= 2) {
+                            f[i][j] |= f[i][j - 2];
+                        }
+                        //看
+                        if (i >= 1 && j >= 2 && (str.charAt(i - 1) == pattern.charAt(j - 2) || pattern.charAt(j - 2) == '.')) {
+                            f[i][j] |= f[i - 1][j];
+                        }
+                    }
+                }
+            }
+        }
+        return f[n][m];
+    }
+
+    // JZ21 调整数组顺序使奇数位于偶数前面(一) 空间复杂度o(n)
+    public int[] reOrderArray(int[] array) {
+        // write code here
+        int jiCount = 0, ouCount = 0;
+        for (int i = 0; i < array.length; ++i) {
+            if (isJi(array[i])) {
+                jiCount++;
+            } else {
+                ouCount++;
+            }
+        }
+        int[] res = new int[array.length];
+        int jiBegin = 0, ouBegin = jiCount;
+        for (int i = 0; i < array.length; ++i) {
+            if (isJi(array[i])) {
+                res[jiBegin] = array[i];
+                jiBegin++;
+            } else {
+                res[ouBegin] = array[i];
+                ouBegin++;
+            }
+        }
+        return res;
+    }
+
+    private static boolean isJi(int n) {
+        if (n % 2 == 1) {
+            return true;
+        }
         return false;
     }
 
+    // 还有一个空间复杂度o(1)的 也就是每次看到偶数 这个时间复杂度o(n3)
+    public int[] reOrderArrayV2(int[] array) {
+        // write code here
+        for (int i = 0; i < array.length; ++i) {
+            // 前面是奇数 跳过即可 不需要做调整
+            if (isJi(array[i])) {
+                continue;
+            }
+            // i就是找到的第一个偶数
+            for (int j = 1; i + j < array.length; ++j) {
+                // 后面是偶数，一直找到到下一个奇数
+                if (!isJi(array[i + j])) {
+                    continue;
+                }
+                // 找到奇数，则前移
+                if (isJi(array[i + j])) {
+                    // 奇数插入到偶数为止
+                    int nowJPos = i + j;
+                    int temp = array[nowJPos];
+                    // 偶数位置整体后移一位
+                    while (nowJPos > i) {
+                        array[nowJPos] = array[nowJPos - 1];
+                        --nowJPos;
+                    }
+                    array[i] = temp;
+                    break;
+                }
+            }
+        }
+        return array;
+    }
+
+    // 时间复杂度o(n2) 和上面的改动是 删除了一个循环 把找偶数的i，和j的循环放在了一起
+    public static int[] reOrderArrayV3(int[] array) {
+        // write code here
+        // i就是找到的第一个偶数 可以套在下面的循环里一起找
+        int i = 0;
+        for (int j = 0; j < array.length; ++j) {
+            // 开头碰到奇数 i、j一起后移
+            if (i == j && isJi(array[i])) {
+                i++;
+                continue;
+            }
+            // 后面是偶数，一直找到到下一个奇数
+            if (!isJi(array[j])) {
+                continue;
+            }
+            // 找到奇数，则前移
+            if (isJi(array[j])) {
+                // 奇数插入到偶数为止
+                int nowJPos = j;
+                int temp = array[nowJPos];
+                // 偶数位置整体后移一位
+                while (nowJPos > i) {
+                    array[nowJPos] = array[nowJPos - 1];
+                    --nowJPos;
+                }
+                array[i] = temp;
+                ++i;
+            }
+        }
+        return array;
+    }
+
+    // JZ22 链表中倒数最后k个结点 先走一个 然后两个指针一起走
+    public ListNode FindKthToTail(ListNode pHead, int k) {
+        // write code here
+        ListNode qian = pHead;
+        for (int i = 0; i < k; ++i) {
+            if (null == pHead) {
+                return null;
+            }
+            pHead = pHead.next;
+        }
+        ListNode hou = pHead;
+        while (hou != null) {
+            hou = hou.next;
+            qian = qian.next;
+        }
+        return qian;
+    }
+
+    // JZ23 链表中环的入口结点
+    // 快慢节点相遇之后，快节点回到起点，之后用相同速度走，相遇的时候就是环的入口，这里可以用数学公式证明
+    public ListNode EntryNodeOfLoop(ListNode pHead) {
+        if (null == pHead) {
+            return null;
+        }
+        // 自己成环
+        if (pHead.next == pHead) {
+            return pHead;
+        }
+        ListNode temp = pHead, fast = pHead, slow = pHead;
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+            if (fast == slow) {
+                break;
+            }
+        }
+        // 上面循环是因为fast到null的时候 则证明两个指针没有相遇 也就是没有环
+        if (null == fast || null == fast.next) {
+            return null;
+        }
+        fast = temp;
+        while (fast != slow) {
+            fast = fast.next;
+            slow = slow.next;
+        }
+        return fast;
+    }
+
+    // JZ24 反转链表
+    public ListNode ReverseList (ListNode head) {
+        ListNode pre = null, after = head;
+        while (after != null) {
+            ListNode temp = after.next;
+            after.next = pre;
+            pre = after;
+            after = temp;
+        }
+        return pre;
+    }
+
+    // JZ25 合并两个排序的链表
+    public static ListNode Merge (ListNode pHead1, ListNode pHead2) {
+        // write code here
+        ListNode head = new ListNode(-1);
+        ListNode temp = head;
+        while (null != pHead1 || null != pHead2) {
+            if (null == pHead1 && null != pHead2) {
+                head.next = pHead2;
+                pHead2 = pHead2.next;
+            }
+            if (null == pHead2 && null != pHead1) {
+                head.next = pHead1;
+                pHead1 = pHead1.next;
+            }
+            if (null != pHead1 && null != pHead2) {
+                if (pHead1.val > pHead2.val) {
+                    head.next = pHead2;
+                    pHead2 = pHead2.next;
+                } else {
+                    head.next = pHead1;
+                    pHead1 = pHead1.next;
+                }
+            }
+            head = head.next;
+        }
+        return temp.next;
+    }
+
+    // JZ26 树的子结构
+    public boolean HasSubtree(TreeNode root1, TreeNode root2) {
+        if (null == root1 || null == root2) {
+            return false;
+        }
+        boolean res = false;
+        if (root1.val == root2.val) {
+            res = deepHasSubtree(root1, root2);
+        }
+        // 没找到 则尝试找左子树
+        if (!res) {
+            res = HasSubtree(root1.left, root2);
+        }
+        // 没找到 再尝试找右子树
+        if (!res) {
+            res = HasSubtree(root1.right, root2);
+        }
+        return res;
+    }
+
+    public boolean deepHasSubtree(TreeNode root1, TreeNode root2) {
+        if (null == root2) {
+            return true;
+        }
+        // 相当于第一棵树已经遍历完了 但是第二棵树还没完事
+        if (null == root1 && null != root2) {
+            return false;
+        }
+        // 只要值不等就返回
+        if (root1.val != root2.val) {
+            return false;
+        }
+        else {
+            return deepHasSubtree(root1.left, root2.left) &&
+                    deepHasSubtree(root1.right, root2.right);
+        }
+    }
 
 
     public static void main(String[] args) {
@@ -450,9 +704,16 @@ public class NowCoderV2 {
                 , {'V', 'C', 'E', 'I', 'F', 'G', 'G', 'S'}};
         String s = "SGGFIECVAASABCEHJIGQEM";
 //        System.out.println(hasPath(arr, s));
-        System.out.println(movingCountAdd(122));
+//        System.out.println(movingCountAdd(122));
         int[] calArr = new int[5];
         System.out.println(calArr[4]);
+
+        int[] arrInt = new int[]{1, 2, 2, 3, 2, 2, 5};
+        System.out.println(reOrderArrayV3(arrInt));
+        for (int i = 0; i < arrInt.length; ++i) {
+            System.out.println(arrInt[i]);
+        }
+        Merge(new ListNode(1), new ListNode(2));
     }
 
 
