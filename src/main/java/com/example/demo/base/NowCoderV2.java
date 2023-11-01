@@ -1,9 +1,13 @@
 package com.example.demo.base;
 
+import org.w3c.dom.Attr;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -161,7 +165,7 @@ public class NowCoderV2 {
     Stack<Integer> stack1 = new Stack<Integer>();
     Stack<Integer> stack2 = new Stack<Integer>();
 
-    public void push(int node) {
+    public void pushByDoubleQueue(int node) {
         while (!stack1.isEmpty()) {
             stack2.push(stack1.pop());
         }
@@ -169,7 +173,7 @@ public class NowCoderV2 {
     }
 
     // 注意这个地方 stack2里 必须为空的时候，才能重新添加，否则会之前要先出队的，出不来了，顺序有问题
-    public int pop() {
+    public int popByDoubleQueue() {
         if (stack2.size() == 0) {
             while (!stack1.isEmpty()) {
                 stack2.push(stack1.pop());
@@ -695,6 +699,238 @@ public class NowCoderV2 {
         }
     }
 
+    // JZ27 二叉树的镜像
+    public TreeNode Mirror(TreeNode pRoot) {
+        // write code here
+        TreeNode temp = pRoot;
+        deepMirror(temp);
+        return pRoot;
+    }
+
+    public void deepMirror(TreeNode pRoot) {
+        if (null == pRoot) {
+            return;
+        }
+        TreeNode left = pRoot.getLeft();
+        TreeNode right = pRoot.getRight();
+        pRoot.setLeft(right);
+        pRoot.setRight(left);
+        deepMirror(left);
+        deepMirror(right);
+    }
+
+    // JZ28 对称的二叉树
+    // 采用层次遍历的思想，遍历根节点下面的左右两棵子树
+    public static boolean isSymmetrical(TreeNode pRoot) {
+        // write code here
+        if (null == pRoot) {
+            return true;
+        }
+        LinkedList<TreeNode> queueLeft = new LinkedList<>();
+        queueLeft.add(pRoot.left);
+        LinkedList<TreeNode> queueRight = new LinkedList<>();
+        queueRight.add(pRoot.right);
+        while (!queueLeft.isEmpty() && !queueRight.isEmpty()) {
+            TreeNode leftTemp = queueLeft.poll();
+            TreeNode rightTemp = queueRight.poll();
+            if (null == leftTemp && null == rightTemp) {
+                continue;
+            }
+            // 左右不均衡
+            if ((null == leftTemp && rightTemp != null) || (null == rightTemp && leftTemp != null)) {
+                return false;
+            }
+//            if (leftTemp.val != rightTemp.val) {
+            if (!leftTemp.val.equals(rightTemp.val)) {
+                return false;
+            }
+            queueLeft.add(leftTemp.left);
+            queueLeft.add(leftTemp.right);
+            // 另一棵树反向遍历
+            queueRight.add(rightTemp.right);
+            queueRight.add(rightTemp.left);
+        }
+        return true;
+    }
+
+    // JZ29 顺时针打印矩阵
+    static int count = 0;
+    public static ArrayList<Integer> printMatrix(int[][] matrix) {
+        ArrayList<Integer> res = new ArrayList<>();
+        int size = matrix.length * matrix[0].length;
+        myPrint(matrix, 0, 0, matrix.length - 1, matrix[0].length - 1, res, size);
+        return res;
+    }
+
+    // 每次都要判断是否已经遍历所有元素！
+    private static void myPrint(int[][] arr, int startHang, int startLie, int hangRight, int lieRight, ArrayList<Integer> res, int size) {
+        if (count >= size) {
+            return;
+        }
+        for (int i = startLie; i <= lieRight && count < size; ++i) {
+            res.add(arr[startHang][i]);
+            count++;
+        }
+        for (int i = startHang + 1; i <= hangRight && count < size; ++i) {
+            res.add(arr[i][lieRight]);
+            count++;
+        }
+        for (int i = lieRight - 1; i >= startLie && count < size; --i) {
+            res.add(arr[hangRight][i]);
+            count++;
+        }
+        for (int i = hangRight - 1; i > startHang && count < size; --i) {
+            res.add(arr[i][startLie]);
+            count++;
+        }
+        myPrint(arr, startHang + 1, startLie + 1, hangRight - 1, lieRight - 1, res, size);
+    }
+
+    // JZ30 包含min函数的栈 用一个min stack 做快照
+    LinkedList<Integer> commonStack = new LinkedList<Integer>();
+    LinkedList<Integer> minStack = new LinkedList<Integer>();
+    public void push(int node) {
+        if (commonStack.size() == 0) {
+            commonStack.push(node);
+            minStack.push(node);
+            return;
+        }
+        commonStack.push(node);
+        int nowMin = minStack.peek();
+        if (node < nowMin) {
+            minStack.push(node);
+        } else {
+            minStack.push(nowMin);
+        }
+    }
+
+    public void pop() {
+        commonStack.pop();
+        minStack.pop();
+    }
+
+    public int top() {
+        return commonStack.peek();
+    }
+
+    public int min() {
+        return minStack.peek();
+    }
+
+    // JZ31 栈的压入、弹出序列
+    // 输入两个整数序列，第一个序列表示栈的压入顺序，请判断第二个序列是否可能为该栈的弹出顺序。假设压入栈的所有数字均不相等。
+    // 例如序列1,2,3,4,5是某栈的压入顺序，序列4,5,3,2,1是该压栈序列对应的一个弹出序列，但4,3,5,1,2就不可能是该压栈序列的弹出序列。
+    public static boolean IsPopOrder (int[] pushV, int[] popV) {
+        LinkedList<Integer> pushStack = new LinkedList<>();
+        int popPos = 0;
+        for (int i = 0; i< pushV.length; ++i) {
+            pushStack.push(pushV[i]);
+            int peek = pushStack.peek();
+            // 不相等就接着塞
+            if (peek != popV[popPos]) {
+                continue;
+            }
+            // 相等就尝试出栈
+            while (!pushStack.isEmpty() && popPos < popV.length) {
+                peek = pushStack.peek();
+                if (peek == popV[popPos]) {
+                    pushStack.pop();
+                    ++popPos;
+                }
+                // 不等的话停止 继续尝试入栈 再试一下
+                else {
+                    break;
+                }
+            }
+        }
+        if (!pushStack.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+
+    // JZ32 从上往下打印二叉树 就是二叉树层次遍历
+    public ArrayList<Integer> PrintFromTopToBottom(TreeNode root) {
+        ArrayList<Integer> res = new ArrayList<>();
+        if (null == root) {
+            return res;
+        }
+        LinkedList<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            TreeNode temp = queue.poll();
+            res.add(temp.val);
+            if (null != temp.left) {
+                queue.add(temp.left);
+            }
+            if (null != temp.right) {
+                queue.add(temp.right);
+            }
+        }
+        return res;
+    }
+
+    // JZ33 判定是否为二叉搜索树的后序遍历序列 左子树小 < 根 < 右子树
+    public boolean VerifySquenceOfBST(int [] sequence) {
+        if (sequence.length == 0) {
+            return false;
+        }
+        return VerifySquenceOfBSTDeep(0, sequence.length - 1, sequence);
+    }
+
+    public boolean VerifySquenceOfBSTDeep(int begin, int end, int [] sequence) {
+        if (begin > end) {
+            return true;
+        }
+        int root = sequence[end];
+        // 找到第一个比root大的节点 就是右子树
+        int split = end;
+        for (int i = begin; i < end; ++i) {
+            if (sequence[i] > root) {
+                split = i;
+                break;
+            }
+        }
+        // 判定右子树中是否有比root小的
+        for (int i = split + 1; i< end; ++i) {
+            if (sequence[i] <= root) {
+                return false;
+            }
+        }
+        return VerifySquenceOfBSTDeep(begin, split - 1, sequence) && VerifySquenceOfBSTDeep(split, end - 1, sequence);
+    }
+
+    // JZ34 二叉树中和为某一值的路径(二)
+    public ArrayList<ArrayList<Integer>> FindPath (TreeNode root, int target) {
+        // write code here
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        ArrayList<Integer> temp = new ArrayList<>();
+        if (root == null) {
+            return res;
+        }
+        FindPathDeep(root, 0, target, res, temp);
+        return res;
+    }
+
+    public void FindPathDeep(TreeNode root, int nowNumber, int target, ArrayList<ArrayList<Integer>> res, ArrayList<Integer> temp) {
+        // 找到叶子结点
+        if (root.left == null && root.right == null) {
+            if (root.val + nowNumber == target) {
+                temp.add(root.val);
+                res.add(new ArrayList<>(temp));
+                temp.remove(temp.size() - 1);
+            }
+            return;
+        }
+        temp.add(root.val);
+        if (null != root.left) {
+            FindPathDeep(root.left, nowNumber + root.val, target, res, temp);
+        }
+        if (null != root.right) {
+            FindPathDeep(root.right, nowNumber + root.val, target, res, temp);
+        }
+        temp.remove(temp.size() - 1);
+    }
 
     public static void main(String[] args) {
         char[][] arr = new char[][]{{'A', 'B', 'C', 'E', 'H', 'J', 'I', 'G'}
@@ -709,11 +945,28 @@ public class NowCoderV2 {
         System.out.println(calArr[4]);
 
         int[] arrInt = new int[]{1, 2, 2, 3, 2, 2, 5};
-        System.out.println(reOrderArrayV3(arrInt));
+//        System.out.println(reOrderArrayV3(arrInt));
+
         for (int i = 0; i < arrInt.length; ++i) {
             System.out.println(arrInt[i]);
         }
-        Merge(new ListNode(1), new ListNode(2));
+//        Merge(new ListNode(1), new ListNode(2));
+
+        TreeNode root = new TreeNode(1);
+        TreeNode level_1_l = new TreeNode(2);
+        TreeNode level_1_r = new TreeNode(2);
+        TreeNode level_2_r = new TreeNode(3);
+        TreeNode level_2_l = new TreeNode(3);
+        root.left = level_1_l;
+        root.right = level_1_r;
+        level_1_l.right = level_2_r;
+        level_1_r.left = level_2_l;
+//        isSymmetrical(root);
+
+        int[][] intArr = new int[][]{{1,2,3,4,5}};
+//        printMatrix(intArr);
+
+        IsPopOrder(new int[]{1,2,3,4,5}, new int[]{4,5,3,2,1});
     }
 
 
