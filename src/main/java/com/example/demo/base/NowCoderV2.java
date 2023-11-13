@@ -1,13 +1,10 @@
 package com.example.demo.base;
 
-import org.w3c.dom.Attr;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -932,6 +929,238 @@ public class NowCoderV2 {
         temp.remove(temp.size() - 1);
     }
 
+    // JZ35 复杂链表的复制
+    public static RandomListNode Clone(RandomListNode pHead) {
+        if (null == pHead) {
+            return null;
+        }
+        RandomListNode tail = new RandomListNode(-1);
+        tail.next = pHead;
+        RandomListNode temp = tail;
+        // 先做复制
+        while (null != temp) {
+            RandomListNode copy = new RandomListNode(temp.label);
+            copy.next = temp.next;
+            temp.next = copy;
+            temp = temp.next.next;
+        }
+        // 再次遍历 设置random
+        temp = tail;
+        while (null != temp) {
+            if (null != temp.random) {
+                temp.next.random = temp.random.next;
+            }
+            temp = temp.next.next;
+        }
+        // 新老节点拆开
+        temp = tail;
+        RandomListNode res = tail.next;
+        while (null != temp.next) {
+            RandomListNode newNode = temp.next;
+            temp.next = newNode.next;
+            temp = newNode;
+        }
+        return res.next;
+    }
+
+    // JZ36 二叉搜索树与双向链表
+    // 这里好好想想为啥pre要拿出来 当做一个公共的变量
+    TreeNode head = null;
+    TreeNode pre = null;
+    public TreeNode Convert(TreeNode pRootOfTree) {
+        if (null == pRootOfTree) {
+            return pRootOfTree;
+        }
+        deepConvert(pRootOfTree);
+        return head;
+    }
+
+    public void deepConvert(TreeNode root) {
+        if (null == root) {
+            return;
+        }
+        // 一直往左边找
+        deepConvert(root.left);
+        // 左边一直走 走到头了
+        // 第一次走到头
+        if (null == pre) {
+            pre = root;
+            head = root;
+        }
+        // 不是第一次的话 就要开始整理成链表了
+        else {
+            pre.right = root;
+            root.left = pre;
+            pre = root;
+        }
+        // 前面已经走完了左边 开始处理右边
+        deepConvert(root.right);
+    }
+
+    // TODO JZ37 序列化二叉树
+    String SerializeMine(TreeNode root) {
+        String res = "";
+        if (null == root) {
+            return res;
+        }
+        LinkedList<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        int levelSize = 1, count = 0;
+        boolean haveNormalNode = false;
+        while (!queue.isEmpty()) {
+            TreeNode temp = queue.poll();
+            ++count;
+            String val = String.valueOf(temp.val);
+            if (-1 == temp.val) {
+                val = "#";
+            }
+            res = res + val;
+            if (null == temp.left) {
+                queue.add(new TreeNode(-1));
+            } else {
+                queue.add(temp.left);
+                haveNormalNode = true;
+            }
+            if (null == temp.right) {
+                queue.add(new TreeNode(-1));
+            } else {
+                queue.add(temp.right);
+                haveNormalNode = true;
+            }
+            // 遍历完成这一层 校验这层是否有正常的节点 非#的
+            if (count == levelSize) {
+                if (!haveNormalNode) {
+                    break;
+                }
+                haveNormalNode = false;
+                count = 0;
+                levelSize = levelSize * 2;
+            }
+        }
+        return res;
+    }
+
+    public static String Serialize(TreeNode root) {
+        StringBuilder sb = new StringBuilder();
+        if (null == root) {
+            return "";
+        }
+        if (null == root.left && null == root.right) {
+            sb.append(root.val);
+            return sb.toString();
+        }
+        LinkedList<TreeNode> stack = new LinkedList<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode temp = stack.pop();
+            if (null == temp) {
+                sb.append("#,");
+                continue;
+            }
+            sb.append(temp.val).append(",");
+            if (null == temp.left && null == temp.right) {
+                sb.append("#,#,");
+                continue;
+            }
+            stack.push(temp.right);
+            stack.push(temp.left);
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
+    }
+
+    // 再反序列化出来
+    static TreeNode Deserialize(String str) {
+        if (null == str || str.length() == 0) {
+            return null;
+        }
+        String[] strArr = str.split(",");
+        int levelNum = 2;
+        TreeNode root = new TreeNode(Integer.valueOf(strArr[0]));
+        LinkedList<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        int i = 1;
+        while (i < strArr.length) {
+            int count = 0;
+            while (i < strArr.length && !queue.isEmpty() && count < levelNum) {
+                TreeNode preLevelNode = queue.poll();
+                // left child
+                String childVal = strArr[i];
+                if (childVal.equals("#")) {
+                    ++i;
+                } else {
+                    TreeNode leftNode = new TreeNode(Integer.valueOf(childVal));
+                    preLevelNode.left = leftNode;
+                    ++i;
+                    queue.add(leftNode);
+                }
+                if (i >= strArr.length) {
+                    break;
+                }
+                ++count;
+                // right child
+                String rightVal = strArr[i];
+                if (rightVal.equals("#")) {
+                    ++i;
+                } else {
+                    TreeNode rightNode = new TreeNode(Integer.valueOf(rightVal));
+                    preLevelNode.right = rightNode;
+                    ++i;
+                    queue.add(rightNode);
+                }
+                ++count;
+            }
+            levelNum = levelNum * 2;
+        }
+        return root;
+    }
+
+    // JZ38 字符串的排列
+    public static ArrayList<String> Permutation (String str) {
+        // write code here
+        ArrayList<String> res = new ArrayList<>();
+        if (null == str || 0 == str.length()) {
+            return res;
+        }
+        StringBuilder sb = new StringBuilder();
+        HashSet<String> usedSet = new HashSet<>();
+        boolean[] usedArr = new boolean[str.length()];
+        deepPermutation(sb, str, usedArr, usedSet, res);
+        return res;
+    }
+
+    public static void deepPermutation(StringBuilder sb, String inputStr, boolean[] usedArr, HashSet<String> usedSet, ArrayList<String> res) {
+        if (sb.length() == inputStr.length() && !usedSet.contains(sb.toString())) {
+            res.add(new String(sb.toString()));
+            usedSet.add(new String(sb.toString()));
+            return;
+        }
+        // 注意这里遍历每次都是从头
+        for (int i = 0; i< inputStr.length(); ++i) {
+            // 如果这个字符用过了就跳过
+            if (usedArr[i]) {
+                continue;
+            }
+            sb.append(inputStr.charAt(i));
+            usedArr[i] = true;
+            deepPermutation(sb, inputStr, usedArr, usedSet, res);
+            sb.deleteCharAt(sb.length() - 1);
+            usedArr[i] = false;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     public static void main(String[] args) {
         char[][] arr = new char[][]{{'A', 'B', 'C', 'E', 'H', 'J', 'I', 'G'}
                 , {'S', 'F', 'C', 'S', 'L', 'O', 'P', 'Q'}
@@ -966,7 +1195,12 @@ public class NowCoderV2 {
         int[][] intArr = new int[][]{{1,2,3,4,5}};
 //        printMatrix(intArr);
 
-        IsPopOrder(new int[]{1,2,3,4,5}, new int[]{4,5,3,2,1});
+//        IsPopOrder(new int[]{1,2,3,4,5}, new int[]{4,5,3,2,1});
+
+//        Clone(new RandomListNode(1));
+
+//        Serialize(Deserialize("5,4,#,#,3,#,#,#,2"));
+        Permutation("aa");
     }
 
 
