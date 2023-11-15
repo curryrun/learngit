@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Stack;
 
 /**
@@ -1149,10 +1150,136 @@ public class NowCoderV2 {
         }
     }
 
+    // JZ39 数组中出现次数超过一半的数字
+    // 思路类似于相同的分到一队，不同的分到另一队，打架，消消乐 只要消成0 就肯定不是众数，下一个就换
+    public static int MoreThanHalfNum_Solution (int[] numbers) {
+        // write code here
+        int remainNum = 0, res = -1;
+        for (int i = 0; i< numbers.length; ++i) {
+            if (remainNum == 0) {
+                res = numbers[i];
+                remainNum++;
+            } else {
+                if (numbers[i] == res) {
+                    remainNum++;
+                } else {
+                    remainNum--;
+                }
+            }
+        }
+        int sameCount = 0;
+        for (int i = 0; i< numbers.length; ++i) {
+            if (res == numbers[i]) {
+                sameCount++;
+            }
+        }
+        if (sameCount > numbers.length / 2) {
+            return res;
+        }
+        return -1;
+    }
 
+    // JZ40 最小的K个数
+    public ArrayList<Integer> GetLeastNumbers_Solution (int[] input, int k) {
+        // write code here
+        quickSort(input, 0, input.length - 1);
+        ArrayList<Integer> res = new ArrayList<>();
+        for (int i = 0; i< k; ++i) {
+            res.add(input[i]);
+        }
+        return res;
+    }
 
+    public void quickSort(int[] input, int left, int right) {
+        if (left >= right) {
+            return;
+        }
+        int mid = commonSwap(input, left, right);
+        quickSort(input, left, mid - 1);
+        quickSort(input, mid + 1, right);
+    }
 
+    public int commonSwap(int[] input, int left, int right) {
+        int temp = input[left];
+        while (left < right) {
+            while (left < right && input[right] >= temp) {
+                right--;
+            }
+            input[left] = input[right];
+            while (left < right && input[left] <= temp) {
+                left++;
+            }
+            input[right] = input[left];
+        }
+        input[left] = temp;
+        return left;
+    }
 
+    // JZ41 数据流中的中位数
+    // 小顶堆 存放大的数据 需要正排
+    static PriorityQueue<Integer> afterQueue = new PriorityQueue<>();
+    // 大顶堆 存放小的数据 需要倒排
+    static PriorityQueue<Integer> preQueue = new PriorityQueue<>((Integer o1, Integer o2) -> {return o2 - o1;});
+
+    public static void Insert(Integer num) {
+        int afterSize = afterQueue.size();
+        int preSize = preQueue.size();
+        // 初始case
+        if (0 == preSize && 0 == afterSize) {
+            preQueue.add(num);
+            return;
+        }
+        // 初始情况要特殊处理下
+        if (0 == afterSize) {
+            int prePeek = preQueue.peek();
+            if (num < prePeek) {
+                preQueue.add(num);
+                afterQueue.add(preQueue.poll());
+            } else {
+                afterQueue.add(num);
+            }
+            return;
+        }
+        // 新增的数据要放到afterqueue
+        if (preSize > afterSize) {
+            int afterPeek = afterQueue.peek();
+            if (num > afterPeek) {
+                afterQueue.add(num);
+            } else {
+                preQueue.add(num);
+                afterQueue.add(preQueue.poll());
+            }
+        }
+        // 放到pre里
+        else {
+            int prePeek = preQueue.peek();
+            if (num < prePeek) {
+                preQueue.add(num);
+            } else {
+                afterQueue.add(num);
+                preQueue.add(afterQueue.poll());
+            }
+        }
+
+    }
+
+    public Double GetMedian() {
+        int size = afterQueue.size() + preQueue.size();
+        if (0 == size) {
+            return null;
+        }
+        if (size % 2 == 1) {
+            return preQueue.peek().doubleValue();
+        } else {
+            return (preQueue.peek() + afterQueue.peek()) / 2.0;
+        }
+    }
+
+    // JZ42 连续子数组的最大和
+    public int FindGreatestSumOfSubArray (int[] array) {
+        // write code here
+        return 0;
+    }
 
 
 
@@ -1200,7 +1327,8 @@ public class NowCoderV2 {
 //        Clone(new RandomListNode(1));
 
 //        Serialize(Deserialize("5,4,#,#,3,#,#,#,2"));
-        Permutation("aa");
+//        Permutation("aa");
+//        MoreThanHalfNum_Solution(new int[]{2,2,2,2,2,1,3,4,5});
     }
 
 
