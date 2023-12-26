@@ -1276,9 +1276,26 @@ public class NowCoderV2 {
     }
 
     // JZ42 连续子数组的最大和
+    // 动态规划，设动态规划列表 dp，dp[i] 代表以元素 array[i] 为结尾的连续子数组最大和。
+    // 状态转移方程： dp[i] = Math.max(dp[i-1]+array[i], array[i]);
     public int FindGreatestSumOfSubArray (int[] array) {
         // write code here
-        return 0;
+        int max = array[0];
+        int sum = 0;
+        for(int i = 0; i< array.length; ++i) {
+            sum = Math.max(array[i], sum + array[i]);
+            max = Math.max(max, sum);
+        }
+        return max;
+    }
+
+    // JZ43 整数中1出现的次数（从1到n整数中1出
+    public int NumberOf1Between1AndN_Solution(int n) {
+        int sum = 0;
+        for (int i = 1; i <= n; ++i) {
+
+        }
+        return sum;
     }
 
 
