@@ -1,5 +1,7 @@
 package com.example.demo.base;
 
+import org.springframework.util.StringUtils;
+
 import java.util.LinkedList;
 import java.util.Stack;
 
@@ -98,9 +100,80 @@ public class ForAWS_StackQueue {
         return max;
     }
 
+    // 42. Trapping Rain Water
+    // https://leetcode.com/problems/trapping-rain-water/
+    // Input: height = [0,1,0,2,1,0,1,3,2,1,2,1]
+    // Output: 6
+    public static int trap(int[] height) {
+        int nowI = 0, sum = 0;
+        LinkedList<Integer> stack = new LinkedList<>();
+        while (nowI < height.length) {
+            int nowValue = height[nowI];
+            while (!stack.isEmpty() && nowValue > height[stack.peek()]) {
+                int low = stack.pop();
+                int lowHeight = height[low];
+                // 没有左边的墙了 直接结束
+                if (stack.isEmpty()) {
+                    break;
+                }
+                int newPeek = stack.peek();
+                // 左侧墙壁高度
+                int leftHeight = height[newPeek];
+                // 根据左右墙壁的最小值确认能装多少
+                int minHeight = Math.min(nowValue, leftHeight);
+                // 宽度
+                int width = nowI - newPeek - 1;
+                int itemSum = width * (minHeight - lowHeight);
+                sum = sum + itemSum;
+            }
+            stack.push(nowI);
+            ++nowI;
+        }
+        return sum;
+    }
+
+    // 402 Remove K Digits
+    // https://leetcode.com/problems/remove-k-digits/
+    // 遍历 如果左边比当前的大 就抛掉
+    public static String removeKdigits(String num, int k) {
+        if (null == num || "".equals(num)) {
+            return num;
+        }
+        int popCount = 0;
+        LinkedList<Integer> stack = new LinkedList<>();
+        stack.push(Integer.valueOf(String.valueOf(num.charAt(0))));
+        for (int i = 1; i< num.length(); ++i) {
+            int now = Integer.valueOf(String.valueOf(num.charAt(i)));
+            if (popCount >= k) {
+                stack.push(now);
+                continue;
+            }
+            while (!stack.isEmpty() && stack.peek() > now) {
+                stack.pop();
+                popCount++;
+                if (popCount >= k) {
+                    break;
+                }
+            }
+            stack.push(now);
+        }
+        String res = "";
+        while (!stack.isEmpty()) {
+            res = stack.pop() + res;
+        }
+        res = res.substring(0, num.length() - k);
+        res = res.replaceAll("^0*", "");
+        if ("".equals(res)) {
+            return "0";
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
 //        isValid("()");
-        largestRectangleArea(new int[] {2,1,5,6,2,3});
+//        largestRectangleArea(new int[] {2,1,5,6,2,3});
+//        System.out.println(trap(new int[] {4,2,0,3,2,5}));
+        System.out.println(removeKdigits("1234567890", 9));
     }
 
 }
