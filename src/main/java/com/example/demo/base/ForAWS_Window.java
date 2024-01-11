@@ -65,19 +65,6 @@ public class ForAWS_Window {
         return s.substring(start, start + minLen);
     }
 
-    // 校验是否包含
-    public static boolean isHaveAll(Map<Character, Integer> needMap, Map<Character, Integer> windowMap) {
-        for (Map.Entry<Character, Integer> item : needMap.entrySet()) {
-            Character k = item.getKey();
-            Integer v = item.getValue();
-            Integer windowValue = windowMap.getOrDefault(k, 0);
-            if (!v.equals(windowValue)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public static String minWindowOfMine(String s, String t) {
         Map<Character, Integer> needMap = new HashMap<>();
         for (int i = 0; i < t.length(); ++i) {
@@ -124,8 +111,49 @@ public class ForAWS_Window {
         return s.substring(start, start + minLen);
     }
 
+    // 567. Permutation in String
+    // https://leetcode.com/problems/permutation-in-string/description/
+    public static boolean checkInclusion(String s1, String s2) {
+        Map<Character, Integer> needMap = new HashMap<>();
+        for (int i = 0; i < s1.length(); ++i) {
+            Character now = s1.charAt(i);
+            needMap.put(now, needMap.getOrDefault(now, 0) + 1);
+        }
+        int left = 0, right = 0;
+        int match = 0;
+        Map<Character, Integer> windowMap = new HashMap<>();
+        while (right < s2.length()) {
+            Character now = s2.charAt(right);
+            if (needMap.containsKey(now)) {
+                windowMap.put(now, windowMap.getOrDefault(now, 0) + 1);
+                if (windowMap.get(now).equals(needMap.get(now))) {
+                    match++;
+                }
+            }
+            ++right;
+            // 判断全部 distinct 的字符出现次数 = match的时候
+            while (needMap.size() == match) {
+                // right在上面已经加+1了 所以这里不用加1 其实这里的right已经是下一次窗口扩展循环的时候 right的位置
+                if (right - left == s1.length()) {
+                    return true;
+                }
+                Character delete = s2.charAt(left);
+                if (needMap.containsKey(delete)) {
+                    // 扣减之前就要要重新比对下 是不是match
+                    if (windowMap.get(delete).equals(needMap.get(delete))) {
+                        match--;
+                    }
+                    windowMap.put(delete, windowMap.get(delete) - 1);
+                }
+                ++left;
+            }
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
-        System.out.println(minWindowOfMine("ADOBECODEBANC", "ABC"));
+//        System.out.println(minWindowOfMine("ADOBECODEBANC", "ABC"));
+        System.out.println(checkInclusion("abcdxabcde", "abcdeabcdx"));
     }
 
 
