@@ -1,6 +1,8 @@
 package com.example.demo.base;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -8,6 +10,7 @@ import java.util.Map;
  * @Description
  * @Date 2024/1/8 23:11
  * @Creater zhangdongrun_dxm
+ * https://chienmy.gitbook.io/algorithm-pattern-java/ji-chu-suan-fa/slide_window
  * 滑动窗口
  **/
 public class ForAWS_Window {
@@ -149,6 +152,44 @@ public class ForAWS_Window {
             }
         }
         return false;
+    }
+
+    // 438. Find All Anagrams in a String
+    // https://leetcode.com/problems/find-all-anagrams-in-a-string/description/
+    public List<Integer> findAnagrams(String s, String p) {
+        List<Integer> resList = new ArrayList<>();
+        Map<Character, Integer> needMap = new HashMap<>();
+        for (int i = 0; i< p.length(); ++i) {
+            Character now = p.charAt(i);
+            needMap.put(now, needMap.getOrDefault(now, 0) + 1);
+        }
+        int left = 0, right = 0;
+        int match = 0;
+        Map<Character, Integer> windowMap = new HashMap<>();
+        while (right < s.length()) {
+            Character now = s.charAt(right);
+            if (needMap.containsKey(now)) {
+                windowMap.put(now, windowMap.getOrDefault(now, 0) + 1);
+                if (windowMap.get(now).equals(needMap.get(now))) {
+                    ++match;
+                }
+            }
+            ++right;
+            while (match == needMap.size() && left < s.length()) {
+                if (right - left == p.length()) {
+                    resList.add(left);
+                }
+                Character delete = p.charAt(left);
+                if (windowMap.containsKey(delete)) {
+                    if (windowMap.get(delete).equals(needMap.get(delete))) {
+                        --match;
+                    }
+                    windowMap.put(delete, windowMap.get(delete) - 1);
+                }
+                ++left;
+            }
+        }
+        return resList;
     }
 
     public static void main(String[] args) {
