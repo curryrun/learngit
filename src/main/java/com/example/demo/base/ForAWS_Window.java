@@ -192,6 +192,35 @@ public class ForAWS_Window {
         return resList;
     }
 
+    // 3. Longest Substring Without Repeating Characters
+    // https://leetcode.com/problems/longest-substring-without-repeating-characters/description/
+    public int lengthOfLongestSubstring(String s) {
+        int left = 0, right = 0;
+        int maxLen = 0;
+        Map<Character, Integer> windowMap = new HashMap<>();
+        while (right < s.length()) {
+            Character now = s.charAt(right);
+            windowMap.put(now, windowMap.getOrDefault(now, 0) + 1);
+            // 当前唯一
+            if (1 == windowMap.get(now)) {
+                if (right - left + 1 > maxLen) {
+                    maxLen = right - left + 1;
+                }
+            }
+            // 当前不唯一 开始收缩
+            else {
+                // 当前重复的字符肯定是 now
+                while (windowMap.get(now) > 1) {
+                    Character delete = s.charAt(left);
+                    windowMap.put(delete, windowMap.get(delete) - 1);
+                    ++left;
+                }
+            }
+            ++right;
+        }
+        return maxLen;
+    }
+
     public static void main(String[] args) {
 //        System.out.println(minWindowOfMine("ADOBECODEBANC", "ABC"));
         System.out.println(checkInclusion("abcdxabcde", "abcdeabcdx"));
