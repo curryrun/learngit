@@ -1,4 +1,4 @@
-package com.example.demo.base;
+package com.example.demo.basetype;
 
 import org.springframework.util.StringUtils;
 

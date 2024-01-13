@@ -1,4 +1,6 @@
-package com.example.demo.base;
+package com.example.demo.basetype;
+
+import com.example.demo.base.ListNode;
 
 /**
  * @Classname ForAWS

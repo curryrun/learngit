@@ -1,4 +1,4 @@
-package com.example.demo.base;
+package com.example.demo.basetype;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -209,7 +209,7 @@ public class ForAWS_Window {
             }
             // 当前不唯一 开始收缩
             else {
-                // 当前重复的字符肯定是 now
+                // 当前重复的字符肯定是 now 所以只要找到让now 唯一的节点即可停止收缩
                 while (windowMap.get(now) > 1) {
                     Character delete = s.charAt(left);
                     windowMap.put(delete, windowMap.get(delete) - 1);
