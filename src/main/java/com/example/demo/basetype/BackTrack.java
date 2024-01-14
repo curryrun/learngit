@@ -228,7 +228,6 @@ public class BackTrack {
         return result;
     }
 
-
     public void deepLetterCombinations(int level, List<List<String>> inputList, List<String> result, String tempStr) {
         if (tempStr.length() == inputList.size()) {
             result.add(new String(tempStr));
@@ -240,6 +239,79 @@ public class BackTrack {
             deepLetterCombinations(level + 1, inputList, result, tempStr);
             tempStr = tempStr.substring(0, tempStr.length() - 1);
         }
+    }
+
+    // 39. Combination Sum
+    // https://leetcode.com/problems/combination-sum/description/
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> result = new ArrayList<>();
+        List<Integer> subList = new ArrayList<>();
+        Arrays.sort(candidates);
+        deepCombinationSum(candidates, target, 0, 0, result, subList);
+        return result;
+    }
+
+    public void deepCombinationSum(int[] candidates, int target, int sum, int start, List<List<Integer>> result, List<Integer> subList) {
+        if (sum == target) {
+            result.add(new ArrayList<>(subList));
+            return;
+        }
+        // 组合就要每次从start开始
+        for (int i = start; i < candidates.length; ++i) {
+            int tempSum = sum + candidates[i];
+            if (tempSum > target) {
+                return;
+            }
+            subList.add(candidates[i]);
+            // 注意这个地方没有start + 1, 因为可以重复使用自己
+            deepCombinationSum(candidates, target, tempSum, start, result, subList);
+            subList.remove(subList.size() - 1);
+        }
+    }
+    // 40. Combination Sum II
+    // 数组中有重复元素 就需要用boolean[] used 来算去重
+    // 组合就从start开始 排列就从0开始
+    // https://leetcode.com/problems/combination-sum-ii/description/
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        List<List<Integer>> result = new ArrayList<>();
+        List<Integer> subList = new ArrayList<>();
+        boolean[] used = new boolean[candidates.length];
+        Arrays.sort(candidates);
+        deepCombinationSum2(candidates, target, 0, 0, result, subList, used);
+        return result;
+    }
+
+    public void deepCombinationSum2(int[] candidates, int target, int sum, int start, List<List<Integer>> result, List<Integer> subList, boolean[] used) {
+        if (sum == target) {
+            result.add(new ArrayList<>(subList));
+            return;
+        }
+        for (int i = start; i< candidates.length; ++i) {
+            if (used[i]) {
+                continue;
+            }
+            // 这个地方 是判断前面一个树枝（也就是同层的） 有没有用过 走过的话就是used == false 因为是递归的 前面用过就会置成false
+            // 这里有个前提条件 当前这个数和前一个数相同
+            if (i > 0 && candidates[i] == candidates[i - 1] && !used[i - 1]) {
+                continue;
+            }
+            int tempSum = sum + candidates[i];
+            if (tempSum > target) {
+                return;
+            }
+            subList.add(candidates[i]);
+            used[i] = true;
+            deepCombinationSum2(candidates, target, tempSum, i + 1, result, subList, used);
+            subList.remove(subList.size() - 1);
+            used[i] = false;
+        }
+    }
+
+    // 131. Palindrome Partitioning
+    // https://leetcode.com/problems/palindrome-partitioning/description/
+    public List<List<String>> partition(String s) {
+        // TODO
+        return null;
     }
 
     public static void main(String[] args) {
