@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @Classname BackTrack
@@ -310,13 +311,86 @@ public class BackTrack {
     // 131. Palindrome Partitioning
     // https://leetcode.com/problems/palindrome-partitioning/description/
     public List<List<String>> partition(String s) {
-        // TODO
-        return null;
+        List<List<String>> result = new ArrayList<>();
+        List<String> subList = new ArrayList<>();
+        deepPartition(0, s, result, subList);
+        return result;
+    }
+
+    public void deepPartition(int start, String s, List<List<String>> result, List<String> subList) {
+        if (start >= s.length()) {
+            result.add(new ArrayList<>(subList));
+            return;
+        }
+        for (int i = start; i < s.length(); ++i) {
+            String splitStr = s.substring(start, i + 1);
+            if (isPalindrome(splitStr)) {
+                subList.add(splitStr);
+            } else {
+                continue;
+            }
+            deepPartition(i + 1, s, result, subList);
+            subList.remove(subList.size() - 1);
+        }
+    }
+
+    public boolean isPalindrome(String s) {
+        int left = 0, right = s.length() - 1;
+        while (left < right) {
+            if (s.charAt(left) != s.charAt(right)) {
+                return false;
+            }
+            ++left;
+            --right;
+        }
+        return true;
+    }
+
+    // 93. Restore IP Addresses
+    // https://leetcode.com/problems/restore-ip-addresses/description/
+    public List<String> restoreIpAddresses(String s) {
+        List<String> result = new ArrayList<>();
+        List<String> subList = new ArrayList<>();
+        deepRestoreIpAddresses(0, 0, s, result, subList);
+        return result;
+    }
+
+    public void deepRestoreIpAddresses(int start, int count, String s, List<String> result, List<String> subList) {
+        if (count == 3) {
+            String splitStr = s.substring(start);
+            if (isValidIpItem(splitStr)) {
+                subList.add(splitStr);
+                result.add(subList.stream().map(String::valueOf).collect(Collectors.joining(".")));
+                subList.remove(subList.size() - 1);
+            }
+            return;
+        }
+        for (int i = start; i < 4; ++i) {
+            String splitStr = s.substring(start, i + 1);
+            if (isValidIpItem(splitStr)) {
+                subList.add(splitStr);
+            } else {
+                continue;
+            }
+            deepRestoreIpAddresses(start + 1, count + 1, s, result, subList);
+            subList.remove(subList.size() - 1);
+        }
+    }
+
+    public boolean isValidIpItem(String s) {
+        Long item = Long.valueOf(s);
+        if (item >= 0 && item <= 255) {
+            return true;
+        }
+        return false;
     }
 
     public static void main(String[] args) {
         int[] nums = new int[]{1, 2, 2};
 //        System.out.println(subsetsWithDup(nums));
+        BackTrack track = new BackTrack();
+//        System.out.println(track.partition("aab"));
+        System.out.println(track.restoreIpAddresses("0000"));
     }
 
 
