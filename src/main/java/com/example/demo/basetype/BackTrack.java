@@ -371,6 +371,7 @@ public class BackTrack {
             return;
         }
         for (int i = start; i < s.length(); ++i) {
+            // start 到  i- 1 这部分可以做剪枝 实际是下面的方法做了 字串最长不能过3
             String splitStr = s.substring(start, i + 1);
             if (isValidIpItem(splitStr)) {
                 subList.add(splitStr);
@@ -396,6 +397,8 @@ public class BackTrack {
         }
         return false;
     }
+
+    // TODO 这一部分还有三道经典的hard 后面再做下
 
     public static void main(String[] args) {
         int[] nums = new int[]{1, 2, 2};
