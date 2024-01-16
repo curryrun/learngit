@@ -42,6 +42,69 @@ public class Greedy {
         return count;
     }
 
+    // 376. Wiggle Subsequence
+    // https://leetcode.com/problems/wiggle-subsequence/description/
+    public int wiggleMaxLength(int[] nums) {
+        int count = 1;
+        if (nums.length < 2) {
+            return count;
+        }
+        int nowTop = nums[0];
+        Boolean isIncr = null;
+        for (int i = 1; i< nums.length; ++i) {
+            int now = nums[i];
+            // 确定趋势
+            if (null == isIncr) {
+                // 相同就接着往后走
+                if (now == nowTop) {
+                    continue;
+                }
+                if (now > nowTop) {
+                    isIncr = true;
+                    ++count;
+                } else {
+                    isIncr = false;
+                    ++count;
+                }
+                nowTop = now;
+                continue;
+            }
+            // 相同就接着往后走
+            if (now == nowTop) {
+                continue;
+            }
+            // 之前是递增趋势
+            if (isIncr) {
+                // 现在还是递增
+                if (now > nowTop) {
+                    nowTop = now;
+                    continue;
+                }
+                // 现在是递减
+                else {
+                    nowTop = now;
+                    ++count;
+                    isIncr = false;
+                }
+            }
+            // 之前是递减趋势
+            else {
+                // 现在还是递减
+                if (now < nowTop) {
+                    nowTop = now;
+                    continue;
+                }
+                // 现在是递增
+                else {
+                    nowTop = now;
+                    ++count;
+                    isIncr = true;
+                }
+            }
+        }
+        return count;
+    }
+
     public static void main(String[] args) {
         Greedy greedy = new Greedy();
         System.out.println(greedy.findContentChildren(new int[]{1, 2, 3}, new int[]{1, 1}));
