@@ -351,13 +351,18 @@ public class BackTrack {
     public List<String> restoreIpAddresses(String s) {
         List<String> result = new ArrayList<>();
         List<String> subList = new ArrayList<>();
-        deepRestoreIpAddresses(0, 0, s, result, subList);
+        deepRestoreIpAddresses(0,  s, result, subList);
         return result;
     }
 
-    public void deepRestoreIpAddresses(int start, int count, String s, List<String> result, List<String> subList) {
-        if (count == 3) {
+    public void deepRestoreIpAddresses(int start, String s, List<String> result, List<String> subList) {
+        // 这里控制递归的深度 也就是说切几次
+        if (subList.size() == 3 && start < s.length()) {
             String splitStr = s.substring(start);
+            // 切到最后了
+            if ("".equals(splitStr)) {
+                return;
+            }
             if (isValidIpItem(splitStr)) {
                 subList.add(splitStr);
                 result.add(subList.stream().map(String::valueOf).collect(Collectors.joining(".")));
@@ -365,19 +370,26 @@ public class BackTrack {
             }
             return;
         }
-        for (int i = start; i < 4; ++i) {
+        for (int i = start; i < s.length(); ++i) {
             String splitStr = s.substring(start, i + 1);
             if (isValidIpItem(splitStr)) {
                 subList.add(splitStr);
             } else {
                 continue;
             }
-            deepRestoreIpAddresses(start + 1, count + 1, s, result, subList);
+            deepRestoreIpAddresses(i + 1, s, result, subList);
             subList.remove(subList.size() - 1);
         }
     }
 
+    // 01 不合法
     public boolean isValidIpItem(String s) {
+        if (s.length() > 1 && '0' == s.charAt(0)) {
+            return false;
+        }
+        if (s.length() > 3) {
+            return false;
+        }
         Long item = Long.valueOf(s);
         if (item >= 0 && item <= 255) {
             return true;
@@ -390,7 +402,7 @@ public class BackTrack {
 //        System.out.println(subsetsWithDup(nums));
         BackTrack track = new BackTrack();
 //        System.out.println(track.partition("aab"));
-        System.out.println(track.restoreIpAddresses("0000"));
+        System.out.println(track.restoreIpAddresses("25525511135"));
     }
 
 
