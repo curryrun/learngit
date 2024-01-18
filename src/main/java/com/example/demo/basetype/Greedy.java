@@ -51,7 +51,7 @@ public class Greedy {
         }
         int nowTop = nums[0];
         Boolean isIncr = null;
-        for (int i = 1; i< nums.length; ++i) {
+        for (int i = 1; i < nums.length; ++i) {
             int now = nums[i];
             // 确定趋势
             if (null == isIncr) {
@@ -105,9 +105,93 @@ public class Greedy {
         return count;
     }
 
+    // 53. Maximum Subarray
+    // https://leetcode.com/problems/maximum-subarray/description/
+    // 贪心贪的是哪里呢？
+    // 如果 -2 1 在一起，计算起点的时候，一定是从 1 开始计算，因为负数只会拉低总和，这就是贪心贪的地方！
+    // 局部最优：当前“连续和”为负数的时候立刻放弃，从下一个元素重新计算“连续和”，因为负数加上下一个元素 “连续和”只会越来越小。
+    // 全局最优：选取最大“连续和”
+    public int maxSubArray(int[] nums) {
+        int nowSum = 0;
+        int maxSum = Integer.MIN_VALUE;
+        for (int i = 0; i < nums.length; ++i) {
+            nowSum = nowSum + nums[i];
+            maxSum = Math.max(maxSum, nowSum);
+            // 负数了 则从0计数
+            if (nowSum < 0) {
+                nowSum = 0;
+            }
+        }
+        return maxSum;
+    }
+
+    // 122. Best Time to Buy and Sell Stock II
+    // https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/description/
+    public int maxProfit(int[] prices) {
+        Boolean isIncr = null;
+        if (prices.length < 2) {
+            return 0;
+        }
+        int sum = 0, pre = prices[0], low = 0;
+        for (int i = 1; i < prices.length; ++i) {
+            int now = prices[i];
+            // find first incr
+            if (null == isIncr) {
+                if (now > pre) {
+                    low = pre;
+                    isIncr = true;
+                    // 最后一天还在涨 那就直接当天卖掉
+                    if (i == prices.length - 1) {
+                        sum = sum + now - low;
+                    }
+                }
+                pre = now;
+            }
+            else {
+                // 如果是递增趋势
+                if (isIncr) {
+                    // 当前还在涨
+                    if (now > pre) {
+                        pre = now;
+                        // 最后一天还在涨 那就直接当天卖掉
+                        if (i == prices.length - 1) {
+                            sum = sum + now - low;
+                        }
+                    }
+                    // 当前下跌了 之前就该卖出
+                    else {
+                        sum = sum + pre - low;
+                        low = now;
+                        isIncr = false;
+                        pre = now;
+                    }
+                }
+                // 进入下跌趋势 那就要找到最低点
+                else {
+                    // 当前在涨 前一个就是最低点
+                    if (now > pre) {
+                        low = pre;
+                        isIncr = true;
+                        pre = now;
+                        // 最后一天还在涨 那就直接当天卖掉
+                        if (i == prices.length - 1) {
+                            sum = sum + now - low;
+                        }
+                    }
+                    // 当前下跌了 继续往后走
+                    else {
+                        pre = now;
+                    }
+                }
+            }
+        }
+        return sum;
+    }
+
     public static void main(String[] args) {
         Greedy greedy = new Greedy();
-        System.out.println(greedy.findContentChildren(new int[]{1, 2, 3}, new int[]{1, 1}));
+//        System.out.println(greedy.findContentChildren(new int[]{1, 2, 3}, new int[]{1, 1}));
+        System.out.println(greedy.maxProfit(new int[]{2,1,2,0,1}));
     }
 
 }
