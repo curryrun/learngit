@@ -1,6 +1,7 @@
 package com.example.demo.basetype;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 
 /**
  * @Classname Greedy
@@ -268,10 +269,120 @@ public class Greedy {
         return result;
     }
 
+    // 134. Gas Station
+    // https://leetcode.com/problems/gas-station/description/
+    public int canCompleteCircuit(int[] gas, int[] cost) {
+        int[] temp = new int[gas.length];
+        int sum = 0;
+        for (int i = 0; i< gas.length; ++i) {
+            temp[i] = gas[i] - cost[i];
+            sum = sum + temp[i];
+        }
+        if (sum < 0) {
+            return -1;
+        }
+        int nowGas = 0, begin = 0;
+        for (int i = 0; i < temp.length; ++i) {
+            if (0 == nowGas) {
+                begin = i;
+            }
+            nowGas = nowGas + temp[i];
+            if (nowGas < 0) {
+                nowGas = 0;
+            }
+        }
+        return begin;
+    }
+
+    // 135. Candy
+    // https://leetcode.com/problems/candy/description/
+    // 单独看一个孩子 整体流程拆分成和左侧孩子比，和右侧孩子比 默认值是1
+    // 这道题有点意思 可以回过头来再看一遍
+    public int candy(int[] ratings) {
+        int[] candy = new int[ratings.length];
+        candy[0] = 1;
+        // from left to right
+        // 校验的是 左侧是不是比当前大 看的是左孩子
+        for (int i = 1; i < candy.length; ++i) {
+            // 右侧大 则我应该是左侧的+1
+            if (ratings[i] > ratings[i - 1]) {
+                candy[i] = candy[i - 1] + 1;
+            } else {
+                candy[i] = 1;
+            }
+        }
+        // 从右向左
+        // 看的是右侧 当前比右侧大 则是右侧的+1
+        for (int i = candy.length - 2; i >= 0; --i) {
+            if (ratings[i] > ratings[i + 1]) {
+                candy[i] = Math.max(candy[i], candy[i + 1] + 1);
+            }
+        }
+        int sum = 0;
+        for (int i = 0; i< candy.length; ++i) {
+            sum = sum + candy[i];
+        }
+        return sum;
+    }
+
+    // 860. Lemonade Change
+    // https://leetcode.com/problems/lemonade-change/description/
+    public boolean lemonadeChange(int[] bills) {
+        int count_5 = 0, count_10 = 0;
+        for (int i = 0; i< bills.length; ++i) {
+            if (bills[i] == 5) {
+                ++count_5;
+            }
+            if (bills[i] == 10) {
+                if (count_5 <= 0) {
+                    return false;
+                }
+                --count_5;
+                ++count_10;
+            }
+            if (bills[i] == 20) {
+                if (count_5 <= 0) {
+                    return false;
+                }
+                if (count_10 > 0) {
+                    --count_5;
+                    --count_10;
+                } else {
+                    if (count_5 < 3) {
+                        return false;
+                    }
+                    count_5 = count_5 - 3;
+                }
+
+            }
+        }
+        return true;
+    }
+
+    // 406. Queue Reconstruction by Height
+    // https://leetcode.com/problems/queue-reconstruction-by-height/description/
+    // 按身高从大到小排序 相同的则按第二个维度排序
+    // 使用链表 方便插入
+    public int[][] reconstructQueue(int[][] people) {
+        Arrays.sort(people, (a, b) -> {
+            if (a[0] == b[0]) {
+                return a[1] - b[1];
+            }
+            return b[0] - a[0];
+        });
+        LinkedList<int[]> list = new LinkedList<>();
+        for (int i = 0; i< people.length; ++i) {
+            list.add(people[i][1], people[i]);
+        }
+        return list.toArray(new int[people.length][]);
+    }
+
     public static void main(String[] args) {
         Greedy greedy = new Greedy();
 //        System.out.println(greedy.findContentChildren(new int[]{1, 2, 3}, new int[]{1, 1}));
-        System.out.println(greedy.largestSumAfterKNegations(new int[]{3,-1,0,2}, 3));
+//        System.out.println(greedy.largestSumAfterKNegations(new int[]{3,-1,0,2}, 3));
+        System.out.println(greedy.candy(new int[]{1,0,2}));
+        System.out.println(greedy.candy(new int[]{1,3,4,5,2}));
     }
 
 }
