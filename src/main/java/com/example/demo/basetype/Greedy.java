@@ -1,8 +1,6 @@
 package com.example.demo.basetype;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @Classname Greedy
@@ -188,10 +186,92 @@ public class Greedy {
         return sum;
     }
 
+    // 55. Jump Game
+    // https://leetcode.com/problems/jump-game/description/
+    public boolean canJump(int[] nums) {
+        if (nums.length == 1) {
+            return true;
+        }
+        int maxPos = 0;
+        for (int i = 0; i< nums.length; ++i) {
+            if (i > maxPos) {
+                return false;
+            }
+            int possibleMaxPos = nums[i] + i;
+            maxPos = Math.max(maxPos, possibleMaxPos);
+            if (maxPos >= nums.length - 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // 45. Jump Game II
+    // https://leetcode.com/problems/jump-game-ii/description/
+    // 每一跳 都取可见范围内最大的
+    public static int jump(int[] nums) {
+        int count = 0;
+        int beginPos = 0;
+        while (beginPos < nums.length - 1) {
+            // 进入跳转 加一
+            ++count;
+            // 当前位置可跳转的最大值 = 当前位置 + 当前位置对应的数组中的值
+            int maxPos = beginPos + nums[beginPos], nextJump = 0;
+            // 已经超了的话 就不用选下一跳转的点了
+            if (maxPos >= nums.length - 1) {
+                break;
+            }
+            // 选下一个要跳转的点 当然是要在当前可见范围内 也就是 [beginPos + 1, beginPos + nums[beginPos]]
+            for (int j = beginPos + 1; j <= beginPos + nums[beginPos]; ++j) {
+                if (j + nums[j] > maxPos) {
+                    nextJump = j;
+                    maxPos = j + nums[j];
+                }
+            }
+            // 跳到下一个点位上
+            beginPos = nextJump;
+        }
+        return count;
+    }
+
+    // 1005. Maximize Sum Of Array After K Negations
+    // https://leetcode.com/problems/maximize-sum-of-array-after-k-negations/description/
+    public int largestSumAfterKNegations(int[] nums, int k) {
+        int remainK = k;
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length; ++i) {
+            if (remainK <= 0) {
+                break;
+            }
+            if (nums[i] < 0) {
+                nums[i] = -nums[i];
+                --remainK;
+            }
+        }
+        if (remainK > 0) {
+            // 剩余奇数
+            if (remainK % 2 == 1) {
+                int minPos = 0, min = Integer.MAX_VALUE;
+                for (int i = 0; i < nums.length; ++i) {
+                    if (nums[i] < min) {
+                        min = nums[i];
+                        minPos = i;
+                    }
+                }
+                nums[minPos] = -nums[minPos];
+            }
+        }
+        int result = 0;
+        for (int i = 0; i < nums.length; ++i) {
+            result = result + nums[i];
+        }
+        return result;
+    }
+
     public static void main(String[] args) {
         Greedy greedy = new Greedy();
 //        System.out.println(greedy.findContentChildren(new int[]{1, 2, 3}, new int[]{1, 1}));
-        System.out.println(greedy.maxProfit(new int[]{2,1,2,0,1}));
+        System.out.println(greedy.largestSumAfterKNegations(new int[]{3,-1,0,2}, 3));
     }
 
 }
