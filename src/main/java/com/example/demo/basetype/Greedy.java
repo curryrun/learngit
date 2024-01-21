@@ -1,7 +1,9 @@
 package com.example.demo.basetype;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @Classname Greedy
@@ -377,12 +379,31 @@ public class Greedy {
         return list.toArray(new int[people.length][]);
     }
 
+    // 452. Minimum Number of Arrows to Burst Balloons
+    // https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/description/
+    // 先按开头排序 重新更新范围
+    public int findMinArrowShots(int[][] points) {
+        // 注意这里要用 Integer.compare(a[0], b[0])
+        // 直接减的话会溢出 真的牛皮
+        Arrays.sort(points, (a, b) -> {return Integer.compare(a[0], b[0]);});
+        int count = 1;
+        for (int i = 1; i< points.length; ++i) {
+            if (points[i][0] <= points[i - 1][1]) {
+                points[i][1] = Math.min(points[i][1], points[i - 1][1]);
+            } else {
+                count++;
+            }
+        }
+        return count;
+    }
+
     public static void main(String[] args) {
         Greedy greedy = new Greedy();
 //        System.out.println(greedy.findContentChildren(new int[]{1, 2, 3}, new int[]{1, 1}));
 //        System.out.println(greedy.largestSumAfterKNegations(new int[]{3,-1,0,2}, 3));
-        System.out.println(greedy.candy(new int[]{1,0,2}));
-        System.out.println(greedy.candy(new int[]{1,3,4,5,2}));
+//        System.out.println(greedy.candy(new int[]{1,0,2}));
+//        System.out.println(greedy.candy(new int[]{1,3,4,5,2}));
+        System.out.println(greedy.findMinArrowShots(new int[][]{{10,16},{2,8},{1,6},{7,12}}));
     }
 
 }
