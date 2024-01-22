@@ -397,13 +397,42 @@ public class Greedy {
         return count;
     }
 
+    // 435. Non-overlapping Intervals
+    // https://leetcode.com/problems/non-overlapping-intervals/description/
+    public int eraseOverlapIntervals(int[][] intervals) {
+        Arrays.sort(intervals, (a, b) -> {
+            if (a[0] == b[0]) {
+                return a[1] - b[1];
+            }
+            return a[0] - b[0];
+        });
+        int count = 0;
+        for (int i = 1; i< intervals.length; ++i) {
+            if (intervals[i - 1][1] > intervals[i][0]) {
+                ++count;
+                // 这个地方可能end 前面的更大 最新的区间应该是取这两个的最小值
+                // 贪心体现在这 如果已经重叠了 那就优先删除最大的范围
+                // [1, 4]
+                // [2, 3]
+                // [3, 4]
+                // [1, *, *, *, 4]
+                // [*, *,[2, 3] *]
+                // [*, *, *, [3 4]
+                // 正常情况只要删除 1，4 即可了 所以每次判断的是end的最小值
+                intervals[i][1] = Math.min(intervals[i - 1][1], intervals[i][1]);
+            }
+        }
+        return count;
+    }
+
     public static void main(String[] args) {
         Greedy greedy = new Greedy();
 //        System.out.println(greedy.findContentChildren(new int[]{1, 2, 3}, new int[]{1, 1}));
 //        System.out.println(greedy.largestSumAfterKNegations(new int[]{3,-1,0,2}, 3));
 //        System.out.println(greedy.candy(new int[]{1,0,2}));
 //        System.out.println(greedy.candy(new int[]{1,3,4,5,2}));
-        System.out.println(greedy.findMinArrowShots(new int[][]{{10,16},{2,8},{1,6},{7,12}}));
+//        System.out.println(greedy.findMinArrowShots(new int[][]{{10,16},{2,8},{1,6},{7,12}}));
+        System.out.println(greedy.eraseOverlapIntervals(new int[][]{{-52,31},{-73,-26},{82,97},{-65,-11},{-62,-49},{95,99},{58,95},{-31,49},{66,98},{-63,2},{30,47},{-40,-26}}));
     }
 
 }
