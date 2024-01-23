@@ -2,8 +2,10 @@ package com.example.demo.basetype;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Classname Greedy
@@ -425,6 +427,59 @@ public class Greedy {
         return count;
     }
 
+    // 763. Partition Labels
+    // https://leetcode.com/problems/partition-labels/description/
+    public List<Integer> partitionLabels(String s) {
+        Map<Character, Integer> maxMap = new HashMap<>();
+        for (int i = 0; i< s.length(); ++i) {
+            Character now = s.charAt(i);
+            maxMap.put(now, i);
+        }
+        List<Integer> res = new ArrayList<>();
+        int count = 0, max = -1;
+        for (int i = 0; i< s.length(); ++i) {
+            Character now = s.charAt(i);
+            int nowMax = maxMap.get(now);
+            if (nowMax > max) {
+                max = nowMax;
+            }
+            ++count;
+            // 分隔点
+            if (i == max) {
+                res.add(count);
+                count = 0;
+                max = -1;
+            }
+        }
+        return res;
+    }
+
+    // 56. Merge Intervals
+    // https://leetcode.com/problems/merge-intervals/description/
+    public int[][] merge(int[][] intervals) {
+        Arrays.sort(intervals, (a, b) -> {
+            if (a[0] == b[0]) {
+                return a[1] - b[1];
+            }
+            return a[0] - b[0];
+        });
+        List<int[]> result = new ArrayList<>();
+        result.add(intervals[0]);
+        for (int i = 1; i < intervals.length; ++i) {
+            int[] pre = result.get(result.size() - 1);
+            if (pre[1] >= intervals[i][0]) {
+                pre[1] = Math.max(pre[1], intervals[i][1]);
+            } else {
+                result.add(intervals[i]);
+            }
+        }
+        int[][] resArr = new int[result.size()][2];
+        for (int i = 0; i< result.size(); ++i) {
+            resArr[i] = result.get(i);
+        }
+        return resArr;
+    }
+
     public static void main(String[] args) {
         Greedy greedy = new Greedy();
 //        System.out.println(greedy.findContentChildren(new int[]{1, 2, 3}, new int[]{1, 1}));
@@ -432,7 +487,8 @@ public class Greedy {
 //        System.out.println(greedy.candy(new int[]{1,0,2}));
 //        System.out.println(greedy.candy(new int[]{1,3,4,5,2}));
 //        System.out.println(greedy.findMinArrowShots(new int[][]{{10,16},{2,8},{1,6},{7,12}}));
-        System.out.println(greedy.eraseOverlapIntervals(new int[][]{{-52,31},{-73,-26},{82,97},{-65,-11},{-62,-49},{95,99},{58,95},{-31,49},{66,98},{-63,2},{30,47},{-40,-26}}));
+//        System.out.println(greedy.eraseOverlapIntervals(new int[][]{{-52,31},{-73,-26},{82,97},{-65,-11},{-62,-49},{95,99},{58,95},{-31,49},{66,98},{-63,2},{30,47},{-40,-26}}));
+        System.out.println(greedy.partitionLabels("ababcbacadefegdehijhklij"));
     }
 
 }
