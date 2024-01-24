@@ -1,5 +1,7 @@
 package com.example.demo.basetype;
 
+import com.example.demo.base.TreeNode;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,6 +22,8 @@ import java.util.Map;
  * 不好意思，也没有！ 靠自己手动模拟，如果模拟可行，就可以试一试贪心策略，如果不可行，可能需要动态规划。
  * 有同学问了如何验证可不可以用贪心算法呢？
  * 最好用的策略就是举反例，如果想不到反例，那么就试一试贪心吧。
+ *
+ * 多维度的 要控制一下 每次只考虑单个维度的
  **/
 public class Greedy {
 
@@ -149,8 +153,7 @@ public class Greedy {
                     }
                 }
                 pre = now;
-            }
-            else {
+            } else {
                 // 如果是递增趋势
                 if (isIncr) {
                     // 当前还在涨
@@ -198,7 +201,7 @@ public class Greedy {
             return true;
         }
         int maxPos = 0;
-        for (int i = 0; i< nums.length; ++i) {
+        for (int i = 0; i < nums.length; ++i) {
             if (i > maxPos) {
                 return false;
             }
@@ -278,7 +281,7 @@ public class Greedy {
     public int canCompleteCircuit(int[] gas, int[] cost) {
         int[] temp = new int[gas.length];
         int sum = 0;
-        for (int i = 0; i< gas.length; ++i) {
+        for (int i = 0; i < gas.length; ++i) {
             temp[i] = gas[i] - cost[i];
             sum = sum + temp[i];
         }
@@ -323,7 +326,7 @@ public class Greedy {
             }
         }
         int sum = 0;
-        for (int i = 0; i< candy.length; ++i) {
+        for (int i = 0; i < candy.length; ++i) {
             sum = sum + candy[i];
         }
         return sum;
@@ -333,7 +336,7 @@ public class Greedy {
     // https://leetcode.com/problems/lemonade-change/description/
     public boolean lemonadeChange(int[] bills) {
         int count_5 = 0, count_10 = 0;
-        for (int i = 0; i< bills.length; ++i) {
+        for (int i = 0; i < bills.length; ++i) {
             if (bills[i] == 5) {
                 ++count_5;
             }
@@ -375,7 +378,7 @@ public class Greedy {
             return b[0] - a[0];
         });
         LinkedList<int[]> list = new LinkedList<>();
-        for (int i = 0; i< people.length; ++i) {
+        for (int i = 0; i < people.length; ++i) {
             list.add(people[i][1], people[i]);
         }
         return list.toArray(new int[people.length][]);
@@ -387,9 +390,11 @@ public class Greedy {
     public int findMinArrowShots(int[][] points) {
         // 注意这里要用 Integer.compare(a[0], b[0])
         // 直接减的话会溢出 真的牛皮
-        Arrays.sort(points, (a, b) -> {return Integer.compare(a[0], b[0]);});
+        Arrays.sort(points, (a, b) -> {
+            return Integer.compare(a[0], b[0]);
+        });
         int count = 1;
-        for (int i = 1; i< points.length; ++i) {
+        for (int i = 1; i < points.length; ++i) {
             if (points[i][0] <= points[i - 1][1]) {
                 points[i][1] = Math.min(points[i][1], points[i - 1][1]);
             } else {
@@ -409,7 +414,7 @@ public class Greedy {
             return a[0] - b[0];
         });
         int count = 0;
-        for (int i = 1; i< intervals.length; ++i) {
+        for (int i = 1; i < intervals.length; ++i) {
             if (intervals[i - 1][1] > intervals[i][0]) {
                 ++count;
                 // 这个地方可能end 前面的更大 最新的区间应该是取这两个的最小值
@@ -431,13 +436,13 @@ public class Greedy {
     // https://leetcode.com/problems/partition-labels/description/
     public List<Integer> partitionLabels(String s) {
         Map<Character, Integer> maxMap = new HashMap<>();
-        for (int i = 0; i< s.length(); ++i) {
+        for (int i = 0; i < s.length(); ++i) {
             Character now = s.charAt(i);
             maxMap.put(now, i);
         }
         List<Integer> res = new ArrayList<>();
         int count = 0, max = -1;
-        for (int i = 0; i< s.length(); ++i) {
+        for (int i = 0; i < s.length(); ++i) {
             Character now = s.charAt(i);
             int nowMax = maxMap.get(now);
             if (nowMax > max) {
@@ -474,7 +479,7 @@ public class Greedy {
             }
         }
         int[][] resArr = new int[result.size()][2];
-        for (int i = 0; i< result.size(); ++i) {
+        for (int i = 0; i < result.size(); ++i) {
             resArr[i] = result.get(i);
         }
         return resArr;
@@ -491,7 +496,7 @@ public class Greedy {
             numbers.add(n % 10);
             n = n / 10;
         }
-        for (int i = 1; i< numbers.size(); ++i) {
+        for (int i = 1; i < numbers.size(); ++i) {
             if (numbers.get(i - 1) < numbers.get(i)) {
                 int temp = i - 1;
                 while (temp >= 0) {
@@ -502,11 +507,45 @@ public class Greedy {
             }
         }
         int res = 0, count = 1;
-        for (int i = 0; i< numbers.size(); ++i) {
+        for (int i = 0; i < numbers.size(); ++i) {
             res = res + numbers.get(i) * count;
             count = count * 10;
         }
         return res;
+    }
+
+    // TODO 可以再看看 需要好好理解下
+    // 968. Binary Tree Cameras
+    // https://leetcode.com/problems/binary-tree-cameras/description/
+    // 贪心的点： 为了让摄像头数量最少，我们要尽量让叶子节点的父节点安装摄像头，这样才能摄像头的数量最少。
+    // 0：该节点无覆盖
+    // 1：本节点有摄像头
+    // 2：本节点有覆盖
+    public int minCameraCoverCount = 0;
+    public int minCameraCover(TreeNode root) {
+        if (deepMinCameraCover(root) == 0) {
+            minCameraCoverCount++;
+        }
+        return minCameraCoverCount;
+    }
+
+    public int deepMinCameraCover(TreeNode root) {
+        if (null == root) {
+            return 2;
+        }
+        int left = deepMinCameraCover(root.left);
+        int right = deepMinCameraCover(root.right);
+        if (left == 2 && right == 2) {
+            return 0;
+        }
+        if (left == 0 || right == 0) {
+            minCameraCoverCount++;
+            return 1;
+        }
+        if (left == 1 || right == 1) {
+            return 2;
+        }
+        return -1;
     }
 
     public static void main(String[] args) {
