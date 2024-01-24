@@ -480,6 +480,35 @@ public class Greedy {
         return resArr;
     }
 
+    // 738. Monotone Increasing Digits
+    // https://leetcode.com/problems/monotone-increasing-digits/description/
+    public int monotoneIncreasingDigits(int n) {
+        if (n == 0) {
+            return 0;
+        }
+        List<Integer> numbers = new ArrayList<>();
+        while (n > 0) {
+            numbers.add(n % 10);
+            n = n / 10;
+        }
+        for (int i = 1; i< numbers.size(); ++i) {
+            if (numbers.get(i - 1) < numbers.get(i)) {
+                int temp = i - 1;
+                while (temp >= 0) {
+                    numbers.set(temp, 9);
+                    temp = temp - 1;
+                }
+                numbers.set(i, numbers.get(i) - 1);
+            }
+        }
+        int res = 0, count = 1;
+        for (int i = 0; i< numbers.size(); ++i) {
+            res = res + numbers.get(i) * count;
+            count = count * 10;
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
         Greedy greedy = new Greedy();
 //        System.out.println(greedy.findContentChildren(new int[]{1, 2, 3}, new int[]{1, 1}));
@@ -488,7 +517,8 @@ public class Greedy {
 //        System.out.println(greedy.candy(new int[]{1,3,4,5,2}));
 //        System.out.println(greedy.findMinArrowShots(new int[][]{{10,16},{2,8},{1,6},{7,12}}));
 //        System.out.println(greedy.eraseOverlapIntervals(new int[][]{{-52,31},{-73,-26},{82,97},{-65,-11},{-62,-49},{95,99},{58,95},{-31,49},{66,98},{-63,2},{30,47},{-40,-26}}));
-        System.out.println(greedy.partitionLabels("ababcbacadefegdehijhklij"));
+//        System.out.println(greedy.partitionLabels("ababcbacadefegdehijhklij"));
+        System.out.println(greedy.monotoneIncreasingDigits(100));
     }
 
 }
