@@ -190,10 +190,96 @@ public class Dynamic {
         return dp[n];
     }
 
+    // 背包问题
+    // dp[i][j] 表示从下标为[0-i]的物品里任意取，放进容量为j的背包，价值总和最大是多少。
+    // https://programmercarl.com/%E8%83%8C%E5%8C%85%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%8001%E8%83%8C%E5%8C%85-1.html#%E6%80%9D%E8%B7%AF
+    // 存在两种可能 1放进去 2 不放进去
+    // 不放进去就是,dp[i - 1][j], 前一个的值 放进去 就得找到刚刚好够放的那个 再加上这个放进去的价值
+    // dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - weight[i]] + value[i]);
+    // 二维数组写法
+    private int bagP1(int[] weight, int[] value, int bagSize) {
+        int[][] dp = new int[weight.length][bagSize + 1];
+        // init
+        // 尝试把第一个物品放进背包里
+        for (int j = 1; j < dp[0].length; ++j) {
+            if (j >= weight[0]) {
+                dp[0][j] = value[0];
+            }
+        }
+        // 后遍历背包容量
+        for (int j = 1; j < dp[0].length; ++j) {
+            // 先遍历物品
+            for (int i = 1; i < dp.length; ++i) {
+                // 当前背包容量小 那就是前一个i的数值
+                if (j < weight[i]) {
+                    dp[i][j] = dp[i - 1][j];
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - weight[i]] + value[i]);
+                }
+            }
+        }
+        // 打印dp数组
+        for (int i = 0; i < weight.length; i++) {
+            for (int j = 0; j <= bagSize; j++) {
+                System.out.print(dp[i][j] + "\t");
+            }
+            System.out.println("\n");
+        }
+        return dp[weight.length - 1][bagSize];
+    }
+
+    // 还是背包问题 这次要用一维数组解决 上面的可以复制下来 这种情况可以简化 这一维数组相当于一直滚动 只需要记录这一维就够用了
+    // 0	15	15	15	15
+    // 0	15	15	20	35
+    // 0	15	15	20	35
+    // 第二层遍历的时候 可以在第一层上接着改 所以公式变成:
+    // dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - weight[i]] + value[i]); =>
+    // dp[j] = max(dp[j], dp[j - weight[i]] + value[i]);
+    // 相当于把i这一层维度去掉了
+    // 一维数组要从后往前遍历 从前往后的话会把上一轮的数组覆盖掉
+    private int bagP2(int[] weight, int[] value, int bagSize) {
+        int[] dp = new int[bagSize + 1];
+        for (int i = 0; i < weight.length; ++i) {
+            for (int j = bagSize; j >= weight[i]; --j) {
+                dp[j] = Math.max(dp[j], dp[j - weight[i]] + value[i]);
+            }
+        }
+        return dp[bagSize];
+    }
+
+    // 416. Partition Equal Subset Sum
+    // https://leetcode.com/problems/partition-equal-subset-sum/description/
+    // 加和/2 = 背包大小
+    // 二维数组背包问题： dp[i][j] 表示从下标为[0-i]的物品里任意取，放进容量为j的背包，价值总和最大是多少。
+    // dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);
+    // 这里大小和价值完全相等
+    public boolean canPartition(int[] nums) {
+        int sum = 0;
+        for (int i = 0; i < nums.length; ++i) {
+            sum = sum + nums[i];
+        }
+        if (sum % 2 != 0) {
+            return false;
+        }
+        int bagSize = sum / 2;
+        int[] dp = new int[bagSize + 1];
+        for (int i = 0; i< nums.length; ++i) {
+            for (int j = bagSize; j >= nums[i]; --j) {
+                dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);
+            }
+        }
+        if (dp[bagSize] == bagSize) {
+            return true;
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         Dynamic dynamic = new Dynamic();
 //        System.out.println(dynamic.integerBreakV2(8));
-        System.out.println(dynamic.numTrees(3));
+//        System.out.println(dynamic.numTrees(3));
+        System.out.println(dynamic.bagP1(new int[]{1,3,4}, new int[]{15,20,30}, 4));
+        System.out.println(dynamic.bagP2(new int[]{1,3,4}, new int[]{15,20,30}, 4));
     }
 
 }
