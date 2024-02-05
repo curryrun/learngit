@@ -274,6 +274,56 @@ public class Dynamic {
         return false;
     }
 
+    // 1049. Last Stone Weight II
+    // https://leetcode.com/problems/last-stone-weight-ii/description/
+    public int lastStoneWeightII(int[] stones) {
+        int sum = 0;
+        for (int i = 0; i< stones.length; ++i) {
+            sum = sum + stones[i];
+        }
+        int target = sum / 2;
+        int[] dp = new int[target + 1];
+        for (int i = 0; i < stones.length; ++i) {
+            for (int j = target; j >= stones[i]; --j) {
+                dp[j] = Math.max(dp[j], dp[j - stones[i]] + stones[i]);
+            }
+        }
+        return sum - dp[target] - dp[target];
+    }
+
+    // 用二维数组写
+    public int lastStoneWeightIIV2(int[] stones) {
+        int sum = 0;
+        for (int i = 0; i< stones.length; ++i) {
+            sum = sum + stones[i];
+        }
+        int target = sum / 2;
+        int[][] dp = new int[stones.length][target + 1];
+        // init
+        // 尝试把第一个物品放进背包里
+        for (int j = 1; j < dp[0].length; ++j) {
+            if (j >= stones[0]) {
+                dp[0][j] = stones[0];
+            }
+        }
+        for (int i = 1; i< stones.length; ++i) {
+            for (int j = 1; j <= target; ++j) {
+                if (j < stones[i]) {
+                    dp[i][j] = dp[i - 1][j];
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - stones[i]] + stones[i]);
+                }
+            }
+        }
+        return sum - dp[stones.length - 1][target] - dp[stones.length - 1][target];
+    }
+
+    // 494. Target Sum
+    // https://leetcode.com/problems/target-sum/
+    public int findTargetSumWays(int[] nums, int target) {
+        return 0;
+    }
+
     public static void main(String[] args) {
         Dynamic dynamic = new Dynamic();
 //        System.out.println(dynamic.integerBreakV2(8));
