@@ -1,5 +1,9 @@
 package com.example.demo.basetype;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @Classname Dynamic
  * @Description
@@ -17,6 +21,16 @@ package com.example.demo.basetype;
  *
  **/
 public class Dynamic {
+
+    public void printArr(int[][] arr) {
+        // 打印dp数组
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = 0; j < arr[i].length; j++) {
+                System.out.print(arr[i][j] + "\t");
+            }
+            System.out.println("\n");
+        }
+    }
 
     // 509. Fibonacci Number
     // https://leetcode.com/problems/fibonacci-number/description/
@@ -320,16 +334,144 @@ public class Dynamic {
 
     // 494. Target Sum
     // https://leetcode.com/problems/target-sum/
+    // 二维数组
     public int findTargetSumWays(int[] nums, int target) {
-        return 0;
+        int sum = 0;
+        for (int i = 0; i< nums.length; ++i) {
+            sum = sum + nums[i];
+        }
+        if (sum < Math.abs(target)) {
+            return 0;
+        }
+        if ((sum + target) % 2 != 0) {
+            return 0;
+        }
+        int left = (sum + target) / 2;
+        int[][] dp = new int[nums.length][left + 1];
+        // init
+        if (nums[0] <= left) {
+            dp[0][nums[0]] = 1;
+        }
+
+        int numZeros = 0;
+        for(int i = 0; i < nums.length; i++) {
+            if(nums[i] == 0) {
+                numZeros++;
+            }
+            dp[i][0] = (int) Math.pow(2, numZeros);
+        }
+
+        for (int i = 1; i < nums.length; ++i) {
+            for (int j = 1; j <= left; ++j) {
+                if (nums[i] > j) {
+                    dp[i][j] = dp[i - 1][j];
+                } else {
+                    dp[i][j] = dp[i - 1][j] + dp[i - 1][j - nums[i]];
+                }
+            }
+        }
+//        printArr(dp);
+        return dp[nums.length - 1][left];
     }
+
+    // 一维数组
+    public int findTargetSumWaysV2(int[] nums, int target) {
+        int sum = 0;
+        for (int i = 0; i< nums.length; ++i) {
+            sum = sum + nums[i];
+        }
+        if (sum < Math.abs(target)) {
+            return 0;
+        }
+        if ((sum + target) % 2 != 0) {
+            return 0;
+        }
+        int left = (sum + target) / 2;
+        int[] dp = new int[left + 1];
+        // 初始化
+        // 相当于从num的 0, 容量为0的背包 有多少种方法
+        // 如果数组[0] ，target = 0，那么 bagSize = (target + sum) / 2 = 0。 dp[0]也应该是1， 也就是说给数组里的元素 0 前面无论放加法还是减法，都是 1 种方法。
+        dp[0] = 1;
+        for (int i = 0; i < nums.length; ++i) {
+            for (int j = left; j >= nums[i]; --j) {
+                dp[j] = dp[j] + dp[j - nums[i]];
+            }
+        }
+        return dp[left];
+    }
+
+    // 先用回溯做一下
+    public int findTargetSumWaysTrack(int[] nums, int target) {
+        int sum = 0;
+        for (int i = 0; i< nums.length; ++i) {
+            sum = sum + nums[i];
+        }
+        if (sum < target) {
+            return 0;
+        }
+        if ((sum + target) % 2 != 0) {
+            return 0;
+        }
+        Arrays.sort(nums);
+        int left = (sum + target) / 2;
+        List<List<Integer>> res = new ArrayList<>();
+        List<Integer> itemList = new ArrayList<>();
+        findTargetSumWaysDeep(nums, left, 0, 0, res, itemList);
+        return res.size();
+    }
+
+    public void findTargetSumWaysDeep(int[] nums, int left, int startIndex, int sum, List<List<Integer>> res, List<Integer> itemList) {
+        if (sum > left) {
+            return;
+        }
+        if (sum == left) {
+            res.add(new ArrayList<>(itemList));
+        }
+        for (int i = startIndex; i < nums.length; ++i) {
+            int tempSum = sum + nums[i];
+            if (tempSum > left) {
+                break;
+            }
+            itemList.add(nums[i]);
+            findTargetSumWaysDeep(nums, left, i + 1, tempSum, res, itemList);
+            itemList.remove(itemList.size() - 1);
+        }
+    }
+
+    // 474. Ones and Zeroes
+    // https://leetcode.com/problems/ones-and-zeroes/description/
+    // dp[i][j]：最多有i个0和j个1的strs的最大子集的大小为dp[i][j]
+    public int findMaxForm(String[] strs, int m, int n) {
+        int[][] dp = new int[m + 1][n + 1];
+        for (String item: strs) {
+            int number0 = 0, number1 = 0;
+            for (int i = 0; i < item.length(); ++i) {
+                if ('0' == item.charAt(i)) {
+                    ++number0;
+                } else if ('1' == item.charAt(i)) {
+                    ++number1;
+                }
+            }
+            // 0-1背包问题 遍历背包需要从后往前遍历
+            for (int i = m; i >= number0; --i) {
+                for (int j = n; j >= number1; --j) {
+                    dp[i][j] = Math.max(dp[i][j], dp[i - number0][j- number1] + 1);
+                }
+            }
+        }
+        return dp[m][n];
+    }
+
+    // 完全背包问题 和01背包不同 01背包的一个物品只能装一次 完全背包是物品可以装多次
+
 
     public static void main(String[] args) {
         Dynamic dynamic = new Dynamic();
 //        System.out.println(dynamic.integerBreakV2(8));
 //        System.out.println(dynamic.numTrees(3));
-        System.out.println(dynamic.bagP1(new int[]{1,3,4}, new int[]{15,20,30}, 4));
-        System.out.println(dynamic.bagP2(new int[]{1,3,4}, new int[]{15,20,30}, 4));
+//        System.out.println(dynamic.bagP1(new int[]{1,3,4}, new int[]{15,20,30}, 4));
+//        System.out.println(dynamic.bagP2(new int[]{1,3,4}, new int[]{15,20,30}, 4));
+        System.out.println(dynamic.findTargetSumWaysV2(new int[]{1,1,1,1,1}, 3));
     }
 
 }
