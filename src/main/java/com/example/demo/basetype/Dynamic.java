@@ -515,6 +515,40 @@ public class Dynamic {
         return dp[target];
     }
 
+    // 70. 爬楼梯（进阶版）
+    //
+    public int climb(int m, int n) {
+        int[] dp = new int[n + 1];
+        dp[0] = 1;
+        for (int j = 0; j <= n; ++j) {
+            for (int i = 0; i <= m; ++i) {
+                if (j < i) {
+                    continue;
+                }
+                dp[j] = dp[j] + dp[j - i];
+            }
+        }
+        return dp[n];
+    }
+
+    // 322. Coin Change
+    // https://leetcode.com/problems/coin-change/
+    public int coinChange(int[] coins, int amount) {
+        int[] dp = new int[amount + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[0] = 0;
+        for(int i = 0; i < coins.length; ++i) {
+            for (int j = coins[i]; j <= amount; ++j) {
+                if (dp[j - coins[i]] == Integer.MAX_VALUE) {
+                    continue;
+                }
+                dp[j] = Math.min(dp[j - coins[i]] + 1, dp[j]);
+            }
+        }
+        return dp[amount] == Integer.MAX_VALUE ? -1: dp[amount];
+    }
+
+
     public static void main(String[] args) {
         Dynamic dynamic = new Dynamic();
 //        System.out.println(dynamic.integerBreakV2(8));
