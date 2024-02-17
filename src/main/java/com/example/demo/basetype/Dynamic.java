@@ -9,7 +9,7 @@ import java.util.List;
  * @Description
  * @Date 2024/1/24 22:06
  * @Creater zhangdongrun_dxm
- *
+ * <p>
  * 动规是由前一个状态推导出来的，而贪心是局部直接选最优的
  * 动态规划
  * Dynamic Programming，简称DP
@@ -18,7 +18,6 @@ import java.util.List;
  * 3、dp 初始化
  * 4、确定dp的顺序
  * 5、举例，把每一步都过一下
- *
  **/
 public class Dynamic {
 
@@ -32,6 +31,14 @@ public class Dynamic {
         }
     }
 
+    public void printArr(int[] arr) {
+        // 打印dp数组
+        for (int i = 0; i < arr.length; i++) {
+            System.out.print(arr[i] + "\t");
+        }
+        System.out.println("\n");
+    }
+
     // 509. Fibonacci Number
     // https://leetcode.com/problems/fibonacci-number/description/
     public int fib(int n) {
@@ -41,7 +48,7 @@ public class Dynamic {
         int[] dp = new int[n + 1];
         dp[0] = 0;
         dp[1] = 1;
-        for (int i = 2; i<= n; ++i) {
+        for (int i = 2; i <= n; ++i) {
             dp[i] = dp[i - 1] + dp[i - 2];
         }
         return dp[n];
@@ -54,7 +61,7 @@ public class Dynamic {
         if (n <= 2) {
             return n;
         }
-        int[] dp = new int[n+1];
+        int[] dp = new int[n + 1];
         dp[1] = 1;
         dp[2] = 2;
         for (int i = 3; i <= n; i++) {
@@ -73,7 +80,7 @@ public class Dynamic {
         int[] dp = new int[cost.length + 1];
         dp[0] = 0;
         dp[1] = 0;
-        for (int i = 2; i< dp.length; ++i) {
+        for (int i = 2; i < dp.length; ++i) {
             dp[i] = Math.min(dp[i - 1] + cost[i - 1], dp[i - 2] + cost[i - 2]);
         }
         return dp[dp.length - 1];
@@ -86,7 +93,7 @@ public class Dynamic {
     public int uniquePaths(int m, int n) {
         int[][] dp = new int[m][n];
         dp[0][0] = 1;
-        for (int i = 0; i< m; ++i) {
+        for (int i = 0; i < m; ++i) {
             dp[i][0] = 1;
         }
         for (int j = 0; j < n; ++j) {
@@ -94,7 +101,7 @@ public class Dynamic {
         }
         for (int i = 1; i < m; ++i) {
             for (int j = 1; j < n; ++j) {
-                dp[i][j] = dp[i - 1][j] + dp [i][j - 1];
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
             }
         }
         return dp[m - 1][n - 1];
@@ -107,7 +114,7 @@ public class Dynamic {
     public int uniquePathsWithObstacles(int[][] obstacleGrid) {
         int[][] dp = new int[obstacleGrid.length][obstacleGrid[0].length];
         for (int i = 0; i < dp.length; ++i) {
-            if (obstacleGrid[i][0] == 1 || (i > 0 && dp[i-1][0] == 0)) {
+            if (obstacleGrid[i][0] == 1 || (i > 0 && dp[i - 1][0] == 0)) {
                 dp[i][0] = 0;
             } else {
                 dp[i][0] = 1;
@@ -178,7 +185,7 @@ public class Dynamic {
         int[] dp = new int[n + 1];
         dp[2] = 2;
         dp[3] = 3;
-        for (int i = 4; i< dp.length; ++i) {
+        for (int i = 4; i < dp.length; ++i) {
             for (int j = 1; j <= i - j; ++j) {
                 dp[i] = Math.max(dp[i], Math.max((i - j) * j, dp[i - j] * j));
             }
@@ -277,7 +284,7 @@ public class Dynamic {
         }
         int bagSize = sum / 2;
         int[] dp = new int[bagSize + 1];
-        for (int i = 0; i< nums.length; ++i) {
+        for (int i = 0; i < nums.length; ++i) {
             for (int j = bagSize; j >= nums[i]; --j) {
                 dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);
             }
@@ -292,7 +299,7 @@ public class Dynamic {
     // https://leetcode.com/problems/last-stone-weight-ii/description/
     public int lastStoneWeightII(int[] stones) {
         int sum = 0;
-        for (int i = 0; i< stones.length; ++i) {
+        for (int i = 0; i < stones.length; ++i) {
             sum = sum + stones[i];
         }
         int target = sum / 2;
@@ -308,7 +315,7 @@ public class Dynamic {
     // 用二维数组写
     public int lastStoneWeightIIV2(int[] stones) {
         int sum = 0;
-        for (int i = 0; i< stones.length; ++i) {
+        for (int i = 0; i < stones.length; ++i) {
             sum = sum + stones[i];
         }
         int target = sum / 2;
@@ -320,7 +327,7 @@ public class Dynamic {
                 dp[0][j] = stones[0];
             }
         }
-        for (int i = 1; i< stones.length; ++i) {
+        for (int i = 1; i < stones.length; ++i) {
             for (int j = 1; j <= target; ++j) {
                 if (j < stones[i]) {
                     dp[i][j] = dp[i - 1][j];
@@ -337,7 +344,7 @@ public class Dynamic {
     // 二维数组
     public int findTargetSumWays(int[] nums, int target) {
         int sum = 0;
-        for (int i = 0; i< nums.length; ++i) {
+        for (int i = 0; i < nums.length; ++i) {
             sum = sum + nums[i];
         }
         if (sum < Math.abs(target)) {
@@ -354,8 +361,8 @@ public class Dynamic {
         }
 
         int numZeros = 0;
-        for(int i = 0; i < nums.length; i++) {
-            if(nums[i] == 0) {
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == 0) {
                 numZeros++;
             }
             dp[i][0] = (int) Math.pow(2, numZeros);
@@ -377,7 +384,7 @@ public class Dynamic {
     // 一维数组
     public int findTargetSumWaysV2(int[] nums, int target) {
         int sum = 0;
-        for (int i = 0; i< nums.length; ++i) {
+        for (int i = 0; i < nums.length; ++i) {
             sum = sum + nums[i];
         }
         if (sum < Math.abs(target)) {
@@ -403,7 +410,7 @@ public class Dynamic {
     // 先用回溯做一下
     public int findTargetSumWaysTrack(int[] nums, int target) {
         int sum = 0;
-        for (int i = 0; i< nums.length; ++i) {
+        for (int i = 0; i < nums.length; ++i) {
             sum = sum + nums[i];
         }
         if (sum < target) {
@@ -443,7 +450,7 @@ public class Dynamic {
     // dp[i][j]：最多有i个0和j个1的strs的最大子集的大小为dp[i][j]
     public int findMaxForm(String[] strs, int m, int n) {
         int[][] dp = new int[m + 1][n + 1];
-        for (String item: strs) {
+        for (String item : strs) {
             int number0 = 0, number1 = 0;
             for (int i = 0; i < item.length(); ++i) {
                 if ('0' == item.charAt(i)) {
@@ -455,7 +462,7 @@ public class Dynamic {
             // 0-1背包问题 遍历背包需要从后往前遍历
             for (int i = m; i >= number0; --i) {
                 for (int j = n; j >= number1; --j) {
-                    dp[i][j] = Math.max(dp[i][j], dp[i - number0][j- number1] + 1);
+                    dp[i][j] = Math.max(dp[i][j], dp[i - number0][j - number1] + 1);
                 }
             }
         }
@@ -463,7 +470,50 @@ public class Dynamic {
     }
 
     // 完全背包问题 和01背包不同 01背包的一个物品只能装一次 完全背包是物品可以装多次
+    public int testCompletePack(int[] weight, int[] value, int bagWeight) {
+        int[] dp = new int[bagWeight + 1];
+        for (int i = 0; i < weight.length; ++i) {
+            for (int j = weight[i]; j <= bagWeight; ++j) {
+                dp[j] = Math.max(dp[j], dp[j - weight[i]] + value[i]);
+            }
+            printArr(dp);
+        }
+        return dp[bagWeight];
+    }
 
+    // 518. Coin Change II
+    // https://leetcode.com/problems/coin-change-ii/description/
+    // dp[j] 金额是j有多少种装法
+    // 如果求组合数就是外层for循环遍历物品，内层for遍历背包。
+    // 如果求排列数就是外层for遍历背包，内层for循环遍历物品。
+    public int change(int amount, int[] coins) {
+        int[] dp = new int[amount + 1];
+        dp[0] = 1;
+        for (int i = 0; i < coins.length; ++i) {
+            for (int j = coins[i]; j <= amount; ++j) {
+                dp[j] = dp[j] + dp[j - coins[i]];
+            }
+            printArr(dp);
+        }
+        return dp[amount];
+    }
+
+    // 377. Combination Sum IV
+    // 恶心嗷 虽然叫组合 实际上是要求排列
+    // https://leetcode.com/problems/combination-sum-iv/description/
+    public int combinationSum4(int[] nums, int target) {
+        int[] dp = new int[target + 1];
+        dp[0] = 1;
+        for (int j = 0; j <= target; ++j) {
+            for (int i = 0; i < nums.length; ++i) {
+                if (j < nums[i]) {
+                    continue;
+                }
+                dp[j] = dp[j] + dp[j - nums[i]];
+            }
+        }
+        return dp[target];
+    }
 
     public static void main(String[] args) {
         Dynamic dynamic = new Dynamic();
@@ -471,7 +521,10 @@ public class Dynamic {
 //        System.out.println(dynamic.numTrees(3));
 //        System.out.println(dynamic.bagP1(new int[]{1,3,4}, new int[]{15,20,30}, 4));
 //        System.out.println(dynamic.bagP2(new int[]{1,3,4}, new int[]{15,20,30}, 4));
-        System.out.println(dynamic.findTargetSumWaysV2(new int[]{1,1,1,1,1}, 3));
+//        System.out.println(dynamic.findTargetSumWaysV2(new int[]{1,1,1,1,1}, 3));
+//        System.out.println(dynamic.testCompletePack(new int[]{1, 3, 4}, new int[]{15, 20, 30}, 4));
+//        System.out.println(dynamic.change(5, new int[]{1, 2, 5}));
+        System.out.println(dynamic.combinationSum4(new int[]{1, 2, 3}, 4));
     }
 
 }
