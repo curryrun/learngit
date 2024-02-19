@@ -2,7 +2,9 @@ package com.example.demo.basetype;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Classname Dynamic
@@ -32,6 +34,14 @@ public class Dynamic {
     }
 
     public void printArr(int[] arr) {
+        // 打印dp数组
+        for (int i = 0; i < arr.length; i++) {
+            System.out.print(arr[i] + "\t");
+        }
+        System.out.println("\n");
+    }
+
+    public void printArr(boolean[] arr) {
         // 打印dp数组
         for (int i = 0; i < arr.length; i++) {
             System.out.print(arr[i] + "\t");
@@ -548,6 +558,42 @@ public class Dynamic {
         return dp[amount] == Integer.MAX_VALUE ? -1: dp[amount];
     }
 
+    // 279. Perfect Squares
+    // https://leetcode.com/problems/perfect-squares/description/
+    public int numSquares(int n) {
+        int[] dp = new int[n + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[0] = 0;
+        // 后遍历物品
+        for (int i = 1; i <= n; ++i) {
+            // 先遍历背包
+            for (int j = i * i; j <= n; ++j) {
+                dp[j] = Math.min(dp[j], dp[j - i * i] + 1);
+            }
+        }
+        return dp[n];
+    }
+
+    // 139. Word Break
+    // https://leetcode.com/problems/word-break/
+    public boolean wordBreak(String s, List<String> wordDict) {
+        boolean[] dp = new boolean[s.length() + 1];
+        dp[0] = true;
+        Set<String> wordSet = new HashSet<>(wordDict);
+        // s是背包 wordDict是物品
+        // 外层遍历背包 内层遍历物品 是为了求排列 这题是排列
+        for (int j = 0; j <= s.length(); ++j) {
+            for (int i = j; i <= s.length(); ++i) {
+                System.out.println(s.substring(j, i));
+                // i >= j嗷 如果dp[j]是true 那么从[j, i]之间这段词 也在物品内 则dp[i]= true
+                if (dp[j] == true && wordSet.contains(s.substring(j, i))) {
+                    dp[i] = true;
+                }
+            }
+            printArr(dp);
+        }
+        return dp[s.length()];
+    }
 
     public static void main(String[] args) {
         Dynamic dynamic = new Dynamic();
@@ -558,7 +604,9 @@ public class Dynamic {
 //        System.out.println(dynamic.findTargetSumWaysV2(new int[]{1,1,1,1,1}, 3));
 //        System.out.println(dynamic.testCompletePack(new int[]{1, 3, 4}, new int[]{15, 20, 30}, 4));
 //        System.out.println(dynamic.change(5, new int[]{1, 2, 5}));
-        System.out.println(dynamic.combinationSum4(new int[]{1, 2, 3}, 4));
+//        System.out.println(dynamic.combinationSum4(new int[]{1, 2, 3}, 4));
+//        System.out.println(dynamic.numSquares(12));
+        System.out.println(dynamic.wordBreak("applepenapple", Arrays.asList(new String[]{"apple","pen"})));
     }
 
 }
