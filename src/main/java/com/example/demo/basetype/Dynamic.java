@@ -595,6 +595,51 @@ public class Dynamic {
         return dp[s.length()];
     }
 
+    // 198. House Robber
+    // https://leetcode.com/problems/house-robber/description/
+    public int rob(int[] nums) {
+        if (0 == nums.length) {
+            return 0;
+        }
+        if (1 == nums.length) {
+            return nums[0];
+        }
+        int[] dp = new int[nums.length];
+        dp[0] = nums[0];
+        dp[1] = Math.max(nums[0], nums[1]);
+        for (int i = 2; i < dp.length; ++i) {
+            // 当前偷 or 当前不偷
+            dp[i] = Math.max(dp[i - 2] + nums[i], dp[i - 1]);
+        }
+        return dp[dp.length - 1];
+    }
+
+    // 213. House Robber II
+    // https://leetcode.com/problems/house-robber-ii/description/
+    public int rob2(int[] nums) {
+        if (0 == nums.length) {
+            return 0;
+        }
+        if (1 == nums.length) {
+            return nums[0];
+        }
+        return Math.max(rob(nums, 0, nums.length - 2), rob(nums, 1, nums.length - 1));
+    }
+
+    public int rob(int[] nums, int start, int end) {
+        if (start == end) {
+            return nums[start];
+        }
+        int[] dp = new int[nums.length];
+        dp[start] = nums[start];
+        dp[start + 1] = Math.max(nums[start], nums[start + 1]);
+        for (int i = 2 + start; i <= end; ++i) {
+            // 当前偷 or 当前不偷
+            dp[i] = Math.max(dp[i - 2] + nums[i], dp[i - 1]);
+        }
+        return dp[end];
+    }
+
     public static void main(String[] args) {
         Dynamic dynamic = new Dynamic();
 //        System.out.println(dynamic.integerBreakV2(8));
