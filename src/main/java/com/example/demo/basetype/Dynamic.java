@@ -1,5 +1,7 @@
 package com.example.demo.basetype;
 
+import com.example.demo.base.TreeNode;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -638,6 +640,33 @@ public class Dynamic {
             dp[i] = Math.max(dp[i - 2] + nums[i], dp[i - 1]);
         }
         return dp[end];
+    }
+
+    // 337. House Robber III
+    // https://leetcode.com/problems/house-robber-iii/description/
+    // 这道题很有意思
+    // 当前偷不偷 要看子节点偷不偷 也就是先孩子 再根节点的遍历 就是后序遍历
+    public int rob3(TreeNode root) {
+        if (null == root) {
+            return 0;
+        }
+        int[] res = robTree(root);
+        return Math.max(res[0], res[1]);
+    }
+
+    // 只用大小为2的即可 偷 or 不偷 当前节点的最大值, 因为每轮递归都会新建 其实相当于全部都记录了
+    // 所以dp数组（dp table）以及下标的含义：下标为0记录不偷该节点所得到的的最大金钱，下标为1记录偷该节点所得到的的最大金钱。
+    public int[] robTree(TreeNode root) {
+        if (null == root) {
+            return new int[]{0, 0};
+        }
+        int[] left = robTree(root.left);
+        int[] right = robTree(root.right);
+        // 偷当前节点 那么孩子就不能偷
+        int val1 = root.val + left[0] + right[0];
+        // 不偷当前节点 那么孩子就可以偷 选左右孩子里的最大值 偷！
+        int val0 = Math.max(left[0], left[1]) + Math.max(right[0], right[1]);
+        return new int[]{val0, val1};
     }
 
     public static void main(String[] args) {
