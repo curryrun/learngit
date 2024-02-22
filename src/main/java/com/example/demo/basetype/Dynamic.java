@@ -669,6 +669,27 @@ public class Dynamic {
         return new int[]{val0, val1};
     }
 
+    // 121. Best Time to Buy and Sell Stock
+    // https://leetcode.com/problems/best-time-to-buy-and-sell-stock/description/
+    // dp[i][0] 0 - i天持有股票后的最大财富 （肯定是负数 因为持有要花钱 相当于找最小的负数）
+    // dp[i][1] 0 - i天不持有股票后的最大财富 （可能是当天卖出，或者是之前就卖出）
+    public int maxProfit(int[] prices) {
+        int[][] dp = new int[prices.length][2];
+        dp[0][0] = -prices[0];
+        dp[0][1] = 0;
+        for (int i = 1; i < prices.length; ++i) {
+            // 当天持有股票 可能是
+            // 1、当天不买，就是前一天持有的金额 = 前一天不买的值 dp[i - 1][0]
+            // 2、当天买 = 当天的-价格
+            dp[i][0] = Math.max(dp[i - 1][0], -prices[i]);
+            // 当天不持有股票 可能是
+            // 可能是昨天就不持有股票了 dp[i - 1][1]
+            // 也可能是昨天持有的卖出去
+            dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] + prices[i]);
+        }
+        return dp[prices.length - 1][1];
+    }
+
     public static void main(String[] args) {
         Dynamic dynamic = new Dynamic();
 //        System.out.println(dynamic.integerBreakV2(8));
