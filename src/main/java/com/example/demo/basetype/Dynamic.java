@@ -549,7 +549,7 @@ public class Dynamic {
         int[] dp = new int[amount + 1];
         Arrays.fill(dp, Integer.MAX_VALUE);
         dp[0] = 0;
-        for(int i = 0; i < coins.length; ++i) {
+        for (int i = 0; i < coins.length; ++i) {
             for (int j = coins[i]; j <= amount; ++j) {
                 if (dp[j - coins[i]] == Integer.MAX_VALUE) {
                     continue;
@@ -557,7 +557,7 @@ public class Dynamic {
                 dp[j] = Math.min(dp[j - coins[i]] + 1, dp[j]);
             }
         }
-        return dp[amount] == Integer.MAX_VALUE ? -1: dp[amount];
+        return dp[amount] == Integer.MAX_VALUE ? -1 : dp[amount];
     }
 
     // 279. Perfect Squares
@@ -690,6 +690,53 @@ public class Dynamic {
         return dp[prices.length - 1][1];
     }
 
+    // 122. Best Time to Buy and Sell Stock II
+    // 区别在于可以多次买卖
+    // https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/description/
+    // dp[i][0] i天持有一笔 最大的收益
+    // dp[i][1] i天一笔也不持有 最大的收益
+    public int maxProfitV2(int[] prices) {
+        int[][] dp = new int[prices.length][2];
+        dp[0][0] = -prices[0];
+        dp[0][1] = 0;
+        for (int i = 1; i < prices.length; ++i) {
+            // 当天持有
+            // 1、可能是今天要买 = 前一天不持有 - 今天价格
+            // 2、可能是今天不买  = 前一天持有
+            dp[i][0] = Math.max(dp[i - 1][1] - prices[i], dp[i - 1][0]);
+            // 当天不持有
+            // 1、可能是今天卖出 = 前一天持有 + 当天价格
+            // 2、可能是今天不买 = 前一天持有
+            dp[i][1] = Math.max(dp[i - 1][0] + prices[i], dp[i - 1][1]);
+        }
+        return dp[prices.length - 1][1];
+    }
+
+    // 123. Best Time to Buy and Sell Stock III
+    // 区别在于 最多只能完成两笔交易
+    // https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/description/
+    // dp[i][j] j有四种状态
+    // 0 没有操作 （其实我们也可以不设置这个状态）
+    // 1 当前是持有 第一次购买的股票
+    // 2 当前是不持有 第一次购买的股票
+    // 3 第二次持有股票
+    // 4 第二次不持有股票
+    public int maxProfit3(int[] prices) {
+        int[][] dp = new int[prices.length][5];
+        dp[0][1] = -prices[0];
+        dp[0][3] = -prices[0];
+        for (int i = 1; i < prices.length; ++i) {
+            dp[i][0] = dp[i - 1][0];
+            // 操作一：第i天买入股票了，那么dp[i][1] = dp[i-1][0] - prices[i]
+            // 操作二：第i天没有操作，而是沿用前一天买入的状态，即：dp[i][1] = dp[i - 1][1]
+            dp[i][1] = Math.max(dp[i - 1][0] - prices[i], dp[i - 1][1]);
+            dp[i][2] = Math.max(dp[i - 1][1] + prices[i], dp[i - 1][2]);
+            dp[i][3] = Math.max(dp[i - 1][2] - prices[i], dp[i - 1][3]);
+            dp[i][4] = Math.max(dp[i - 1][3] + prices[i], dp[i - 1][4]);
+        }
+        return dp[prices.length - 1][4];
+    }
+
     public static void main(String[] args) {
         Dynamic dynamic = new Dynamic();
 //        System.out.println(dynamic.integerBreakV2(8));
@@ -701,7 +748,7 @@ public class Dynamic {
 //        System.out.println(dynamic.change(5, new int[]{1, 2, 5}));
 //        System.out.println(dynamic.combinationSum4(new int[]{1, 2, 3}, 4));
 //        System.out.println(dynamic.numSquares(12));
-        System.out.println(dynamic.wordBreak("applepenapple", Arrays.asList(new String[]{"apple","pen"})));
+        System.out.println(dynamic.wordBreak("applepenapple", Arrays.asList(new String[]{"apple", "pen"})));
     }
 
 }
