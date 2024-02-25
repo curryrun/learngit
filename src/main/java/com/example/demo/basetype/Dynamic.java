@@ -33,6 +33,7 @@ public class Dynamic {
             }
             System.out.println("\n");
         }
+        System.out.println("============");
     }
 
     public void printArr(int[] arr) {
@@ -737,6 +738,62 @@ public class Dynamic {
         return dp[prices.length - 1][4];
     }
 
+    // 188. Best Time to Buy and Sell Stock IV
+    // https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/description/
+    // 和上面一样 j代表持有状态
+    public int maxProfit(int k, int[] prices) {
+        int[][] dp = new int[prices.length][2 * k + 1];
+        for (int i = 0; i < k; ++i) {
+            dp[0][2 * i + 1] = -prices[0];
+        }
+        for (int i = 1; i < prices.length; ++i) {
+            dp[i][0] = dp[i - 1][0];
+            for (int j = 1; j < dp[i].length; ++j) {
+                if (j % 2 == 1) {
+                    dp[i][j] = Math.max(dp[i - 1][j - 1] - prices[i], dp[i - 1][j]);
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j - 1] + prices[i], dp[i - 1][j]);
+                }
+            }
+        }
+        int max = 0;
+        for (int i = 0; i < dp[prices.length - 1].length; ++i) {
+            max = Math.max(max, dp[prices.length - 1][i]);
+        }
+        return max;
+    }
+
+    // 309. Best Time to Buy and Sell Stock with Cooldown
+    // https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/description/
+    // dp[i][j] j是区分状态的 在这个状态下的 最大收益
+    // 核心点在于把不持有状态拆分成 保持上一天的状态 or 当天卖出 通过当天卖出状态 推定下一天冷静期的收益
+    public int maxProfitV5(int[] prices) {
+        int[][] dp = new int[prices.length][4];
+        // 0 持有
+        // 1 不持有 拆分成
+        //         1 保持之前不持有的状态 可能是前一天也不持有 or 前一天是冷静期
+        //         2 当天卖出
+        // 3 冷静期
+        // 要注意 冷静期的时候 也是不持有的状态
+        dp[0][0] = -prices[0];
+        for (int i = 1; i < prices.length; ++i) {
+            // 0 持有可分成
+            // a 昨天持有
+            // b 从不持有状态 今天买入
+            // c 昨天是冷静期 今天买入
+            dp[i][0] = Math.max(dp[i - 1][0], Math.max(dp[i - 1][1] - prices[i], dp[i - 1][3] - prices[i]));
+            // 不持有状态:
+            // 1 保持之前的状态: 前一天不持有 or 前一天是冷静期
+            dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][3]);
+            // 2 当天卖出
+            dp[i][2] = dp[i - 1][0] + prices[i];
+            // 冷静期 = 昨天卖出状态
+            dp[i][3] = dp[i - 1][2];
+        }
+        // 注意 最后一天是冷静期 也可以参与计算
+        return Math.max(dp[prices.length - 1][3], Math.max(dp[prices.length - 1][1], dp[prices.length - 1][2]));
+    }
+
     public static void main(String[] args) {
         Dynamic dynamic = new Dynamic();
 //        System.out.println(dynamic.integerBreakV2(8));
@@ -748,7 +805,9 @@ public class Dynamic {
 //        System.out.println(dynamic.change(5, new int[]{1, 2, 5}));
 //        System.out.println(dynamic.combinationSum4(new int[]{1, 2, 3}, 4));
 //        System.out.println(dynamic.numSquares(12));
-        System.out.println(dynamic.wordBreak("applepenapple", Arrays.asList(new String[]{"apple", "pen"})));
+//        System.out.println(dynamic.wordBreak("applepenapple", Arrays.asList(new String[]{"apple", "pen"})));
+//        System.out.println(dynamic.maxProfit(2, new int[]{3,2,6,5,0,3}));
+        System.out.println(dynamic.maxProfitV5( new int[]{1,2,3,0,2}));
     }
 
 }
