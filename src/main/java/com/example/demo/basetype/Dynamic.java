@@ -794,6 +794,46 @@ public class Dynamic {
         return Math.max(dp[prices.length - 1][3], Math.max(dp[prices.length - 1][1], dp[prices.length - 1][2]));
     }
 
+    // 714. Best Time to Buy and Sell Stock with Transaction Fee
+    // https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/description/?utm_source=LCUS&utm_medium=ip_redirect&utm_campaign=transfer2china
+    public int maxProfit(int[] prices, int fee) {
+        int[][] dp = new int[prices.length][2];
+        dp[0][0] = -prices[0];
+        for (int i = 1; i < prices.length; ++i) {
+            // 持有
+            dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] - prices[i]);
+            // 不持有
+            dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] + prices[i] - fee);
+        }
+        return dp[prices.length - 1][1];
+    }
+
+    // 300. Longest Increasing Subsequence
+    // https://leetcode.com/problems/longest-increasing-subsequence/description/
+    public int lengthOfLIS(int[] nums) {
+        if (nums.length <= 1) {
+            return nums.length;
+        }
+        int[] dp = new int[nums.length];
+        Arrays.fill(dp, 1);
+        int result = 0;
+        for (int i = 1; i < nums.length; ++i) {
+            for (int j = 0; j < i; ++j) {
+                System.out.println(nums[j] + "==========" + nums[i]);
+                System.out.println(dp[j] + "==========" + dp[i]);
+                if (nums[i] > nums[j]) {
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
+                }
+                System.out.println(dp[j] + "after==========" + dp[i]);
+            }
+            printArr(dp);
+            if (dp[i] > result) {
+                result = dp[i];
+            }
+        }
+        return result;
+    }
+
     public static void main(String[] args) {
         Dynamic dynamic = new Dynamic();
 //        System.out.println(dynamic.integerBreakV2(8));
@@ -807,7 +847,8 @@ public class Dynamic {
 //        System.out.println(dynamic.numSquares(12));
 //        System.out.println(dynamic.wordBreak("applepenapple", Arrays.asList(new String[]{"apple", "pen"})));
 //        System.out.println(dynamic.maxProfit(2, new int[]{3,2,6,5,0,3}));
-        System.out.println(dynamic.maxProfitV5( new int[]{1,2,3,0,2}));
+//        System.out.println(dynamic.maxProfitV5( new int[]{1,2,3,0,2}));
+        System.out.println(dynamic.lengthOfLIS( new int[]{0,1,0,3,2}));
     }
 
 }
