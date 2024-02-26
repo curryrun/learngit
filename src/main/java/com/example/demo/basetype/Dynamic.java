@@ -834,6 +834,51 @@ public class Dynamic {
         return result;
     }
 
+    // 674. Longest Continuous Increasing Subsequence
+    // https://leetcode.com/problems/longest-continuous-increasing-subsequence/description/
+    // 贪心来做
+    public int findLengthOfLCIS(int[] nums) {
+        if (nums.length <= 1) {
+            return nums.length;
+        }
+        int max = 1, pre = nums[0], roundCount = 1;
+        for (int i = 1; i < nums.length; ++i) {
+            if (pre < nums[i]) {
+                roundCount++;
+                max = Math.max(max, roundCount);
+            } else {
+                roundCount = 1;
+            }
+            pre = nums[i];
+        }
+        return max;
+    }
+
+    // 概括来说：不连续递增子序列的跟前0-i 个状态有关，连续递增的子序列只跟前一个状态有关
+    // 用动规来做
+    // dp[i]：以下标i为结尾的连续递增的子序列长度为dp[i]。
+    public int findLengthOfLCISV2(int[] nums) {
+        if (nums.length <= 1) {
+            return nums.length;
+        }
+        int[] dp = new int[nums.length];
+        int max = 1;
+        Arrays.fill(dp, 1);
+        for (int i = 1; i < nums.length; ++i) {
+            if (nums[i] > nums[i - 1]) {
+                dp[i] = dp[i - 1] + 1;
+            }
+            max = Math.max(dp[i], max);
+        }
+        return max;
+    }
+
+    // 718. Maximum Length of Repeated Subarray
+    // https://leetcode.com/problems/maximum-length-of-repeated-subarray/description/
+    public int findLength(int[] nums1, int[] nums2) {
+
+    }
+
     public static void main(String[] args) {
         Dynamic dynamic = new Dynamic();
 //        System.out.println(dynamic.integerBreakV2(8));
