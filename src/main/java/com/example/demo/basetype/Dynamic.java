@@ -875,8 +875,33 @@ public class Dynamic {
 
     // 718. Maximum Length of Repeated Subarray
     // https://leetcode.com/problems/maximum-length-of-repeated-subarray/description/
+    // dp[i][j] ：以下标i - 1为结尾的A，和以下标j - 1为结尾的B，最长重复子数组长度为dp[i][j]。 （特别注意： “以下标i - 1为结尾的A” 标明一定是 以A[i-1]为结尾的字符串 ）
+    // 这里可能想不到 换成dp[i][j] ：以下标i为结尾的A，和以下标j为结尾的B，最长重复子数组长度为dp[i][j]
     public int findLength(int[] nums1, int[] nums2) {
-
+        int[][] dp = new int[nums1.length][nums2.length];
+        int max = 0;
+        // init
+        for (int i = 0; i < nums1.length; ++i) {
+            if (nums1[i] == nums2[0]) {
+                dp[i][0] = 1;
+            }
+            max = Math.max(max, dp[i][0]);
+        }
+        for (int j = 0; j < nums2.length; ++j) {
+            if (nums2[j] == nums1[0]) {
+                dp[0][j] = 1;
+            }
+            max = Math.max(max, dp[0][j]);
+        }
+        for (int i = 1; i< nums1.length; ++i) {
+            for (int j = 1; j < nums2.length; ++j) {
+                if (nums1[i] == nums2[j]) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                }
+                max = Math.max(max, dp[i][j]);
+            }
+        }
+        return max;
     }
 
     public static void main(String[] args) {
