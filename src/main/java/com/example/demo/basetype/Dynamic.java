@@ -904,6 +904,62 @@ public class Dynamic {
         return max;
     }
 
+    // 1143. Longest Common Subsequence
+    // https://leetcode.com/problems/longest-common-subsequence/description/
+    // 初始化哪里有点问题 这种写法有三个用例没过
+    public int longestCommonSubsequence(String text1, String text2) {
+        int[][] dp = new int[text1.length()][text2.length()];
+        int max = 0;
+        if (text1.charAt(0) == text2.charAt(0)) {
+            dp[0][0] = 1;
+            max = 1;
+        }
+        // init
+        for (int i = 1; i < text1.length(); ++i) {
+            if (text1.charAt(i) == text2.charAt(0)) {
+                dp[i][0] = dp[i - 1][0] + 1;
+            } else {
+                dp[i][0] = dp[i - 1][0];
+            }
+            max = Math.max(max, dp[i][0]);
+        }
+        for (int j = 1; j < text2.length(); ++j) {
+            if (text2.charAt(j) == text1.charAt(0)) {
+                dp[0][j] = dp[0][j] + 1;
+            } else {
+                dp[0][j] = dp[0][j - 1];
+            }
+            max = Math.max(max, dp[0][j]);
+        }
+        for (int i = 1; i< text1.length(); ++i) {
+            for (int j = 1; j < text2.length(); ++j) {
+                if (text1.charAt(i) == text2.charAt(j)) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+                max = Math.max(max, dp[i][j]);
+            }
+        }
+        return max;
+    }
+
+    public int longestCommonSubsequenceV2(String text1, String text2) {
+        int[][] dp = new int[text1.length() + 1][text2.length() + 1];
+        int max = 0;
+        for (int i = 1; i< text1.length() + 1; ++i) {
+            for (int j = 1; j < text2.length() + 1; ++j) {
+                if (text1.charAt(i) == text2.charAt(j)) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+                max = Math.max(max, dp[i][j]);
+            }
+        }
+        return max;
+    }
+
     public static void main(String[] args) {
         Dynamic dynamic = new Dynamic();
 //        System.out.println(dynamic.integerBreakV2(8));
@@ -918,7 +974,8 @@ public class Dynamic {
 //        System.out.println(dynamic.wordBreak("applepenapple", Arrays.asList(new String[]{"apple", "pen"})));
 //        System.out.println(dynamic.maxProfit(2, new int[]{3,2,6,5,0,3}));
 //        System.out.println(dynamic.maxProfitV5( new int[]{1,2,3,0,2}));
-        System.out.println(dynamic.lengthOfLIS( new int[]{0,1,0,3,2}));
+//        System.out.println(dynamic.lengthOfLIS( new int[]{0,1,0,3,2}));
+        System.out.println(dynamic.longestCommonSubsequence("abcde", "ace"));
     }
 
 }
