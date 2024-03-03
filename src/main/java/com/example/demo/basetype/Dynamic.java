@@ -893,7 +893,7 @@ public class Dynamic {
             }
             max = Math.max(max, dp[0][j]);
         }
-        for (int i = 1; i< nums1.length; ++i) {
+        for (int i = 1; i < nums1.length; ++i) {
             for (int j = 1; j < nums2.length; ++j) {
                 if (nums1[i] == nums2[j]) {
                     dp[i][j] = dp[i - 1][j - 1] + 1;
@@ -907,6 +907,7 @@ public class Dynamic {
     // 1143. Longest Common Subsequence
     // https://leetcode.com/problems/longest-common-subsequence/description/
     // 初始化哪里有点问题 这种写法有三个用例没过
+    // dp[i][j] ：长度0-i的A，长度0-j的B，最长重复子序列长度为dp[i][j]
     public int longestCommonSubsequence(String text1, String text2) {
         int[][] dp = new int[text1.length()][text2.length()];
         int max = 0;
@@ -915,9 +916,10 @@ public class Dynamic {
             max = 1;
         }
         // init
+        // 注意 这里即使有重复的 初始化也不能前一个加1 因为你长度是1 不能有长度为2的子序列！！！！！！！！！！ 千万注意
         for (int i = 1; i < text1.length(); ++i) {
             if (text1.charAt(i) == text2.charAt(0)) {
-                dp[i][0] = dp[i - 1][0] + 1;
+                dp[i][0] = 1;
             } else {
                 dp[i][0] = dp[i - 1][0];
             }
@@ -925,13 +927,13 @@ public class Dynamic {
         }
         for (int j = 1; j < text2.length(); ++j) {
             if (text2.charAt(j) == text1.charAt(0)) {
-                dp[0][j] = dp[0][j] + 1;
+                dp[0][j] = 1;
             } else {
                 dp[0][j] = dp[0][j - 1];
             }
             max = Math.max(max, dp[0][j]);
         }
-        for (int i = 1; i< text1.length(); ++i) {
+        for (int i = 1; i < text1.length(); ++i) {
             for (int j = 1; j < text2.length(); ++j) {
                 if (text1.charAt(i) == text2.charAt(j)) {
                     dp[i][j] = dp[i - 1][j - 1] + 1;
@@ -947,7 +949,7 @@ public class Dynamic {
     public int longestCommonSubsequenceV2(String text1, String text2) {
         int[][] dp = new int[text1.length() + 1][text2.length() + 1];
         int max = 0;
-        for (int i = 1; i< text1.length() + 1; ++i) {
+        for (int i = 1; i < text1.length() + 1; ++i) {
             for (int j = 1; j < text2.length() + 1; ++j) {
                 if (text1.charAt(i) == text2.charAt(j)) {
                     dp[i][j] = dp[i - 1][j - 1] + 1;
@@ -958,6 +960,211 @@ public class Dynamic {
             }
         }
         return max;
+    }
+
+    // 1035. Uncrossed Lines
+    // https://leetcode.com/problems/uncrossed-lines/description/
+    // 直线不能相交，这就是说明在字符串A中 找到一个与字符串B相同的子序列，且这个子序列不能改变相对顺序，只要相对顺序不改变，链接相同数字的直线就不会相交。
+    // 其实也就是求最长子序列长度 和上面一题一样
+    public int maxUncrossedLines(int[] nums1, int[] nums2) {
+        int[][] dp = new int[nums1.length][nums2.length];
+        if (nums1[0] == nums2[0]) {
+            dp[0][0] = 1;
+        }
+        for (int i = 1; i < nums1.length; ++i) {
+            if (nums1[i] == nums2[0]) {
+                dp[i][0] = 1;
+            } else {
+                dp[i][0] = dp[i - 1][0];
+            }
+        }
+        for (int j = 1; j < nums2.length; ++j) {
+            if (nums2[j] == nums1[0]) {
+                dp[0][j] = 1;
+            } else {
+                dp[0][j] = dp[0][j - 1];
+            }
+        }
+        for (int i = 1; i < nums1.length; ++i) {
+            for (int j = 1; j < nums2.length; ++j) {
+                if (nums1[i] == nums2[j]) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        return dp[nums1.length - 1][nums2.length - 1];
+    }
+
+    // 53. Maximum Subarray
+    // https://leetcode.com/problems/maximum-subarray/description/
+    // 先用贪心做一下
+    public int maxSubArray(int[] nums) {
+        int max = Integer.MIN_VALUE;
+        int nowSum = 0;
+        for (int i = 0; i < nums.length; ++i) {
+            nowSum = nowSum + nums[i];
+            max = Math.max(nowSum, max);
+            // 重新计数
+            if (nowSum < 0) {
+                nowSum = 0;
+            }
+        }
+        return max;
+    }
+
+    // 做过 现在用动规做
+    // dp[i] 应该是以i结尾的最大子数组
+    public int maxSubArrayV2(int[] nums) {
+        int[] dp = new int[nums.length + 1];
+        int max = Integer.MIN_VALUE;
+        for (int i = 1; i <= nums.length; ++i) {
+            // 要么从是上一个加当前 or 当前重新开始
+            dp[i] = Math.max(dp[i - 1] + nums[i - 1], nums[i - 1]);
+            max = Math.max(max, dp[i]);
+        }
+        return max;
+    }
+
+    // 392. Is Subsequence
+    // https://leetcode.com/problems/is-subsequence/description/
+    // 先不用动规做
+    public boolean isSubsequence(String s, String t) {
+        if (s.length() == 0) {
+            return true;
+        }
+        if (t.length() == 0) {
+            return false;
+        }
+        for (int i = 0; i < t.length(); ++i) {
+            if (t.charAt(i) != s.charAt(0)) {
+                continue;
+            }
+            int begin = i, j = 0;
+            while (begin < t.length()) {
+                if (t.charAt(begin) == s.charAt(j)) {
+                    ++j;
+                }
+                if (j == s.length()) {
+                    return true;
+                }
+                ++begin;
+            }
+        }
+        return false;
+    }
+
+    // 用动规做
+    // dp[i][j] 表示以下标i-1为结尾的字符串s，和以下标j-1为结尾的字符串t，相同子序列的长度为dp[i][j]。
+    public boolean isSubsequenceV2(String s, String t) {
+        int[][] dp = new int[s.length() + 1][t.length() + 1];
+        for (int i = 1; i <= s.length(); ++i) {
+            for (int j = 1; j <= t.length(); ++j) {
+                if (s.charAt(i - 1) == t.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = dp[i][j - 1];
+                }
+            }
+        }
+        if (s.length() == dp[s.length()][t.length()]) {
+            return true;
+        }
+        return false;
+    }
+
+    // 115 Distinct Subsequences
+    // TODO 这道题值得好好再做一下
+    // https://leetcode.com/problems/distinct-subsequences/description/
+    // dp[i][j]：以i-1为结尾的s子序列中出现以j-1为结尾的t的个数为dp[i][j]
+    // s大 t小
+    public int numDistinct(String s, String t) {
+        int[][] dp = new int[s.length() + 1][t.length() + 1];
+        // init
+        // t是空串的话 个数就是1
+        for (int i = 0; i <= s.length(); ++i) {
+            dp[i][0] = 1;
+        }
+        for (int i = 1; i <= s.length(); ++i) {
+            for (int j = 1; j <= t.length(); ++j) {
+                // 相等时
+                if (s.charAt(i - 1) == t.charAt(j - 1)) {
+                    // 两种情况 用当前的s[i -1]就是 dp[i - 1][j - 1]即前一个
+                    // 不用当前的s[i -1] 就是dp[i - 1][j]
+                    // 例如： s：bagg 和 t：bag ，s[3] 和 t[2]是相同的，但是字符串s也可以不用s[3]来匹配，即用s[0]s[1]s[2]组成的bag。
+                    // 当然也可以用s[3]来匹配，即：s[0]s[1]s[3]组成的bag。
+                    // 我们求的是 s 中有多少个 t，而不是 求t中有多少个s，所以只考虑 s中删除元素的情况，即 不用s[i - 1]来匹配 的情况。
+                    dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j];
+                }
+                // 不相等的话 直接就等于上一个 i- 2的长度
+                else {
+                    dp[i][j] = dp[i - 1][j];
+                }
+            }
+        }
+        return dp[s.length()][t.length()];
+    }
+
+    // 583. Delete Operation for Two Strings
+    // https://leetcode.com/problems/delete-operation-for-two-strings/description/
+    // dp[i][j]：以i-1为结尾的字符串word1，和以j-1位结尾的字符串word2，想要达到相等，所需要删除元素的最少次数。
+    public int minDistance(String word1, String word2) {
+        int[][] dp = new int[word1.length() + 1][word2.length() + 1];
+        // 都是空串天生相等
+        dp[0][0] = 0;
+        for (int i = 1; i <= word1.length(); ++i) {
+            dp[i][0] = i;
+        }
+        for (int j = 1; j <= word2.length(); ++j) {
+            dp[0][j] = j;
+        }
+        for (int i = 1; i <= word1.length(); ++i) {
+            for (int j = 1; j <= word2.length(); ++j) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    // 当word1[i - 1] 与 word2[j - 1]不相同的时候，有三种情况：
+                    // 情况一：删word1[i - 1]，最少操作次数为dp[i - 1][j] + 1
+                    //
+                    // 情况二：删word2[j - 1]，最少操作次数为dp[i][j - 1] + 1
+                    //
+                    // 情况三：同时删word1[i - 1]和word2[j - 1]，操作的最少次数为dp[i - 1][j - 1] + 2
+                    // 不相等的时候 可能要两个都删 or 只删word1 or 只删word2
+                    dp[i][j] = Math.min(dp[i - 1][j - 1] + 2, Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1));
+                }
+            }
+        }
+        return dp[word1.length()][word2.length()];
+    }
+
+    // 72. Edit Distance
+    // https://leetcode.com/problems/edit-distance/description/
+    // dp[i][j] 表示以下标i-1为结尾的字符串word1，和以下标j-1为结尾的字符串word2，最近编辑距离为dp[i][j]。
+    public int minDistance2(String word1, String word2) {
+        int[][] dp = new int[word1.length() + 1][word2.length() + 1];
+        for (int i = 1; i <= word1.length(); ++i) {
+            dp[i][0] = i;
+        }
+        for (int j = 1; j <= word2.length(); ++j) {
+            dp[0][j] = j;
+        }
+        for (int i = 1; i <= word1.length(); ++i) {
+            for (int j = 1; j <= word2.length(); ++j) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                }
+                else {
+                    // word1删一个 dp[i][j] = dp[i - 1][j] + 1
+                    // word2删除一个元素 dp[i][j] = dp[i][j - 1] + 1; 注意：word2删除一个元素，相当于word1添加一个元素
+                    // 替换元素，word1替换word1[i - 1]，使其与word2[j - 1]相同
+                    // 只需要一次替换的操作，就可以让 word1[i - 1] 和 word2[j - 1] 相同。
+                    // 所以 dp[i][j] = dp[i - 1][j - 1] + 1;
+                    dp[i][j] = Math.min(dp[i - 1][j] + 1, Math.min(dp[i][j - 1] + 1, dp[i - 1][j - 1] + 1));
+                }
+            }
+        }
+        return dp[word1.length()][word2.length()];
     }
 
     public static void main(String[] args) {
@@ -975,7 +1182,7 @@ public class Dynamic {
 //        System.out.println(dynamic.maxProfit(2, new int[]{3,2,6,5,0,3}));
 //        System.out.println(dynamic.maxProfitV5( new int[]{1,2,3,0,2}));
 //        System.out.println(dynamic.lengthOfLIS( new int[]{0,1,0,3,2}));
-        System.out.println(dynamic.longestCommonSubsequence("abcde", "ace"));
+        System.out.println(dynamic.longestCommonSubsequence("dknkdizqxkdczafixidorgfcnkrirmhmzqbcfuvojsxwraxe", "dulixqfgvipenkfubgtyxujixspoxmhgvahqdmzmlyhajerqz"));
     }
 
 }
