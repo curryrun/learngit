@@ -1167,6 +1167,40 @@ public class Dynamic {
         return dp[word1.length()][word2.length()];
     }
 
+    // 647. Palindromic Substrings
+    // https://leetcode.com/problems/palindromic-substrings/description/
+    // 判断一个子字符串（字符串的下表范围[i,j]）是否回文，依赖于，子字符串（下表范围[i + 1, j - 1]）） 是否是回文。
+    // 这个是关键的公式推导思路
+    // 所以需要一个二维数组 dp[i][j] 定义是以i j 为范围 闭区间的字符串 是不是回文
+    public int countSubstrings(String s) {
+        boolean[][] dp = new boolean[s.length()][s.length()];
+        int res = 0;
+        for (int i = s.length() - 1 ; i >= 0; --i) {
+            for (int j = i; j < s.length(); ++j) {
+                // 如果i j本身就不等 那肯定不是回文 不用看
+                // 要看相等的情况
+                if (s.charAt(i) == s.charAt(j)) {
+                    // a or aa 的情况
+                    if (j - i <= 1) {
+                        dp[i][j] = true;
+                    } else {
+                        // 注意这个地方 要i + 1的数据 也就是说i要从后往前遍历 保证i后面的是遍历过了 有结果的
+                        dp[i][j] = dp[i + 1][j - 1];
+                    }
+                    if (dp[i][j]) {
+                        ++res;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    // 这道题 再做一个双指针的解法
+    public int countSubstringsV2(String s) {
+
+    }
+
     public static void main(String[] args) {
         Dynamic dynamic = new Dynamic();
 //        System.out.println(dynamic.integerBreakV2(8));
