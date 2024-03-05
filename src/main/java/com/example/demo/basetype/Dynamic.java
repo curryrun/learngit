@@ -1153,8 +1153,7 @@ public class Dynamic {
             for (int j = 1; j <= word2.length(); ++j) {
                 if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
                     dp[i][j] = dp[i - 1][j - 1];
-                }
-                else {
+                } else {
                     // word1删一个 dp[i][j] = dp[i - 1][j] + 1
                     // word2删除一个元素 dp[i][j] = dp[i][j - 1] + 1; 注意：word2删除一个元素，相当于word1添加一个元素
                     // 替换元素，word1替换word1[i - 1]，使其与word2[j - 1]相同
@@ -1175,7 +1174,7 @@ public class Dynamic {
     public int countSubstrings(String s) {
         boolean[][] dp = new boolean[s.length()][s.length()];
         int res = 0;
-        for (int i = s.length() - 1 ; i >= 0; --i) {
+        for (int i = s.length() - 1; i >= 0; --i) {
             for (int j = i; j < s.length(); ++j) {
                 // 如果i j本身就不等 那肯定不是回文 不用看
                 // 要看相等的情况
@@ -1197,8 +1196,47 @@ public class Dynamic {
     }
 
     // 这道题 再做一个双指针的解法
+    // 两种可能性 1 以i为中心 2 i,i为中心
     public int countSubstringsV2(String s) {
+        int res = 0;
+        for (int i = 0; i < s.length(); ++i) {
+            res = res + countSubstringsV2Item(i, i, s);
+            res = res + countSubstringsV2Item(i, i + 1, s);
+        }
+        return res;
+    }
 
+    public int countSubstringsV2Item(int left, int right, String s) {
+        int res = 0;
+        while (left >= 0 && right < s.length()) {
+            if (s.charAt(left) != s.charAt(right)) {
+                break;
+            }
+            ++res;
+            left--;
+            right++;
+        }
+        return res;
+    }
+
+    // 516. Longest Palindromic Subsequence
+    // https://leetcode.com/problems/longest-palindromic-subsequence/
+    // dp[i][j] 是[i,j]闭区间内 最长回文子序列
+    public int longestPalindromeSubseq(String s) {
+        int[][] dp = new int[s.length()][s.length()];
+        for (int i = 0; i < s.length(); ++i) {
+            dp[i][i] = 1;
+        }
+        for (int i = s.length() - 1; i >= 0; --i) {
+            for (int j = i + 1; j < s.length(); ++j) {
+                if (s.charAt(i) == s.charAt(j)) {
+                    dp[i][j] = dp[i + 1][j - 1] + 2;
+                } else {
+                    dp[i][j] = Math.max(dp[i + 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        return dp[0][s.length() - 1];
     }
 
     public static void main(String[] args) {
