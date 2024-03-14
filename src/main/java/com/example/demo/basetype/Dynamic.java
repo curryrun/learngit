@@ -600,6 +600,7 @@ public class Dynamic {
 
     // 198. House Robber
     // https://leetcode.com/problems/house-robber/description/
+    // dp[i]：考虑下标i（包括i）以内的房屋，最多可以偷窃的金额为dp[i]
     public int rob(int[] nums) {
         if (0 == nums.length) {
             return 0;
