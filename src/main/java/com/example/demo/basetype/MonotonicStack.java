@@ -61,6 +61,9 @@ public class MonotonicStack {
     }
 
     // 496. Next Greater Element I
+    // https://leetcode.com/problems/next-greater-element-i/description/?utm_source=LCUS&utm_medium=ip_redirect&utm_campaign=transfer2china
+    // 找到比栈顶大的 就出栈 这个时候可以确定比a大的数
+    // 用map缓存num1中的元素位置 这样可以在出栈的时候反查 num1中有没有这个数
     public int[] nextGreaterElement(int[] nums1, int[] nums2) {
         int[] res = new int[nums1.length];
         Arrays.fill(res, -1);
@@ -89,10 +92,37 @@ public class MonotonicStack {
         return res;
     }
 
+    // 503. Next Greater Element II
+    // https://leetcode.com/problems/next-greater-element-ii/description/
+    public int[] nextGreaterElements(int[] nums) {
+        int[] res = new int[nums.length];
+        Arrays.fill(res, -1);
+        LinkedList<Integer> stack = new LinkedList<>();
+        boolean haveReLoop = false;
+        for (int i = 0; i < nums.length; ++i) {
+            if (stack.isEmpty()) {
+                stack.push(i);
+            } else {
+                while (!stack.isEmpty() && nums[i] > nums[stack.peek()]) {
+                    res[stack.pop()] = nums[i];
+                }
+                stack.push(i);
+            }
+            // 再次循环一次
+            if (i == nums.length - 1 && !haveReLoop) {
+                // 因为还会加一哟 下次循环要从0开始
+                i = -1;
+                haveReLoop = true;
+            }
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
         MonotonicStack monotonicStack = new MonotonicStack();
 //        System.out.println(monotonicStack.dailyTemperatures(new int[]{73,74,75,71,69,72,76,73}));
-        System.out.println(monotonicStack.nextGreaterElement(new int[]{2,4}, new int[]{1,2,3,4}));
+//        System.out.println(monotonicStack.nextGreaterElement(new int[]{2,4}, new int[]{1,2,3,4}));
+        System.out.println(monotonicStack.nextGreaterElements(new int[]{5,4,3,2,1}));
     }
 
 }
